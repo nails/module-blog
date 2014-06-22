@@ -30,8 +30,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		$this->_available	= NULL;
-		$this->_skin_prefix	= 'skin-blog-';
+		$this->_available = NULL;
 
 		//	Skin locations
 		//	The model will search these directories for skins; to add more directories extend this
@@ -48,8 +47,8 @@ class NAILS_Blog_skin_model extends NAILS_Model
 
 		//	'Official' skins
 		$this->_skin_locations[]	= array(
-										'path'	=> FCPATH . 'vendor/nailsapp',
-										'url'	=> site_url( 'vendor/nailsapp', page_is_secure() ),
+										'path'	=> NAILS_PATH,
+										'url'	=> NAILS_URL,
 										'regex'	=> '/^skin-blog-(.*)$/'
 									);
 
