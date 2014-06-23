@@ -55,7 +55,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 		// --------------------------------------------------------------------------
 
 		//	Load up the blog's skin
-		$_skin = app_setting( 'skin', 'blog' ) ? app_setting( 'skin', 'blog' ) : 'gettingstarted';
+		$_skin = app_setting( 'skin', 'blog' ) ? app_setting( 'skin', 'blog' ) : 'skin-blog-gettingstarted';
 
 		$this->_skin = $this->blog_skin_model->get( $_skin );
 
