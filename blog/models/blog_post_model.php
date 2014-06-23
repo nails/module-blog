@@ -499,7 +499,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 	 **/
 	public function get_all( $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE, $_caller = 'GET_ALL' )
 	{
-		$_posts = parent::get_all( $page, $per_page, $data, $include_deleted, 'GET_ALL' );
+		$_posts = parent::get_all( $page, $per_page, $data, $include_deleted, $_caller );
 
 		foreach ( $_posts AS $post ) :
 
