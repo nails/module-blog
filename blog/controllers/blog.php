@@ -30,8 +30,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
 	{
 		//	Meta & Breadcrumbs
 		$this->data['page']->title 				= APP_NAME . ' Blog';
-		$this->data['page']->seo->description 		= '';
-		$this->data['page']->seo->keywords 			= '';
+		$this->data['page']->seo->description 	= '';
+		$this->data['page']->seo->keywords 		= '';
 
 		// --------------------------------------------------------------------------
 
@@ -260,8 +260,30 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
+		//	Any SEO data?
+		if ( ! empty( $this->data['category']->seo_title ) ) :
+
+			$this->data['page']->title = $this->data['category']->seo_title;
+
+		endif;
+
+		if ( ! empty( $this->data['category']->seo_description ) ) :
+
+			$this->data['page']->seo->description = $this->data['category']->seo_description;
+
+		endif;
+
+		if ( ! empty( $this->data['category']->seo_keywords ) ) :
+
+			$this->data['page']->seo->keywords = $this->data['category']->seo_keywords;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
 		//	Finally, let the views know this is an 'archive' type page
-		$this->data['archive_title'] = 'Posts in category "' . $this->data['category']->label . '"';
+		$this->data['archive_title']		= 'Posts in category "' . $this->data['category']->label . '"';
+		$this->data['archive_description']	= $this->data['category']->description;
 
 		// --------------------------------------------------------------------------
 
@@ -292,7 +314,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
-		//	Get category
+		//	Get tag
 		$this->data['tag'] = $this->blog_tag_model->get_by_slug( $this->uri->rsegment( 3 ) );
 
 		if ( ! $this->data['tag'] ) :
@@ -345,8 +367,30 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
+		//	Any SEO data?
+		if ( ! empty( $this->data['tag']->seo_title ) ) :
+
+			$this->data['page']->title = $this->data['tag']->seo_title;
+
+		endif;
+
+		if ( ! empty( $this->data['tag']->seo_description ) ) :
+
+			$this->data['page']->seo->description = $this->data['tag']->seo_description;
+
+		endif;
+
+		if ( ! empty( $this->data['tag']->seo_keywords ) ) :
+
+			$this->data['page']->seo->keywords = $this->data['tag']->seo_keywords;
+
+		endif;
+
+		// --------------------------------------------------------------------------
+
 		//	Finally, let the views know this is an 'archive' type page
-		$this->data['archive_title'] = 'Posts in tag "' . $this->data['tag']->label . '"';
+		$this->data['archive_title']		= 'Posts in tag "' . $this->data['tag']->label . '"';
+		$this->data['archive_description']	= $this->data['category']->description;
 
 		// --------------------------------------------------------------------------
 

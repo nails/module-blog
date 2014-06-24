@@ -31,72 +31,77 @@ class NAILS_Blog_tag_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function get_all( $include_count = FALSE )
+	protected function _getcount_common( $data = array(), $_caller = NULL )
 	{
-		$_select	= array();
-		$_select[]	= $this->_table_prefix . '.id';
-		$_select[]	= $this->_table_prefix . '.slug';
-		$_select[]	= $this->_table_prefix . '.label';
+		parent::_getcount_common( $data, $_caller );
 
-		$this->db->select( $_select );
+		// --------------------------------------------------------------------------
 
-		if ( $include_count ) :
+		$this->db->select( $this->_table_prefix . '.*' );
+
+		if ( ! empty( $data['include_count'] ) ) :
 
 			$this->db->select( '(SELECT COUNT(DISTINCT post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_tag WHERE tag_id = ' . $this->_table_prefix . '.id) post_count' );
 
 		endif;
 
-		$this->db->order_by( $this->_table_prefix . '.label' );
-		$_tags = $this->db->get( $this->_table . ' ' . $this->_table_prefix )->result();
+		//	Default sort
+		if ( empty( $data['sort'] ) ) :
 
-		foreach ( $_tags AS $tag ) :
+			$this->db->order_by( $this->_table_prefix . '.label' );
 
-			$this->_format_tag( $tag );
-
-		endforeach;
-
-		return $_tags;
+		endif;
 	}
 
 
 	// --------------------------------------------------------------------------
 
 
-	public function get_by_id( $id, $include_count = FALSE  )
+	public function create( $data )
 	{
-		$this->db->where( 'id', $id );
-		$_tag = $this->get_all( $include_count );
+		$_data = new stdClass();
 
-		if ( ! $_tag )
+		// --------------------------------------------------------------------------
+
+		//	Some basic sanity testing
+		if ( empty( $data->label ) ) :
+
+			$this->_set_error( '"label" is a required field.' );
 			return FALSE;
 
-		return $_tag[0];
-	}
+		else :
 
+			$_data->label = trim( $data->label );
 
-	// --------------------------------------------------------------------------
+		endif;
 
+		// --------------------------------------------------------------------------
 
-	public function get_by_slug( $slug, $include_count = FALSE  )
-	{
-		$this->db->where( 'slug', $slug );
-		$_tag = $this->get_all( $include_count );
+		$_data->slug = $this->_generate_slug( $data->label );
 
-		if ( ! $_tag )
-			return FALSE;
+		if ( isset( $data->description ) ) :
 
-		return $_tag[0];
-	}
+			$_data->description = $data->description;
 
+		endif;
 
-	// --------------------------------------------------------------------------
+		if ( isset( $data->seo_title ) ) :
 
+			$_data->seo_title = strip_tags( $data->seo_title );
 
-	public function create( $label )
-	{
-		$_data			= array();
-		$_data['slug']	= $this->_generate_slug( $label );
-		$_data['label']	= $label;
+		endif;
+
+		if ( isset( $data->seo_description ) ) :
+
+			$_data->seo_description = strip_tags( $data->seo_description );
+
+		endif;
+
+		if ( isset( $data->seo_keywords ) ) :
+
+			$_data->seo_keywords = strip_tags( $data->seo_keywords );
+
+		endif;
 
 		return parent::create( $_data );
 	}
@@ -104,71 +109,53 @@ class NAILS_Blog_tag_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function update( $id_slug, $label )
+	public function update( $id, $data )
 	{
-		$_slug = $this->_generate_slug( $label );
+		$_data = new stdClass();
 
-		$this->db->set( 'slug', $_slug );
-		$this->db->set( 'label', $_slug );
-		$this->db->set( 'modified', 'NOW()', FALSE );
+		// --------------------------------------------------------------------------
 
-		if ( $this->user_model->is_logged_in() ) :
+		//	Some basic sanity testing
+		if ( empty( $data->label ) ) :
 
-			$this->db->set( 'modified_by', active_user( 'id' ) );
-
-		endif;
-
-		if ( is_numeric( $id_slug ) ) :
-
-			$this->db->where( 'id', $id_slug );
+			$this->_set_error( '"label" is a required field.' );
+			return FALSE;
 
 		else :
 
-			$this->db->where( 'slug', $id_slug );
-
-		endif;
-
-		$this->db->update( $this->_table );
-
-		return (bool) $this->db->affected_rows();
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function destroy( $id_slug )
-	{
-		if ( ! $id_slug ) :
-
-			return FALSE;
+			$_data->label = trim( $data->label );
 
 		endif;
 
 		// --------------------------------------------------------------------------
 
-		if ( is_numeric( $id_slug ) ) :
+		$_data->slug = $this->_generate_slug( $data->label, '', '', NULL, NULL, $id );
 
-			$this->db->where( 'id', $id_slug );
+		if ( isset( $data->description ) ) :
 
-		else :
-
-			$this->db->where( 'slug', $id_slug );
+			$_data->description = $data->description;
 
 		endif;
 
-		$this->db->delete( $this->_table );
+		if ( isset( $data->seo_title ) ) :
 
-		return (bool) $this->db->affected_rows();
-	}
+			$_data->seo_title = strip_tags( $data->seo_title );
 
+		endif;
 
-	// --------------------------------------------------------------------------
+		if ( isset( $data->seo_description ) ) :
 
+			$_data->seo_description = strip_tags( $data->seo_description );
 
-	public function delete( $id_slug )
-	{
-		return $this->destroy( $id_slug );
+		endif;
+
+		if ( isset( $data->seo_keywords ) ) :
+
+			$_data->seo_keywords = strip_tags( $data->seo_keywords );
+
+		endif;
+
+		return parent::update( $id, $_data );
 	}
 
 
@@ -177,7 +164,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
 	public function format_url( $slug )
 	{
-		return site_url( app_setting( 'url', 'blog' ) . 'tag/' . $slug );
+		return sitE_url( app_setting( 'url', 'blog' ) . 'tag/' . $slug );
 	}
 
 
@@ -232,6 +219,7 @@ if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG_TAG_MODEL' ) ) :
 	}
 
 endif;
+
 
 /* End of file blog_tag_model.php */
 /* Location: ./modules/blog/models/blog_tag_model.php */
