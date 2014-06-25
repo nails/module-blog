@@ -25,7 +25,7 @@ class NAILS_Blog_model extends NAILS_Model
 
 	public function __construct()
 	{
-		$this->config->load( 'blog', FALSE, TRUE );
+		$this->config->load( 'blog/blog' );
 	}
 
 

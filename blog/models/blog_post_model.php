@@ -889,7 +889,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 	public function get_with_association( $association_index, $associated_id )
 	{
-		$this->config->load( 'blog', FALSE, TRUE );
+		$this->config->load( 'blog/blog' );
 
 		$_associations = $this->config->item( 'blog_post_associations' );
 
