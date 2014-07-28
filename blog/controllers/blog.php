@@ -442,34 +442,29 @@ class NAILS_Blog extends NAILS_Blog_Controller
 	 */
 	protected function _fetch_sidebar_widgets()
 	{
-		//	Widgets
-		if ( app_setting( 'sidebar_enabled', 'blog' ) ) :
+		$this->data['widget'] = new stdClass();
 
-			$this->data['widget'] = new stdClass();
+		if ( app_setting( 'sidebar_latest_posts', 'blog' ) ) :
 
-			if ( app_setting( 'sidebar_latest_posts', 'blog' ) ) :
+			$this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts();
 
-				$this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts();
+		endif;
 
-			endif;
+		if ( app_setting( 'sidebar_categories', 'blog' ) ) :
 
-			if ( app_setting( 'sidebar_categories', 'blog' ) ) :
+			$this->data['widget']->categories = $this->blog_widget_model->categories();
 
-				$this->data['widget']->categories = $this->blog_widget_model->categories();
+		endif;
 
-			endif;
+		if ( app_setting( 'sidebar_tags', 'blog' ) ) :
 
-			if ( app_setting( 'sidebar_tags', 'blog' ) ) :
+			$this->data['widget']->tags = $this->blog_widget_model->tags();
 
-				$this->data['widget']->tags = $this->blog_widget_model->tags();
+		endif;
 
-			endif;
+		if ( app_setting( 'sidebar_popular_posts', 'blog' ) ) :
 
-			if ( app_setting( 'sidebar_popular_posts', 'blog' ) ) :
-
-				$this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts();
-
-			endif;
+			$this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts();
 
 		endif;
 	}
