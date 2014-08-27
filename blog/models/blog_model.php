@@ -34,12 +34,18 @@ class NAILS_Blog_model extends NAILS_Model
 
 	public function get_associations( $post_id = NULL )
 	{
+		$this->config->load( 'blog' );
 		$_associations	= $this->config->item( 'blog_post_associations' );
 
-		if ( ! $_associations )
+		if ( ! $_associations ) :
+
 			return array();
 
-		foreach( $_associations AS &$assoc ) :
+		endif;
+
+		// --------------------------------------------------------------------------
+
+		foreach ( $_associations AS &$assoc ) :
 
 			//	Fetch the association data from the source, fail ungracefully - the dev should have this configured correctly.
 			//	Fetch current associations if a post_id has been supplied

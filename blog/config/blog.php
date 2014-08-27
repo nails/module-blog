@@ -31,10 +31,12 @@
 		$config['blog_post_associations']					= array();
 		$config['blog_post_associations'][0]				= new stdClass();
 		$config['blog_post_associations'][0]->slug			= 'a-unique-slug';
-		$config['blog_post_associations'][0]->sidebar_title	= 'The title of the widget in the front end sidebar';
 		$config['blog_post_associations'][0]->legend		= 'The <fieldset>\'s legend';
 		$config['blog_post_associations'][0]->description	= 'The <fieldset>\'s description';
 		$config['blog_post_associations'][0]->multiple		= TRUE;
+
+		$config['blog_post_associations'][0]->widget		= new stdClass;
+		$config['blog_post_associations'][0]->widget->label	= 'The label of the widget in the front end sidebar';
 
 	Note: the following examples use the notion that there is a table with a list of hills and that the blog
 	writer might want to associate blog posts to hills (and vice versa).
@@ -97,7 +99,7 @@
 
 		$config['blog_post_associations'][0]->widget->callback = function( $id, $label, $index ) { return 'formatted string' };
 
-	Note that this function must return the HTML which'll be placed in a <li></li>.
+	Note that this function must return the complete HTML, the skin will handle the surrounding markup.
 
 	Alternatively, you can define `callback_batch`, like so:
 
@@ -106,3 +108,16 @@
 	This will be passed an array of objects, each with two properties: `id` and `label`; you are responsible for rendering *all* the HTML.
 
 */
+
+
+	// --------------------------------------------------------------------------
+
+	//	Load the app's config file if it's there. When loading within the blog
+	//	module scope then CI ignores the app's version.
+
+	if ( file_exists( FCPATH . APPPATH . 'config/blog.php' ) ) :
+
+		require FCPATH . APPPATH . 'config/blog.php';
+
+	endif;
+

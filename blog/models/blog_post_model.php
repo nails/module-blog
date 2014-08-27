@@ -42,6 +42,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 	}
 
 
+	// --------------------------------------------------------------------------
+
+
 	/**
 	 * Creates a new object
 	 *
@@ -443,12 +446,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 		if ( isset( $data['associations'] ) && $data['associations'] ) :
 
 			//	Fetch association config
-			$_association = $this->config->item( 'blog_post_associations' );
-
+			$this->load->model( 'blog/blog_model' );
+			$_associations = $this->blog_model->get_associations();
 
 			foreach ( $data['associations'] AS $index => $assoc ) :
 
-				if ( ! isset( $_association[$index] ) ) :
+				if ( ! isset( $_associations[$index] ) ) :
 
 					continue;
 
@@ -456,7 +459,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				//	Clear old associations
 				$this->db->where( 'post_id', $id );
-				$this->db->delete( $_association[$index]->target );
+				$this->db->delete( $_associations[$index]->target );
 
 				//	Add new ones
 				$_data = array();
@@ -469,7 +472,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				if ( $_data ) :
 
-					$this->db->insert_batch( $_association[$index]->target, $_data );
+					$this->db->insert_batch( $_associations[$index]->target, $_data );
 
 				endif;
 
@@ -500,6 +503,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 	public function get_all( $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE, $_caller = 'GET_ALL' )
 	{
 		$_posts = parent::get_all( $page, $per_page, $data, $include_deleted, $_caller );
+
+		$this->load->model( 'blog/blog_model' );
+		$_associations	= $this->blog_model->get_associations();
 
 		foreach ( $_posts AS $post ) :
 
@@ -553,8 +559,6 @@ class NAILS_Blog_post_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	Fetch other associations
-			$_associations	= $this->config->item( 'blog_post_associations' );
-
 			if ( ! empty( $data['include_associations'] ) && $_associations ) :
 
 				foreach( $_associations AS $index => $assoc ) :
@@ -862,11 +866,18 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$this->db->join( NAILS_DB_PREFIX . 'blog_tag bt',		'bt.id = bpt.tag_id' );
 
 		//	Set the where
-		if ( NULL === $data ) :
+		if ( ! is_array( $data ) ) :
 
-			$data = array( 'where' => array() );
+			$data = array();
 
 		endif;
+
+		if ( ! isset( $data['where'] ) ) :
+
+			$data['where'] = array();
+
+		endif;
+
 
 		if ( is_numeric( $id_slug ) ) :
 
