@@ -34,7 +34,7 @@ class NAILS_Blog_model extends NAILS_Model
 
 	public function get_associations( $post_id = NULL )
 	{
-		$this->config->load( 'blog' );
+		$this->config->load( 'blog/blog' );
 		$_associations	= $this->config->item( 'blog_post_associations' );
 
 		if ( ! $_associations ) :
