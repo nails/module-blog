@@ -21,9 +21,13 @@ class NAILS_Blog_skin_model extends NAILS_Model
 	protected $_skins;
 	protected $_skin_locations;
 
+
 	// --------------------------------------------------------------------------
 
 
+	/**
+	 * Construct the model.
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -32,16 +36,18 @@ class NAILS_Blog_skin_model extends NAILS_Model
 
 		$this->_available = NULL;
 
-		//	Skin locations
-		//	The model will search these directories for skins; to add more directories extend this
-		//	This must be an array with 2 indexes:
-		//	`path`	=> The absolute path to the directory containing the skins (required)
-		//	`url`	=> The URL to access the skins (required)
-		//	`regex`	=> If the directory doesn't only contain skins then specify a regex to filter by
+		/**
+		 * Skin locations
+		 * The model will search these directories for skins; to add more directories extend this
+		 * This must be an array with 2 indexes:
+		 * `path`	=> The absolute path to the directory containing the skins (required)
+		 * `url`	=> The URL to access the skin (required)
+		 * `regex`	=> If the directory doesn't only contain skin then specify a regex to filter by
+		 */
 
-		if ( empty( $this->_skin_locations) ) :
+		if ( empty( $this->_skin_locations ) ) :
 
-			$this->_skin_locations		= array();
+			$this->_skin_locations = array();
 
 		endif;
 
@@ -59,8 +65,15 @@ class NAILS_Blog_skin_model extends NAILS_Model
 									);
 	}
 
+
 	// --------------------------------------------------------------------------
 
+
+	/**
+	 * Fetches all available shipping drivers
+	 * @param  boolean $refresh Fetchf rom refresh - skip the cache
+	 * @return array
+	 */
 	public function get_available( $refresh = FALSE )
 	{
 		if ( ! is_null( $this->_available ) && ! $refresh ) :
@@ -190,6 +203,12 @@ class NAILS_Blog_skin_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
+	/**
+	 * Gets a single driver
+	 * @param  string  $slug    the driver's slug
+	 * @param  boolean $refresh Skip the cache
+	 * @return stdClass
+	 */
 	public function get( $slug, $refresh = FALSE )
 	{
 		$_skins = $this->get_available( $refresh );
