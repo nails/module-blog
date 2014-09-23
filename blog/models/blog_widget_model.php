@@ -22,12 +22,13 @@ class NAILS_Blog_widget_model extends NAILS_Model
 	 * @param  integer $limit The maximum number of posts to return
 	 * @return array
 	 */
-	public function latest_posts( $limit = 5 )
+	public function latest_posts( $blog_id, $limit = 5 )
 	{
-		$this->db->select( 'id,slug,title,published' );
+		$this->db->select( 'id,blog_id,slug,title,published' );
 		$this->db->where( 'is_published', TRUE );
 		$this->db->where( 'published <=', 'NOW()', FALSE );
 		$this->db->where( 'is_deleted', FALSE );
+		$this->db->where( 'blog_id', $blog_id );
 		$this->db->limit( $limit );
 		$this->db->order_by( 'published', 'DESC' );
 		$_posts = $this->db->get( NAILS_DB_PREFIX . 'blog_post' )->result();
@@ -40,7 +41,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		foreach ( $_posts AS $post ) :
 
-			$post->url = $this->blog_post_model->format_url( $post->slug );
+			$post->url = $this->blog_post_model->format_url( $post->slug, $post->blog_id );
 
 		endforeach;
 
@@ -58,13 +59,14 @@ class NAILS_Blog_widget_model extends NAILS_Model
 	 * @param array $config Changes to the default configs
 	 * @return array
 	 **/
-	public function popular_posts( $limit = 5 )
+	public function popular_posts( $blog_id, $limit = 5 )
 	{
 		$this->db->select( 'bp.id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits' );
 		$this->db->join( NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id' );
 		$this->db->where( 'bp.is_published', TRUE );
 		$this->db->where( 'bp.published <=', 'NOW()', FALSE );
 		$this->db->where( 'bp.is_deleted', FALSE );
+		$this->db->where( 'blog_id', $blog_id );
 		$this->db->group_by( 'bp.id' );
 		$this->db->order_by( 'hits', 'DESC' );
 		$this->db->order_by( 'bp.published', 'DESC' );
@@ -80,7 +82,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		foreach ( $_posts AS $post ) :
 
-			$post->url = $this->blog_post_model->format_url( $post->slug );
+			$post->url = $this->blog_post_model->format_url( $post->slug, $post->blog_id );
 
 		endforeach;
 
@@ -99,9 +101,9 @@ class NAILS_Blog_widget_model extends NAILS_Model
 	 * @param boolean $return_html Whether to return HTML or just the data
 	 * @return array
 	 **/
-	public function categories( $include_count = TRUE, $only_populated = TRUE )
+	public function categories( $blog_id, $include_count = TRUE, $only_populated = TRUE )
 	{
-		$this->db->select( 'c.id,c.slug,c.label' );
+		$this->db->select( 'c.id,c.blog_id,c.slug,c.label' );
 
 		if ( $include_count ) :
 
@@ -115,6 +117,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
+		$this->db->where( 'c.blog_id', $blog_id );
 		$this->db->order_by( 'c.label' );
 
 		$_categories = $this->db->get( NAILS_DB_PREFIX . 'blog_category c' )->result();
@@ -127,7 +130,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		foreach ( $_categories AS $cat ) :
 
-			$cat->url = $this->blog_category_model->format_url( $cat->slug );
+			$cat->url = $this->blog_category_model->format_url( $cat->slug, $cat->blog_id );
 
 		endforeach;
 
@@ -146,9 +149,9 @@ class NAILS_Blog_widget_model extends NAILS_Model
 	 * @param boolean $return_html Whether to return HTML or just the data
 	 * @return mixed
 	 **/
-	public function tags( $include_count = TRUE, $only_populated = TRUE )
+	public function tags( $blog_id, $include_count = TRUE, $only_populated = TRUE )
 	{
-		$this->db->select( 't.id,t.slug,t.label' );
+		$this->db->select( 't.id,t.blog_id,t.slug,t.label' );
 
 		if ( $include_count ) :
 
@@ -162,6 +165,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
+		$this->db->where( 't.blog_id', $blog_id );
 		$this->db->order_by( 't.label' );
 
 		$_tags = $this->db->get( NAILS_DB_PREFIX . 'blog_tag t' )->result();
@@ -174,7 +178,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		foreach ( $_tags AS $tag ) :
 
-			$tag->url = $this->blog_tag_model->format_url( $tag->slug );
+			$tag->url = $this->blog_tag_model->format_url( $tag->slug, $tag->blog_id );
 
 		endforeach;
 

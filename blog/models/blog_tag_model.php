@@ -162,9 +162,9 @@ class NAILS_Blog_tag_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function format_url( $slug )
+	public function format_url( $slug, $blog_id )
 	{
-		return sitE_url( app_setting( 'url', 'blog' ) . 'tag/' . $slug );
+		return sitE_url( app_setting( 'url', 'blog-' . $blog_id ) . 'tag/' . $slug );
 	}
 
 

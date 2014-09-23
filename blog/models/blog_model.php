@@ -17,15 +17,24 @@
 
 class NAILS_Blog_model extends NAILS_Model
 {
-	protected $_settings;
-
+	protected $_table;
+	protected $_table_prefix;
 
 	// --------------------------------------------------------------------------
 
 
 	public function __construct()
 	{
+		parent::__construct();
+
+		// --------------------------------------------------------------------------
+
 		$this->config->load( 'blog/blog' );
+
+		// --------------------------------------------------------------------------
+
+		$this->_table			= NAILS_DB_PREFIX . 'blog';
+		$this->_table_prefix	= 'b';
 	}
 
 

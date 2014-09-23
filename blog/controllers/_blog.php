@@ -10,9 +10,20 @@
 
 class NAILS_Blog_Controller extends NAILS_Controller
 {
+	protected $_blog_id;
+
+
+	// --------------------------------------------------------------------------
+
+
 	public function __construct()
 	{
 		parent::__construct();
+
+		// --------------------------------------------------------------------------
+
+		$this->_blog_id = $this->uri->rsegment( 2 );
+		$this->data['blog_id'] = $this->_blog_id;
 
 		// --------------------------------------------------------------------------
 
@@ -39,14 +50,14 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
 		// --------------------------------------------------------------------------
 
-		if ( app_setting( 'categories_enabled', 'blog' ) ) :
+		if ( app_setting( 'categories_enabled', 'blog-' . $this->_blog_id ) ) :
 
 			$this->load->model( 'blog/blog_category_model' );
 
 		endif;
 
 
-		if ( app_setting( 'tags_enabled', 'blog' ) ) :
+		if ( app_setting( 'tags_enabled', 'blog-' . $this->_blog_id ) ) :
 
 			$this->load->model( 'blog/blog_tag_model' );
 
@@ -55,7 +66,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 		// --------------------------------------------------------------------------
 
 		//	Load up the blog's skin
-		$_skin = app_setting( 'skin', 'blog' ) ? app_setting( 'skin', 'blog' ) : 'skin-blog-gettingstarted';
+		$_skin = app_setting( 'skin', 'blog-' . $this->_blog_id ) ? app_setting( 'skin', 'blog-' . $this->_blog_id ) : 'skin-blog-gettingstarted';
 
 		$this->_skin = $this->blog_skin_model->get( $_skin );
 
@@ -73,7 +84,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 		// --------------------------------------------------------------------------
 
 		//	Blog name
-		$this->_blog_name = app_setting( 'name', 'blog' ) ? app_setting( 'name', 'blog' ) : 'Blog';
+		$this->_blog_name = app_setting( 'name', 'blog-' . $this->_blog_id ) ? app_setting( 'name', 'blog-' . $this->_blog_id ) : 'Blog';
 	}
 }
 

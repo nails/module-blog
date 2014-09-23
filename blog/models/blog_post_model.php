@@ -57,9 +57,16 @@ class NAILS_Blog_post_model extends NAILS_Model
 		//	Prepare slug
 		$_counter = 0;
 
-		if ( ! isset( $data['title'] ) || ! $data['title'] ) :
+		if ( empty( $data['title'] ) ) :
 
 			$this->_set_error( 'Title missing' );
+			return FALSE;
+
+		endif;
+
+		if ( empty( $data['blog_id'] ) ) :
+
+			$this->_set_error( 'Blog ID missing' );
 			return FALSE;
 
 		endif;
@@ -73,7 +80,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Set data
-		if ( isset( $data['title'] ) ) :			$this->db->set( 'title',			$data['title'] );			endif;
+		$this->db->set( 'blog_id', $data['blog_id'] );
+		$this->db->set( 'title', $data['title'] );
+
 		if ( isset( $data['body'] ) ) :				$this->db->set( 'body',				$data['body'] );			endif;
 		if ( isset( $data['seo_title'] ) ) :		$this->db->set( 'seo_title',		$data['title'] );			endif;
 		if ( isset( $data['seo_description'] ) ) :	$this->db->set( 'seo_description',	$data['seo_description'] );	endif;
@@ -139,7 +148,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 			$_id = $this->db->insert_id();
 
 			//	Add Gallery items, if any
-			if ( isset( $data['gallery'] ) && $data['gallery'] ) :
+			if ( ! empty( $data['gallery'] ) ) :
 
 				$_data = array();
 
@@ -164,7 +173,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	Add Categories and tags, if any
-			if ( isset( $data['categories'] ) && $data['categories'] ) :
+			if ( ! empty( $data['categories'] ) ) :
 
 				$_data = array();
 
@@ -178,7 +187,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 			endif;
 
-			if ( isset( $data['tags'] ) && $data['tags'] != FALSE ) :
+			if ( ! empty( $data['tags'] ) ) :
 
 				$_data = array();
 
@@ -195,7 +204,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 			// --------------------------------------------------------------------------
 
 			//	Add associations, if any
-			if ( isset( $data['associations'] ) && $data['associations'] ) :
+			if ( ! empty( $data['associations'] ) ) :
 
 				//	Fetch association config
 				$_association = $this->config->item( 'blog_post_associations' );
@@ -284,6 +293,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Set data
+		if ( isset( $data['blog_id'] ) ) :			$this->db->set( 'blog_id',			$data['blog_id'] );			endif;
 		if ( isset( $data['title'] ) ) :			$this->db->set( 'title',			$data['title'] );			endif;
 		if ( isset( $data['body'] ) ) :				$this->db->set( 'body',				$data['body'] );			endif;
 		if ( isset( $data['seo_title'] ) ) :		$this->db->set( 'seo_title',		$data['title'] );			endif;
@@ -443,7 +453,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		// --------------------------------------------------------------------------
 
 		//	Add associations, if any
-		if ( isset( $data['associations'] ) && $data['associations'] ) :
+		if ( isset( $data['associations'] ) && is_array( $data['associations'] ) ) :
 
 			//	Fetch association config
 			$this->load->model( 'blog/blog_model' );
@@ -512,7 +522,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 			//	Fetch associated categories
 			if ( ! empty( $data['include_categories'] ) ) :
 
-				$this->db->select( 'c.id,c.slug,c.label' );
+				$this->load->model( 'blog/blog_category_model' );
+
+				$this->db->select( 'c.id,c.blog_id,c.slug,c.label' );
 				$this->db->join( NAILS_DB_PREFIX . 'blog_category c', 'c.id = pc.category_id' );
 				$this->db->where( 'pc.post_id', $post->id );
 				$this->db->group_by( 'c.id' );
@@ -521,7 +533,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				foreach( $post->categories AS $c ) :
 
-					$c->url = $this->blog_category_model->format_url( $c->slug );
+					$c->url = $this->blog_category_model->format_url( $c->slug, $c->blog_id );
 
 				endforeach;
 
@@ -536,8 +548,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 			//	Fetch associated tags
 			if ( ! empty( $data['include_tags'] ) ) :
 
+				$this->load->model( 'blog/blog_tag_model' );
+
 				//	Fetch associated tags
-				$this->db->select( 't.id,t.slug,t.label' );
+				$this->db->select( 't.id,t.blog_id,t.slug,t.label' );
 				$this->db->join( NAILS_DB_PREFIX . 'blog_tag t', 't.id = pt.tag_id' );
 				$this->db->where( 'pt.post_id', $post->id );
 				$this->db->group_by( 't.id' );
@@ -546,7 +560,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				foreach( $post->tags AS $t ) :
 
-					$t->url = $this->blog_tag_model->format_url( $t->slug );
+					$t->url = $this->blog_tag_model->format_url( $t->slug, $t->blog_id );
 
 				endforeach;
 
@@ -681,11 +695,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		$this->db->select( 'bp.id, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title' );
+		$this->db->select( 'bp.id, bp.blog_id, b.label blog_label, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title' );
 		$this->db->select( 'bp.seo_description, bp.seo_keywords, bp.is_published, bp.is_deleted, bp.created, bp.created_by, bp.modified, bp.modified_by, bp.published' );
 
 		$this->db->select( 'u.first_name, u.last_name, ue.email, u.profile_img, u.gender' );
 
+		$this->db->join( NAILS_DB_PREFIX . 'blog b', 'bp.blog_id = b.id', 'LEFT' );
 		$this->db->join( NAILS_DB_PREFIX . 'user u', 'bp.modified_by = u.id', 'LEFT' );
 		$this->db->join( NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT' );
 
@@ -992,9 +1007,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function format_url( $slug )
+	public function format_url( $slug, $blog_id )
 	{
-		return site_url( app_setting( 'url', 'blog' ) . $slug );
+		return site_url( app_setting( 'url', 'blog-' . $blog_id ) . $slug );
 	}
 
 
@@ -1012,7 +1027,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$post->is_deleted			= (bool) $post->is_deleted;
 
 		//	Generate URL
-		$post->url					= $this->format_url( $post->slug );
+		$post->url					= $this->format_url( $post->slug, $post->blog_id );
+
+		//	Blog
+		$post->blog					= new stdClass();
+		$post->blog->id				= (int) $post->blog_id;
+		$post->blog->label			= $post->blog_label;
 
 		//	Author
 		$post->author				= new stdClass();
@@ -1023,6 +1043,8 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$post->author->profile_img	= $post->profile_img;
 		$post->author->gender		= $post->gender;
 
+		unset( $post->blog_id );
+		unset( $post->blog_label );
 		unset( $post->modified_by );
 		unset( $post->first_name );
 		unset( $post->last_name );
