@@ -936,7 +936,15 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 		endforeach;
 
+		if ( empty( $_ids ) ) :
+
+			//	No IDs? No posts.
+			return array();
+
+		endif;
+
 		$this->db->where_in( $this->_table_prefix . '.id', $_ids );
+
 		return $this->get_all();
 
 	}
