@@ -75,6 +75,17 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
 		endif;
 
+		if ( empty( $data->blog_id ) ) :
+
+			$this->_set_error( '"blog_id" is a required field.' );
+			return FALSE;
+
+		else :
+
+			$_data->blog_id = $data->blog_id;
+
+		endif;
+
 		// --------------------------------------------------------------------------
 
 		$_data->slug = $this->_generate_slug( $data->label );
