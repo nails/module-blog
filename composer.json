@@ -33,6 +33,6 @@
 	{
 		"nailsapp/common": "dev-develop",
 		"nailsapp/module-cdn": "dev-develop",
-		"nailsapp/skin-blog-gettingstarted": "dev-develop"
+		"nailsapp/skin-blog-classic": "dev-develop"
 	}
 }
