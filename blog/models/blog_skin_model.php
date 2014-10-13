@@ -55,7 +55,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
 		$this->_skin_locations[]	= array(
 										'path'	=> NAILS_PATH,
 										'url'	=> NAILS_URL,
-										'regex'	=> '/^skin-blog-(.*)$/'
+										'regex'	=> '/^blog-skin-(.*)$/'
 									);
 
 		//	App Skins
