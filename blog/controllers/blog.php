@@ -244,7 +244,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		//	Only published items which are not schduled for the future
 		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'blog_id',			'value' => $this->_blog_id );
+		$_data['where'][]	= array( 'column' => 'bp.blog_id',		'value' => $this->_blog_id );
 		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
 		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
 
@@ -352,7 +352,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		//	Only published items which are not schduled for the future
 		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'blog_id',			'value' => $this->_blog_id );
+		$_data['where'][]	= array( 'column' => 'bp.blog_id',		'value' => $this->_blog_id );
 		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
 		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
 
@@ -387,7 +387,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		//	Finally, let the views know this is an 'archive' type page
 		$this->data['archive_title']		= 'Posts in tag "' . $this->data['tag']->label . '"';
-		$this->data['archive_description']	= $this->data['category']->description;
+		$this->data['archive_description']	= $this->data['tag']->description;
 
 		// --------------------------------------------------------------------------
 
