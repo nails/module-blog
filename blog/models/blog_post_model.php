@@ -102,7 +102,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		//	Excerpt
 		if ( ! empty( $data['excerpt'] ) ) :
 
-			$this->db->set( 'excerpt', trim( strip_tags( $data['excerpt'] ) ) );
+			$this->db->set( 'excerpt', trim( $data['excerpt'] ) );
 
 		elseif ( ! empty( $data['body'] ) ) :
 
@@ -315,7 +315,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		//	Excerpt
 		if ( ! empty( $data['excerpt'] ) ) :
 
-			$this->db->set( 'excerpt', trim( strip_tags( $data['excerpt'] ) ) );
+			$this->db->set( 'excerpt', trim( $data['excerpt'] ) );
 
 		elseif ( ! empty( $data['body'] ) ) :
 
