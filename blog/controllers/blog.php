@@ -20,6 +20,19 @@ require_once '_blog.php';
 
 class NAILS_Blog extends NAILS_Blog_Controller
 {
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->data['isIndex']		= false;
+		$this->data['isSingle']		= false;
+		$this->data['isCategory']	= false;
+		$this->data['isTag']		= false;
+		$this->data['isRss']		= false;
+	}
+
+	// --------------------------------------------------------------------------
+
 	/**
 	 * Browse all articles
 	 *
@@ -71,6 +84,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
+		$this->data['isIndex'] = true;
+
+		// --------------------------------------------------------------------------
+
 		//	Load views
 		$this->load->view( 'structure/header',					$this->data );
 		$this->load->view( $this->_skin->path . 'views/browse',	$this->data );
@@ -99,6 +116,12 @@ class NAILS_Blog extends NAILS_Blog_Controller
 			$this->data['post'] = $this->blog_post_model->get_by_slug( $this->uri->rsegment( 3 ) );
 
 		endif;
+
+
+		if (site_url(uri_string()) !== $this->data['post']->url) {
+
+			redirect($this->data['post']->url, 301);
+		}
 
 		// --------------------------------------------------------------------------
 
@@ -165,6 +188,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
+		$this->data['isSingle'] = true;
+
+		// --------------------------------------------------------------------------
+
 		//	Load views
 		$this->load->view( 'structure/header',					$this->data );
 		$this->load->view( $this->_skin->path . 'views/single',	$this->data );
@@ -226,7 +253,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 		// --------------------------------------------------------------------------
 
 		//	Handle pagination
-		$_page		= $this->uri->rsegment( 3 );
+		$_page		= $this->uri->rsegment( 5 );
 		$_per_page	= app_setting( 'home_per_page', 'blog-' . $this->_blog_id );
 		$_per_page	= $_per_page ? $_per_page : 10;
 
@@ -251,8 +278,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
 		// --------------------------------------------------------------------------
 
 		//	Load posts and count
-		$this->data['posts'] = $this->blog_post_model->get_with_category( $this->data['category']->id, $_page, $_per_page, $_data );
-		$this->data['pagination']->total = $this->blog_post_model->count_all( $_data );
+		$this->data['posts'] = $this->blog_post_model->get_with_category($this->data['category']->id, $_page, $_per_page, $_data);
+		$this->data['pagination']->total = $this->blog_post_model->count_with_category($this->data['category']->id, $_data);
 
 		// --------------------------------------------------------------------------
 
@@ -280,6 +307,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 		//	Finally, let the views know this is an 'archive' type page
 		$this->data['archive_title']		= 'Posts in category "' . $this->data['category']->label . '"';
 		$this->data['archive_description']	= $this->data['category']->description;
+
+		// --------------------------------------------------------------------------
+
+		$this->data['isCategory'] = true;
 
 		// --------------------------------------------------------------------------
 
@@ -334,7 +365,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 		// --------------------------------------------------------------------------
 
 		//	Handle pagination
-		$_page		= $this->uri->rsegment( 3 );
+		$_page		= $this->uri->rsegment( 5 );
 		$_per_page	= app_setting( 'home_per_page', 'blog-' . $this->_blog_id );
 		$_per_page	= $_per_page ? $_per_page : 10;
 
@@ -391,6 +422,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
 		// --------------------------------------------------------------------------
 
+		$this->data['isTag'] = true;
+
+		// --------------------------------------------------------------------------
+
 		$this->load->view( 'structure/header',					$this->data );
 		$this->load->view( $this->_skin->path . 'views/browse',	$this->data );
 		$this->load->view( 'structure/footer',					$this->data );
@@ -423,6 +458,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
 
 		$this->data['posts'] = $this->blog_post_model->get_all( NULL, NULL, $_data );
+
+		// --------------------------------------------------------------------------
+
+		$this->data['isRss'] = true;
 
 		// --------------------------------------------------------------------------
 

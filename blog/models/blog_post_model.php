@@ -841,72 +841,114 @@ class NAILS_Blog_post_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	//get_all( $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE, $_caller = 'GET_ALL' )
-	public function get_with_category( $id_slug, $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE )
+	public function get_with_category($categoryIdSlug, $page = NULL, $perPage = NULL, $data = NULL, $includeDeleted = FALSE)
 	{
 		//	Join the blog_post_category table so we can WHERE on it.
-		$this->db->join( NAILS_DB_PREFIX . 'blog_post_category bpc',	'bpc.post_id = bp.id' );
-		$this->db->join( NAILS_DB_PREFIX . 'blog_category bc',			'bc.id = bpc.category_id' );
+		$this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
+		$this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
 
 		//	Set the where
-		if ( NULL === $data ) :
+		if (is_null($data)) {
 
-			$data = array( 'where' => array() );
+			$data = array('where' => array());
+		}
 
-		endif;
+		if (is_numeric($categoryIdSlug)) {
 
-		if ( is_numeric( $id_slug ) ) :
+			$data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
 
-			$data['where'][] = array( 'column' => 'bc.id', 'value' => (int) $id_slug );
+		} else {
 
-		else :
+			$data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+		}
 
-			$data['where'][] = array( 'column' => 'bc.slug', 'value' => $id_slug );
+		$this->db->group_by($this->_table_prefix . '.id');
 
-		endif;
+		return $this->get_all($page, $perPage, $data, $includeDeleted);
+	}
 
-		$this->db->group_by( $this->_table_prefix . '.id' );
+	// --------------------------------------------------------------------------
 
-		return $this->get_all( $page, $per_page, $data, $include_deleted );
+
+	public function count_with_category($categoryIdSlug, $data = null, $includeDeleted = false)
+	{
+		//	Join the blog_post_category table so we can WHERE on it.
+		$this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
+		$this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
+
+		//	Set the where
+		if (is_null($data)) {
+
+			$data = array('where' => array());
+		}
+
+		if (is_numeric($categoryIdSlug)) {
+
+			$data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
+
+		} else {
+
+			$data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+		}
+
+		return $this->count_all($data, $includeDeleted);
 	}
 
 
 	// --------------------------------------------------------------------------
 
 
-	public function get_with_tag( $id_slug, $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE )
+	public function get_with_tag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
 	{
 		//	Join the blog_post_tag table so we can WHERE on it.
-		$this->db->join( NAILS_DB_PREFIX . 'blog_post_tag bpt',	'bpt.post_id = bp.id' );
-		$this->db->join( NAILS_DB_PREFIX . 'blog_tag bt',		'bt.id = bpt.tag_id' );
+		$this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
+		$this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
 
 		//	Set the where
-		if ( ! is_array( $data ) ) :
+		if (is_null($data)) {
 
-			$data = array();
+			$data = array('where' => array());
+		}
 
-		endif;
+		if (is_numeric($tagIdSlug)) {
 
-		if ( ! isset( $data['where'] ) ) :
+			$data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
 
-			$data['where'] = array();
+		} else {
 
-		endif;
+			$data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+		}
+
+		$this->db->group_by($this->_table_prefix . '.id');
+
+		return $this->get_all($page, $perPage, $data, $includeDeleted);
+	}
+
+	// --------------------------------------------------------------------------
 
 
-		if ( is_numeric( $id_slug ) ) :
+	public function count_with_tag($tagIdSlug, $data = null, $includeDeleted = false)
+	{
+		//	Join the blog_post_category table so we can WHERE on it.
+		$this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
+		$this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
 
-			$data['where'][] = array( 'column' => 'bt.id', 'value' => (int) $id_slug );
+		//	Set the where
+		if (is_null($data)) {
 
-		else :
+			$data = array('where' => array());
+		}
 
-			$data['where'][] = array( 'column' => 'bt.slug', 'value' => $id_slug );
+		if (is_numeric($tagIdSlug)) {
 
-		endif;
+			$data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
 
-		$this->db->group_by( $this->_table_prefix . '.id' );
+		} else {
 
-		return $this->get_all( $page, $per_page, $data, $include_deleted );
+			$data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+		}
+
+		return $this->count_all($data, $includeDeleted);
 	}
 
 
