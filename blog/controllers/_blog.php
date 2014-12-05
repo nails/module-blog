@@ -84,7 +84,12 @@ class NAILS_Blog_Controller extends NAILS_Controller
 		// --------------------------------------------------------------------------
 
 		//	Blog name
-		$this->_blog_name = app_setting( 'name', 'blog-' . $this->_blog_id ) ? app_setting( 'name', 'blog-' . $this->_blog_id ) : 'Blog';
+		$this->_blog_name = app_setting('name', 'blog-' . $this->_blog_id) ? app_setting('name', 'blog-' . $this->_blog_id) : 'Blog';
+
+		// --------------------------------------------------------------------------
+
+		$this->_blog_url = $this->blog_model->getBlogUrl($this->_blog_id);
+		$this->data['blog_url'] = $this->_blog_url;
 	}
 }
 

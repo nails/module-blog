@@ -173,21 +173,23 @@ class NAILS_Blog_tag_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function format_url( $slug, $blog_id )
+	public function format_url($slug, $blogId)
 	{
-		return sitE_url( app_setting( 'url', 'blog-' . $blog_id ) . 'tag/' . $slug );
+		$this->load->model('blog/blog_model');
+		return $this->blog_model->getBlogUrl($blogId) . 'tag/' . $slug;
 	}
 
 
 	// --------------------------------------------------------------------------
 
 
-	protected function _format_tag( &$tag )
+	protected function _format_object(&$tag)
 	{
-		$tag->id	= (int) $tag->id;
-		$tag->url	= $this->format_url( $tag->slug );
+		parent::_format_object($category);
 
-		if ( isset( $tag->post_count ) ) :
+		$tag->url	= $this->format_url($tag->slug, $tag->blog_id);
+
+		if (isset($tag->post_count)) :
 
 			$tag->post_count = (int) $tag->post_count;
 

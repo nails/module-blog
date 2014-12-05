@@ -19,6 +19,7 @@ class NAILS_Blog_model extends NAILS_Model
 {
 	protected $_table;
 	protected $_table_prefix;
+	protected $blogUrl;
 
 	// --------------------------------------------------------------------------
 
@@ -35,6 +36,7 @@ class NAILS_Blog_model extends NAILS_Model
 
 		$this->_table			= NAILS_DB_PREFIX . 'blog';
 		$this->_table_prefix	= 'b';
+		$this->blogUrl			= array();
 	}
 
 
@@ -84,6 +86,26 @@ class NAILS_Blog_model extends NAILS_Model
 		endforeach;
 
 		return $_associations;
+	}
+
+	// --------------------------------------------------------------------------
+
+	public function getBlogUrl($blogId)
+	{
+		if (isset($this->blogUrl[$blogId])) {
+
+			return $this->blogUrl[$blogId];
+
+		} else {
+
+			$url = app_setting('url', 'blog-' . $blogId);
+			$url = $url ? $url : 'blog/';
+			$url = site_url($url) . '/';
+
+			$this->blogUrl[$blogId] = $url;
+
+			return $this->blogUrl[$blogId];
+		}
 	}
 }
 

@@ -1015,9 +1015,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function format_url( $slug, $blog_id )
+	public function format_url($slug, $blogId)
 	{
-		return site_url( app_setting( 'url', 'blog-' . $blog_id ) . $slug );
+		$this->load->model('blog/blog_model');
+		return $this->blog_model->getBlogUrl($blogId) . $slug;
 	}
 
 
@@ -1026,7 +1027,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 	protected function _format_object( &$post )
 	{
-		parent::_format_object( $post );
+		parent::_format_object($post);
 
 		// --------------------------------------------------------------------------
 
@@ -1035,7 +1036,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$post->is_deleted			= (bool) $post->is_deleted;
 
 		//	Generate URL
-		$post->url					= $this->format_url( $post->slug, $post->blog_id );
+		$post->url					= $this->format_url($post->slug, $post->blog_id);
 
 		//	Blog
 		$post->blog					= new stdClass();
@@ -1051,14 +1052,14 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$post->author->profile_img	= $post->profile_img;
 		$post->author->gender		= $post->gender;
 
-		unset( $post->blog_id );
-		unset( $post->blog_label );
-		unset( $post->modified_by );
-		unset( $post->first_name );
-		unset( $post->last_name );
-		unset( $post->email );
-		unset( $post->profile_img );
-		unset( $post->gender );
+		unset($post->blog_id);
+		unset($post->blog_label);
+		unset($post->modified_by);
+		unset($post->first_name);
+		unset($post->last_name);
+		unset($post->email);
+		unset($post->profile_img);
+		unset($post->gender);
 	}
 }
 

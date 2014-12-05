@@ -173,21 +173,23 @@ class NAILS_Blog_category_model extends NAILS_Model
 	// --------------------------------------------------------------------------
 
 
-	public function format_url( $slug, $blog_id )
+	public function format_url($slug, $blogId)
 	{
-		return site_url( app_setting( 'url', 'blog-' . $blog_id ) . 'category/' . $slug );
+		$this->load->model('blog/blog_model');
+		return $this->blog_model->getBlogUrl($blogId) . 'category/' . $slug;
 	}
 
 
 	// --------------------------------------------------------------------------
 
 
-	protected function _format_category( &$category )
+	protected function _format_object(&$category)
 	{
-		$category->id	= (int) $category->id;
-		$category->url	= $this->format_url( $category->slug );
+		parent::_format_object($category);
 
-		if ( isset( $category->post_count ) ) :
+		$category->url	= $this->format_url($category->slug, $category->blog_id);
+
+		if (isset($category->post_count)) :
 
 			$category->post_count = (int) $category->post_count;
 
