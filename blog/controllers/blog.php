@@ -1,9 +1,9 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Name:		Blog
+ * Name:        Blog
  *
- * Description:	This controller handles the front page of the blog
+ * Description: This controller handles the front page of the blog
  *
  **/
 
@@ -15,533 +15,502 @@
  *
  **/
 
-//	Include _blog.php; executes common functionality
+//  Include _blog.php; executes common functionality
 require_once '_blog.php';
 
 class NAILS_Blog extends NAILS_Blog_Controller
 {
-	public function __construct()
-	{
-		parent::__construct();
+    public function __construct()
+    {
+        parent::__construct();
 
-		$this->data['isIndex']		= false;
-		$this->data['isSingle']		= false;
-		$this->data['isCategory']	= false;
-		$this->data['isTag']		= false;
-		$this->data['isRss']		= false;
-	}
+        $this->data['isIndex']    = false;
+        $this->data['isSingle']   = false;
+        $this->data['isCategory'] = false;
+        $this->data['isTag']      = false;
+        $this->data['isRss']      = false;
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-	/**
-	 * Browse all articles
-	 *
-	 * @access public
-	 * @return void
-	 **/
-	public function index()
-	{
-		//	Meta & Breadcrumbs
-		$this->data['page']->title 				= APP_NAME . ' Blog';
-		$this->data['page']->seo->description 	= '';
-		$this->data['page']->seo->keywords 		= '';
+    /**
+     * Browse all posts
+     * @return void
+     */
+    public function index()
+    {
+        //  Meta & Breadcrumbs
+        $this->data['page']->title            = APP_NAME . ' Blog';
+        $this->data['page']->seo->description = '';
+        $this->data['page']->seo->keywords    = '';
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Handle pagination
-		$_page		= $this->uri->rsegment( 3 );
-		$_per_page	= app_setting( 'home_per_page', 'blog-' . $this->_blog_id );
-		$_per_page	= $_per_page ? $_per_page : 10;
+        //  Handle pagination
+        $page      = $this->uri->rsegment(3);
+        $perPage  = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage  = $perPage ? $perPage : 10;
 
-		$this->data['pagination']			= new stdClass();
-		$this->data['pagination']->page		= $_page;
-		$this->data['pagination']->per_page	= $_per_page;
+        $this->data['pagination']           = new stdClass();
+        $this->data['pagination']->page     = $page;
+        $this->data['pagination']->per_page = $perPage;
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Send any additional data
-		$_data						= array();
-		$_data['include_body']		= ! app_setting( 'use_excerpts', 'blog-' . $this->_blog_id );
-		$_data['include_gallery']	= app_setting( 'home_show_gallery', 'blog-' . $this->_blog_id );
-		$_data['sort']				= array( 'bp.published', 'desc' );
+        //  Send any additional data
+        $data                    = array();
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['sort']            = array('bp.published', 'desc');
 
-		//	Only published items which are not schduled for the future
-		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'blog_id',			'value' => $this->_blog_id );
-		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
-		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
+        //  Only published items which are not schduled for the future
+        $data['where']   = array();
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'is_published', 'value' => true);
+        $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Load posts and count
-		$this->data['posts'] = $this->blog_post_model->get_all( $_page, $_per_page, $_data );
-		$this->data['pagination']->total = $this->blog_post_model->count_all( $_data );
+        //  Load posts and count
+        $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
+        $this->data['pagination']->total = $this->blog_post_model->count_all($data);
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Widgets
-		$this->_fetch_sidebar_widgets();
+        //  Widgets
+        $this->fetchSidebarWidgets();
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		$this->data['isIndex'] = true;
+        $this->data['isIndex'] = true;
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Load views
-		$this->load->view( 'structure/header',					$this->data );
-		$this->load->view( $this->_skin->path . 'views/browse',	$this->data );
-		$this->load->view( 'structure/footer',					$this->data );
-	}
+        //  Load views
+        $this->load->view('structure/header', $this->data);
+        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->load->view('structure/footer', $this->data);
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    /**
+     * View a single post
+     * @return void
+     */
+    public function single($id = null)
+    {
+        //  Get the single post by its slug
+        if ($id) {
 
+            $this->data['post'] = $this->blog_post_model->get_by_id($id);
 
-	/**
-	 * View a single article
-	 *
-	 * @access public
-	 * @return void
-	 **/
-	public function single( $id = NULL )
-	{
-		//	Get the single post by its slug
-		if ( $id ) :
+        } else {
 
-			$this->data['post'] = $this->blog_post_model->get_by_id( $id );
+            $this->data['post'] = $this->blog_post_model->get_by_slug($this->uri->rsegment(3));
+        }
 
-		else :
+        // --------------------------------------------------------------------------
 
-			$this->data['post'] = $this->blog_post_model->get_by_slug( $this->uri->rsegment( 3 ) );
+        //  Check we have something to show, otherwise, bail out
+        if (!$this->data['post']) {
 
-		endif;
+            show_404();
+        }
 
+        // --------------------------------------------------------------------------
 
-		if (site_url(uri_string()) !== $this->data['post']->url) {
+        //  If this post's status is not published then 404, unless logged in as an admin
+        if (!$this->data['post']->is_published && !$this->user_model->is_admin()) {
 
-			redirect($this->data['post']->url, 301);
-		}
+            show_404();
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Check we have something to show, otherwise, bail out
-		if ( ! $this->data['post'] ) :
+        //  Correct URL?
+        if (site_url(uri_string()) !== $this->data['post']->url) {
 
-			show_404();
+            redirect($this->data['post']->url, 301);
+        }
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Widgets
+        $this->fetchSidebarWidgets();
 
-		//	If this post's status is not published then 404, unless logged in as an admin
-		if ( ! $this->data['post']->is_published && ! $this->user_model->is_admin() ) :
+        // --------------------------------------------------------------------------
 
-			show_404();
+        //  Meta
+        $this->data['page']->title            = $this->_blog_name . ': ';
+        $this->data['page']->title           .= $this->data['post']->seo_title ? $this->data['post']->seo_title : $this->data['post']->title;
+        $this->data['page']->seo->description = $this->data['post']->seo_description;
+        $this->data['page']->seo->keywords    = $this->data['post']->seo_keywords;
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Assets
+        if (app_setting('social_enabled', 'blog-' . $this->_blog_id)) {
 
-		//	Widgets
-		$this->_fetch_sidebar_widgets();
+            $this->asset->load('social-likes/social-likes.min.js', 'BOWER');
 
-		// --------------------------------------------------------------------------
+            switch (app_setting('social_skin', 'blog-' . $this->_blog_id)) {
 
-		//	Meta
-		$this->data['page']->title				= $this->_blog_name . ': ';
-		$this->data['page']->title				.= $this->data['post']->seo_title ? $this->data['post']->seo_title : $this->data['post']->title;
-		$this->data['page']->seo->description	= $this->data['post']->seo_description;
-		$this->data['page']->seo->keywords		= $this->data['post']->seo_keywords;
+                case 'FLAT':
 
-		// --------------------------------------------------------------------------
+                    $this->asset->load('social-likes/social-likes_flat.css', 'BOWER');
+                    break;
 
-		//	Assets
-		if ( app_setting( 'social_enabled', 'blog-' . $this->_blog_id ) ) :
+                case 'BIRMAN':
 
-			$this->asset->load( 'social-likes/social-likes.min.js', 'BOWER' );
+                    $this->asset->load('social-likes/social-likes_birman.css', 'BOWER');
+                    break;
 
-			switch ( app_setting( 'social_skin', 'blog-' . $this->_blog_id ) )  :
+                case 'CLASSIC':
+                default:
 
-				case 'FLAT' :
+                    $this->asset->load('social-likes/social-likes_classic.css', 'BOWER');
+                    break;
+            }
+        }
 
-					$this->asset->load( 'social-likes/social-likes_flat.css', 'BOWER' );
+        // --------------------------------------------------------------------------
 
-				break;
+        $this->data['isSingle'] = true;
 
-				case 'BIRMAN' :
+        // --------------------------------------------------------------------------
 
-					$this->asset->load( 'social-likes/social-likes_birman.css', 'BOWER' );
+        //  Load views
+        $this->load->view('structure/header', $this->data);
+        $this->load->view($this->_skin->path . 'views/single', $this->data);
+        $this->load->view('structure/footer', $this->data);
 
-				break;
+        // --------------------------------------------------------------------------
 
-				case 'CLASSIC' :
-				default:
+        //  Register a hit
+        $data             = array();
+        $data['user_id']  = active_user('id');
+        $data['referrer'] = $this->input->server('HTTP_REFERER');
 
-					$this->asset->load( 'social-likes/social-likes_classic.css', 'BOWER' );
+        $this->blog_post_model->add_hit($this->data['post']->id, $data);
+    }
 
-				break;
+    // --------------------------------------------------------------------------
 
-			endswitch;
+    /**
+     * Browse a categry
+     * @return void
+     */
+    public function category()
+    {
+        if (!app_setting('categories_enabled', 'blog-' . $this->_blog_id) || !$this->uri->rsegment(4)) {
 
-		endif;
+            show_404();
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		$this->data['isSingle'] = true;
+        //  Get category
+        $this->data['category'] = $this->blog_category_model->get_by_slug($this->uri->rsegment(4));
 
-		// --------------------------------------------------------------------------
+        if (!$this->data['category']) {
 
-		//	Load views
-		$this->load->view( 'structure/header',					$this->data );
-		$this->load->view( $this->_skin->path . 'views/single',	$this->data );
-		$this->load->view( 'structure/footer',					$this->data );
+            show_404();
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Register a hit
-		$_data				= array();
-		$_data['user_id']	= active_user( 'id' );
-		$_data['referrer']	= $this->input->server( 'HTTP_REFERER' );
+        //  Widgets
+        $this->fetchSidebarWidgets();
 
-		$this->blog_post_model->add_hit( $this->data['post']->id, $_data );
-	}
+        // --------------------------------------------------------------------------
 
+        //  Meta
+        $this->data['page']->title            = $this->_blog_name . ': Posts in category "' . $this->data['category']->label . '"';
+        $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' posted in the  ' . $this->data['category']->label . ' category ';
+        $this->data['page']->seo->keywords    = '';
 
-	// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
+        //  Handle pagination
+        $page     = $this->uri->rsegment(5);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage = $perPage ? $perPage : 10;
 
-	public function category()
-	{
-		if ( ! app_setting( 'categories_enabled', 'blog-' . $this->_blog_id ) ) :
+        $this->data['pagination']           = new stdClass();
+        $this->data['pagination']->page     = $page;
+        $this->data['pagination']->per_page = $perPage;
 
-			show_404();
+        // --------------------------------------------------------------------------
 
-		endif;
+        //  Send any additional data
+        $data                    = array();
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['sort']            = array('bp.published', 'desc');
 
-		// --------------------------------------------------------------------------
+        //  Only published items which are not schduled for the future
+        $data['where']   = array();
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'is_published', 'value' => true);
+        $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
-		if ( ! $this->uri->rsegment( 4 ) ) :
+        // --------------------------------------------------------------------------
 
-			show_404();
+        //  Load posts and count
+        $this->data['posts'] = $this->blog_post_model->get_with_category($this->data['category']->id, $page, $perPage, $data);
+        $this->data['pagination']->total = $this->blog_post_model->count_with_category($this->data['category']->id, $data);
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Any SEO data?
+        if (!empty($this->data['category']->seo_title)) {
 
-		//	Get category
-		$this->data['category'] = $this->blog_category_model->get_by_slug( $this->uri->rsegment( 4 ) );
+            $this->data['page']->title = $this->data['category']->seo_title;
+        }
 
-		if ( ! $this->data['category'] ) :
+        if (!empty($this->data['category']->seo_description)) {
 
-			show_404();
+            $this->data['page']->seo->description = $this->data['category']->seo_description;
+        }
 
-		endif;
+        if (!empty($this->data['category']->seo_keywords)) {
 
-		// --------------------------------------------------------------------------
+            $this->data['page']->seo->keywords = $this->data['category']->seo_keywords;
+        }
 
-		//	Widgets
-		$this->_fetch_sidebar_widgets();
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Finally, let the views know this is an 'archive' type page
+        $this->data['archive_title']       = 'Posts in category "' . $this->data['category']->label . '"';
+        $this->data['archive_description'] = $this->data['category']->description;
+        $this->data['isCategory']          = true;
 
-		//	Meta
-		$this->data['page']->title 				= $this->_blog_name . ': Posts in category "' . $this->data['category']->label . '"';
-		$this->data['page']->seo->description 	= 'All posts on ' . APP_NAME . ' posted in the  ' . $this->data['category']->label . ' category ';
-		$this->data['page']->seo->keywords 		= '';
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        $this->load->view('structure/header', $this->data);
+        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->load->view('structure/footer', $this->data);
+    }
 
-		//	Handle pagination
-		$_page		= $this->uri->rsegment( 5 );
-		$_per_page	= app_setting( 'home_per_page', 'blog-' . $this->_blog_id );
-		$_per_page	= $_per_page ? $_per_page : 10;
+    // --------------------------------------------------------------------------
 
-		$this->data['pagination']			= new stdClass();
-		$this->data['pagination']->page		= $_page;
-		$this->data['pagination']->per_page	= $_per_page;
+    /**
+     * Browse a tag
+     * @return void
+     */
+    public function tag()
+    {
+        if (!app_setting('tags_enabled', 'blog-' . $this->_blog_id) || !$this->uri->rsegment(4)) {
 
-		// --------------------------------------------------------------------------
+            show_404();
+        }
 
-		//	Send any additional data
-		$_data						= array();
-		$_data['include_body']		= ! app_setting( 'use_excerpts', 'blog-' . $this->_blog_id );
-		$_data['include_gallery']	= app_setting( 'home_show_gallery', 'blog-' . $this->_blog_id );
-		$_data['sort']				= array( 'bp.published', 'desc' );
+        // --------------------------------------------------------------------------
 
-		//	Only published items which are not schduled for the future
-		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'bp.blog_id',		'value' => $this->_blog_id );
-		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
-		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
+        //  Get tag
+        $this->data['tag'] = $this->blog_tag_model->get_by_slug($this->uri->rsegment(4));
 
-		// --------------------------------------------------------------------------
+        if (!$this->data['tag']) {
 
-		//	Load posts and count
-		$this->data['posts'] = $this->blog_post_model->get_with_category($this->data['category']->id, $_page, $_per_page, $_data);
-		$this->data['pagination']->total = $this->blog_post_model->count_with_category($this->data['category']->id, $_data);
+            show_404();
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Any SEO data?
-		if ( ! empty( $this->data['category']->seo_title ) ) :
+        //  Widgets
+        $this->fetchSidebarWidgets();
 
-			$this->data['page']->title = $this->data['category']->seo_title;
+        // --------------------------------------------------------------------------
 
-		endif;
+        //  Meta
+        $this->data['page']->title            = $this->_blog_name . ': Posts tagged with "' . $this->data['tag']->label . '"';
+        $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' tagged with  ' . $this->data['tag']->label . ' ';
+        $this->data['page']->seo->keywords    = '';
 
-		if ( ! empty( $this->data['category']->seo_description ) ) :
+        // --------------------------------------------------------------------------
 
-			$this->data['page']->seo->description = $this->data['category']->seo_description;
+        //  Handle pagination
+        $page     = $this->uri->rsegment(5);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage = $perPage ? $perPage : 10;
 
-		endif;
+        $this->data['pagination']           = new stdClass();
+        $this->data['pagination']->page     = $page;
+        $this->data['pagination']->per_page = $perPage;
 
-		if ( ! empty( $this->data['category']->seo_keywords ) ) :
+        // --------------------------------------------------------------------------
 
-			$this->data['page']->seo->keywords = $this->data['category']->seo_keywords;
+        //  Send any additional data
+        $data                    = array();
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['sort']            = array('bp.published', 'desc');
 
-		endif;
+        //  Only published items which are not schduled for the future
+        $data['where']   = array();
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'is_published', 'value' => true);
+        $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Finally, let the views know this is an 'archive' type page
-		$this->data['archive_title']		= 'Posts in category "' . $this->data['category']->label . '"';
-		$this->data['archive_description']	= $this->data['category']->description;
+        //  Load posts and count
+        $this->data['posts'] = $this->blog_post_model->get_with_tag($this->data['tag']->id, $page, $perPage, $data);
+        $this->data['pagination']->total = $this->blog_post_model->count_all($data);
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		$this->data['isCategory'] = true;
+        //  Any SEO data?
+        if (!empty($this->data['tag']->seo_title)) {
 
-		// --------------------------------------------------------------------------
+            $this->data['page']->title = $this->data['tag']->seo_title;
+        }
 
-		$this->load->view( 'structure/header',					$this->data );
-		$this->load->view( $this->_skin->path . 'views/browse',	$this->data );
-		$this->load->view( 'structure/footer',					$this->data );
-	}
+        if (!empty($this->data['tag']->seo_description)) {
 
+            $this->data['page']->seo->description = $this->data['tag']->seo_description;
+        }
 
-	// --------------------------------------------------------------------------
+        if (!empty($this->data['tag']->seo_keywords)) {
 
+            $this->data['page']->seo->keywords = $this->data['tag']->seo_keywords;
+        }
 
-	public function tag()
-	{
-		if ( ! app_setting( 'tags_enabled', 'blog-' . $this->_blog_id ) ) :
+        // --------------------------------------------------------------------------
 
-			show_404();
+        //  Finally, let the views know this is an 'archive' type page
+        $this->data['archive_title']       = 'Posts in tag "' . $this->data['tag']->label . '"';
+        $this->data['archive_description'] = $this->data['tag']->description;
+        $this->data['isTag']               = true;
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        $this->load->view('structure/header', $this->data);
+        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->load->view('structure/footer', $this->data);
+    }
 
-		if ( ! $this->uri->rsegment( 4 ) ) :
+    // --------------------------------------------------------------------------
 
-			show_404();
+    /**
+     * RSS Feed for the blog
+     * @return void
+     */
+    public function rss()
+    {
+        if (!app_setting('rss_enabled', 'blog-' . $this->_blog_id)) {
 
-		endif;
+            show_404();
+        }
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		//	Get tag
-		$this->data['tag'] = $this->blog_tag_model->get_by_slug( $this->uri->rsegment( 4 ) );
+        //  Get posts
+        $data                    = array();
+        $data['include_body']    = true;
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['sort']            = array('bp.published', 'desc');
 
-		if ( ! $this->data['tag'] ) :
+        //  Only published items which are not schduled for the future
+        $data['where']   = array();
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'is_published', 'value' => true);
+        $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
-			show_404();
+        $this->data['posts'] = $this->blog_post_model->get_all(null, null, $data);
+        $this->data['isRss'] = true;
 
-		endif;
+        //  Set Output
+        $this->output->set_content_type('text/xml; charset=UTF-8');
+        $this->load->view($this->_skin->path . 'views/rss', $this->data);
+    }
 
-		// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-		//	Widgets
-		$this->_fetch_sidebar_widgets();
 
-		// --------------------------------------------------------------------------
+    /**
+     * Trackback endpoint
+     * @return void
+     */
+    public function trackback()
+    {
+        // @TODO: Implement trackback support, maybe.
+    }
 
-		//	Meta
-		$this->data['page']->title 				= $this->_blog_name . ': Posts tagged with "' . $this->data['tag']->label . '"';
-		$this->data['page']->seo->description	= 'All posts on ' . APP_NAME . ' tagged with  ' . $this->data['tag']->label . ' ';
-		$this->data['page']->seo->keywords 		= '';
+    // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+    /**
+     * Pingback endpoint
+     * @return void
+     */
+    public function pingback()
+    {
+        // @TODO: Implement pingback support, maybe.
+    }
 
-		//	Handle pagination
-		$_page		= $this->uri->rsegment( 5 );
-		$_per_page	= app_setting( 'home_per_page', 'blog-' . $this->_blog_id );
-		$_per_page	= $_per_page ? $_per_page : 10;
+    // --------------------------------------------------------------------------
 
-		$this->data['pagination']			= new stdClass();
-		$this->data['pagination']->page		= $_page;
-		$this->data['pagination']->per_page	= $_per_page;
+    /**
+     * Loads all the enabled sidebar widgets
+     * @return void
+     */
+    protected function fetchSidebarWidgets()
+    {
+        $this->data['widget'] = new stdClass();
 
-		// --------------------------------------------------------------------------
+        if (app_setting('sidebar_latest_posts', 'blog-' . $this->_blog_id)) {
 
-		//	Send any additional data
-		$_data						= array();
-		$_data['include_body']		= ! app_setting( 'use_excerpts', 'blog-' . $this->_blog_id );
-		$_data['include_gallery']	= app_setting( 'home_show_gallery', 'blog-' . $this->_blog_id );
-		$_data['sort']				= array( 'bp.published', 'desc' );
+            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->_blog_id);
+        }
 
-		//	Only published items which are not schduled for the future
-		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'bp.blog_id',		'value' => $this->_blog_id );
-		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
-		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
+        if (app_setting('sidebar_categories', 'blog-' . $this->_blog_id)) {
 
-		// --------------------------------------------------------------------------
+            $this->data['widget']->categories = $this->blog_widget_model->categories($this->_blog_id);
+        }
 
-		//	Load posts and count
-		$this->data['posts'] = $this->blog_post_model->get_with_tag( $this->data['tag']->id, $_page, $_per_page, $_data );
-		$this->data['pagination']->total = $this->blog_post_model->count_all( $_data );
+        if (app_setting('sidebar_tags', 'blog-' . $this->_blog_id)) {
 
-		// --------------------------------------------------------------------------
+            $this->data['widget']->tags = $this->blog_widget_model->tags($this->_blog_id);
+        }
 
-		//	Any SEO data?
-		if ( ! empty( $this->data['tag']->seo_title ) ) :
+        if (app_setting('sidebar_popular_posts', 'blog-' . $this->_blog_id)) {
 
-			$this->data['page']->title = $this->data['tag']->seo_title;
+            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->_blog_id);
+        }
+    }
 
-		endif;
+    // --------------------------------------------------------------------------
 
-		if ( ! empty( $this->data['tag']->seo_description ) ) :
+    /**
+     * Routes the URL
+     * @return void
+     */
+    public function _remap()
+    {
+        $method = $this->uri->rsegment(3) ? $this->uri->rsegment(3) : 'index';
 
-			$this->data['page']->seo->description = $this->data['tag']->seo_description;
+        if (method_exists($this, $method) && substr($method, 0, 1) != '_' && $this->input->get('id')) {
 
-		endif;
+            //  Permalink
+            $this->single($this->input->get('id'));
 
-		if ( ! empty( $this->data['tag']->seo_keywords ) ) :
+        } elseif (method_exists($this, $method) && substr($method, 0, 1) != '_') {
 
-			$this->data['page']->seo->keywords = $this->data['tag']->seo_keywords;
+            //  Method exists, execute it
+            $this->{$method}();
 
-		endif;
+        } elseif (is_numeric($method)) {
 
-		// --------------------------------------------------------------------------
+            //  Paginating the main blog page
+            $this->index();
 
-		//	Finally, let the views know this is an 'archive' type page
-		$this->data['archive_title']		= 'Posts in tag "' . $this->data['tag']->label . '"';
-		$this->data['archive_description']	= $this->data['tag']->description;
+        } else {
 
-		// --------------------------------------------------------------------------
-
-		$this->data['isTag'] = true;
-
-		// --------------------------------------------------------------------------
-
-		$this->load->view( 'structure/header',					$this->data );
-		$this->load->view( $this->_skin->path . 'views/browse',	$this->data );
-		$this->load->view( 'structure/footer',					$this->data );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function rss()
-	{
-		if ( ! app_setting( 'rss_enabled', 'blog-' . $this->_blog_id ) ) :
-
-			show_404();
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		//	Get posts
-		$_data						= array();
-		$_data['include_body']		= TRUE;
-		$_data['include_gallery']	= app_setting( 'home_show_gallery', 'blog-' . $this->_blog_id );
-		$_data['sort']				= array( 'bp.published', 'desc' );
-
-		//	Only published items which are not schduled for the future
-		$_data['where']		= array();
-		$_data['where'][]	= array( 'column' => 'blog_id',			'value' => $this->_blog_id );
-		$_data['where'][]	= array( 'column' => 'is_published',	'value' => TRUE );
-		$_data['where'][]	= array( 'column' => 'published <=',	'value' => 'NOW()',	'escape' => FALSE );
-
-		$this->data['posts'] = $this->blog_post_model->get_all( NULL, NULL, $_data );
-
-		// --------------------------------------------------------------------------
-
-		$this->data['isRss'] = true;
-
-		// --------------------------------------------------------------------------
-
-		//	Set Output
-		$this->output->set_content_type( 'text/xml; charset=UTF-8' );
-		$this->load->view( $this->_skin->path . 'views/rss', $this->data );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-	/**
-	 * Loads all the enabled sidebar widgets
-	 * @return void
-	 */
-	protected function _fetch_sidebar_widgets()
-	{
-		$this->data['widget'] = new stdClass();
-
-		if ( app_setting( 'sidebar_latest_posts', 'blog-' . $this->_blog_id ) ) :
-
-			$this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts( $this->_blog_id );
-
-		endif;
-
-		if ( app_setting( 'sidebar_categories', 'blog-' . $this->_blog_id ) ) :
-
-			$this->data['widget']->categories = $this->blog_widget_model->categories( $this->_blog_id );
-
-		endif;
-
-		if ( app_setting( 'sidebar_tags', 'blog-' . $this->_blog_id ) ) :
-
-			$this->data['widget']->tags = $this->blog_widget_model->tags( $this->_blog_id );
-
-		endif;
-
-		if ( app_setting( 'sidebar_popular_posts', 'blog-' . $this->_blog_id ) ) :
-
-			$this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts( $this->_blog_id );
-
-		endif;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Map slugs to the single() method
-	 *
-	 * @access public
-	 * @return void
-	 **/
-	public function _remap()
-	{
-		$_method = $this->uri->rsegment( 3 ) ? $this->uri->rsegment( 3 ) : 'index';
-
-		if ( method_exists( $this, $_method ) && substr( $_method, 0, 1 ) != '_' && $this->input->get( 'id' ) ) :
-
-			//	Permalink
-			$this->single( $this->input->get( 'id' ) );
-
-		elseif ( method_exists( $this, $_method ) && substr( $_method, 0, 1 ) != '_' ) :
-
-			//	Method exists, execute it
-			$this->{$_method}();
-
-		elseif( is_numeric( $_method ) ) :
-
-			//	Paginating the main blog page
-			$this->index();
-
-		else :
-
-			//	Doesn't exist, consider rsegment( 3 ) a slug
-			$this->single();
-
-		endif;
-	}
+            //  Doesn't exist, consider rsegment(3) a slug
+            $this->single();
+        }
+    }
 }
 
 
@@ -572,13 +541,9 @@ class NAILS_Blog extends NAILS_Blog_Controller
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG')) {
 
-	class Blog extends NAILS_Blog
-	{
-	}
-
-endif;
-
-/* End of file blog.php */
-/* Location: ./modules/blog/controllers/blog.php */
+    class Blog extends NAILS_Blog
+    {
+    }
+}
