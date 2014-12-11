@@ -72,7 +72,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
 		if ( ! $this->_skin ) :
 
-			show_fatal_error( 'Failed to load blog skin "' . $_skin . '"', 'Blog skin "' . $_skin . '" failed to load at ' . APP_NAME . ', the following reason was given: ' . $this->blog_skin_model->last_error() );
+			showFatalError('Failed to load blog skin "' . $_skin . '"', 'Blog skin "' . $_skin . '" failed to load at ' . APP_NAME . ', the following reason was given: ' . $this->blog_skin_model->last_error());
 
 		endif;
 
