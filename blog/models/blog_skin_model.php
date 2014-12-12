@@ -128,7 +128,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
 		foreach( $_skin_locations AS $skin_location ) :
 
 			$_path	= $skin_location['path'];
-			$_skins	= directory_map( $_path, 1 );
+			$_skins	= is_dir($_path) ? directory_map( $_path, 1 ) : array();
 
 			if ( is_array( $_skins ) ) :
 
