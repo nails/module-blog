@@ -1,97 +1,93 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-/**
- * Name:		NALS_BLOG_Controller
- *
- * Description:	This controller executes various bits of common Blog functionality
- *
- **/
-
+<?php
 
 class NAILS_Blog_Controller extends NAILS_Controller
 {
-	protected $_blog_id;
+    protected $_blog_id;
+
+    // --------------------------------------------------------------------------
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // --------------------------------------------------------------------------
+
+        //  Check this module is enabled in settings
+        if (! module_is_enabled('blog')) {
+
+            //  Cancel execution, module isn't enabled
+            show_404();
+        }
+
+        // --------------------------------------------------------------------------
+
+        //  Check the blog is valid
+        $this->load->model('blog/blog_model');
+
+        $blogId = $this->uri->rsegment(2);
+        $blog   = $this->blog_model->get_by_id($blogId);
+
+        if (empty($blog)) {
+
+            show_404();
+        }
+
+        // --------------------------------------------------------------------------
+
+        //  Load language file
+        $this->lang->load('blog/blog');
+
+        // --------------------------------------------------------------------------
+
+        //  Load the other models
+        $this->load->model('blog/blog_post_model');
+        $this->load->model('blog/blog_widget_model');
+        $this->load->model('blog/blog_skin_model');
+
+        // --------------------------------------------------------------------------
+
+        $settingStr = 'blog-' . $blog->id;
+
+        if (app_setting('categories_enabled', $settingStr)) {
+
+            $this->load->model('blog/blog_category_model');
+        }
 
 
-	// --------------------------------------------------------------------------
+        if (app_setting('tags_enabled', $settingStr)) {
 
+            $this->load->model('blog/blog_tag_model');
+        }
 
-	public function __construct()
-	{
-		parent::__construct();
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Load up the blog's skin
+        $skin = app_setting('skin', $settingStr) ? app_setting('skin', $settingStr) : 'blog-skin-classic';
 
-		$this->_blog_id = $this->uri->rsegment( 2 );
-		$this->data['blog_id'] = $this->_blog_id;
+        $this->_skin = $this->blog_skin_model->get($skin);
 
-		// --------------------------------------------------------------------------
+        if (!$this->_skin) {
 
-		//	Check this module is enabled in settings
-		if ( ! module_is_enabled( 'blog' ) ) :
+            $subject  = 'Failed to load blog skin "' . $skin . '"';
+            $message  = 'Blog skin "' . $skin . '" failed to load at ' . APP_NAME;
+            $message .= ', the following reason was given: ' . $this->blog_skin_model->last_error();
 
-			//	Cancel execution, module isn't enabled
-			show_404();
+            showFatalError($subject, $message);
+        }
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Pass to $this->data, for the views
+        $this->data['skin'] = $this->_skin;
 
-		//	Load language file
-		$this->lang->load( 'blog/blog' );
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
-
-		//	Load the models
-		$this->load->model( 'blog/blog_model' );
-		$this->load->model( 'blog/blog_post_model' );
-		$this->load->model( 'blog/blog_widget_model' );
-		$this->load->model( 'blog/blog_skin_model' );
-
-		// --------------------------------------------------------------------------
-
-		if ( app_setting( 'categories_enabled', 'blog-' . $this->_blog_id ) ) :
-
-			$this->load->model( 'blog/blog_category_model' );
-
-		endif;
-
-
-		if ( app_setting( 'tags_enabled', 'blog-' . $this->_blog_id ) ) :
-
-			$this->load->model( 'blog/blog_tag_model' );
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		//	Load up the blog's skin
-		$_skin = app_setting( 'skin', 'blog-' . $this->_blog_id ) ? app_setting( 'skin', 'blog-' . $this->_blog_id ) : 'blog-skin-classic';
-
-		$this->_skin = $this->blog_skin_model->get( $_skin );
-
-		if ( ! $this->_skin ) :
-
-			showFatalError('Failed to load blog skin "' . $_skin . '"', 'Blog skin "' . $_skin . '" failed to load at ' . APP_NAME . ', the following reason was given: ' . $this->blog_skin_model->last_error());
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		//	Pass to $this->data, for the views
-		$this->data['skin'] = $this->_skin;
-
-		// --------------------------------------------------------------------------
-
-		//	Blog name
-		$this->_blog_name = app_setting('name', 'blog-' . $this->_blog_id) ? app_setting('name', 'blog-' . $this->_blog_id) : 'Blog';
-
-		// --------------------------------------------------------------------------
-
-		$this->_blog_url = $this->blog_model->getBlogUrl($this->_blog_id);
-		$this->data['blog_url'] = $this->_blog_url;
-	}
+        //  Set view data
+        $this->_blog_id         = $blog->id;
+        $this->_blog_url        = $this->blog_model->getBlogUrl($blog->id);
+        $this->_blog_name       = app_setting('name', $settingStr) ? app_setting('name', $settingStr) : 'Blog';
+        $this->data['isBlog']   = true;
+        $this->data['blog_id']  = $blog->id;
+        $this->data['blog_url'] = $this->_blog_url;
+    }
 }
-
-/* End of file _blog.php */
-/* Location: ./application/modules/blog/controllers/_blog.php */
