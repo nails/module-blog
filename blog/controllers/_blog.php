@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * This class provides some common blog controller functionality
+ *
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Controller
+ * @author      Nails Dev Team
+ * @link
+ */
+
 class NAILS_Blog_Controller extends NAILS_Controller
 {
     protected $_blog_id;

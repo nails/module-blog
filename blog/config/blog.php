@@ -1,18 +1,16 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-/*
-| -------------------------------------------------------------------------
-| Blog Variables
-| -------------------------------------------------------------------------
-|
-| Configure extended blog functionality
-|
-| Full details of configurable options are available at
-| TODO: link to docs
-|
-*/
+/**
+ * Blog config
+ *
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Config
+ * @author      Nails Dev Team
+ * @link
+ */
 
-	$config = array();
+$config = array();
 
 /*
 
@@ -110,14 +108,14 @@
 */
 
 
-	// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
-	//	Load the app's config file if it's there. When loading within the blog
-	//	module scope then CI ignores the app's version.
+/**
+ * Load the app's config file if it's there. When loading within the blog
+ * module scope then CI ignores the app's version.
+ */
 
-	if ( file_exists( FCPATH . APPPATH . 'config/blog.php' ) ) :
+if (file_exists(FCPATH . APPPATH . 'config/blog.php')) {
 
-		require FCPATH . APPPATH . 'config/blog.php';
-
-	endif;
-
+	require FCPATH . APPPATH . 'config/blog.php';
+}
