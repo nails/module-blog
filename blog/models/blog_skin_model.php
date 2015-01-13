@@ -125,14 +125,14 @@ class NAILS_Blog_skin_model extends NAILS_Model
 		//	Reset array keys, possible that some may have been removed
 		$_skin_locations = array_values( $_skin_locations );
 
-		foreach( $_skin_locations AS $skin_location ) :
+		foreach ( $_skin_locations AS $skin_location ) :
 
 			$_path	= $skin_location['path'];
 			$_skins	= is_dir($_path) ? directory_map( $_path, 1 ) : array();
 
 			if ( is_array( $_skins ) ) :
 
-				foreach( $_skins AS $skin ) :
+				foreach ( $_skins AS $skin ) :
 
 					//	do we need to filter out non skins?
 					if ( ! empty( $skin_location['regex'] ) ) :
@@ -213,7 +213,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
 	{
 		$_skins = $this->get_available( $refresh );
 
-		foreach( $_skins AS $skin ) :
+		foreach ( $_skins AS $skin ) :
 
 			if ( $skin->slug == $slug ) :
 
