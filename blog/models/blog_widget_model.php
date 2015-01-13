@@ -33,7 +33,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 		$this->db->order_by( 'published', 'DESC' );
 		$_posts = $this->db->get( NAILS_DB_PREFIX . 'blog_post' )->result();
 
-		if ( ! $this->load->model_is_loaded( 'blog_post_model' ) ) :
+		if ( ! $this->load->isModelLoaded( 'blog_post_model' ) ) :
 
 			$this->load->model( 'blog/blog_post_model' );
 
@@ -74,7 +74,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		$_posts = $this->db->get( NAILS_DB_PREFIX . 'blog_post_hit bph' )->result();
 
-		if ( ! $this->load->model_is_loaded( 'blog_post_model' ) ) :
+		if ( ! $this->load->isModelLoaded( 'blog_post_model' ) ) :
 
 			$this->load->model( 'blog/blog_post_model' );
 
@@ -122,7 +122,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		$_categories = $this->db->get( NAILS_DB_PREFIX . 'blog_category c' )->result();
 
-		if ( ! $this->load->model_is_loaded( 'blog_category_model' ) ) :
+		if ( ! $this->load->isModelLoaded( 'blog_category_model' ) ) :
 
 			$this->load->model( 'blog/blog_category_model' );
 
@@ -170,7 +170,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		$_tags = $this->db->get( NAILS_DB_PREFIX . 'blog_tag t' )->result();
 
-		if ( ! $this->load->model_is_loaded( 'blog_tag_model' ) ) :
+		if ( ! $this->load->isModelLoaded( 'blog_tag_model' ) ) :
 
 			$this->load->model( 'blog/blog_tag_model' );
 

@@ -23,7 +23,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Check this module is enabled in settings
-        if (! module_is_enabled('blog')) {
+        if (! isModuleEnabled('blog')) {
 
             //  Cancel execution, module isn't enabled
             show_404();

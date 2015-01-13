@@ -61,7 +61,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
 		//	App Skins
 		$this->_skin_locations[]	= array(
 										'path' => FCPATH . APPPATH . 'modules/blog/skins',
-										'url' => site_url( APPPATH . 'modules/blog/skins', page_is_secure() )
+										'url' => site_url( APPPATH . 'modules/blog/skins', isPageSecure() )
 									);
 	}
 
