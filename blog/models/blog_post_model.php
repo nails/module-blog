@@ -152,7 +152,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['gallery'] AS $order => $image_id ) :
+				foreach ( $data['gallery'] as $order => $image_id ) :
 
 					if ( (int) $image_id ) :
 
@@ -177,7 +177,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['categories'] AS $cat_id ) :
+				foreach ( $data['categories'] as $cat_id ) :
 
 					$_data[] = array( 'post_id' => $_id, 'category_id' => $cat_id );
 
@@ -191,7 +191,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['tags'] AS $tag_id ) :
+				foreach ( $data['tags'] as $tag_id ) :
 
 					$_data[] = array( 'post_id' => $_id, 'tag_id' => $tag_id );
 
@@ -209,7 +209,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 				//	Fetch association config
 				$_association = $this->config->item( 'blog_post_associations' );
 
-				foreach ( $data['associations'] AS $index => $assoc ) :
+				foreach ( $data['associations'] as $index => $assoc ) :
 
 					if ( ! isset( $_association[$index] ) ) :
 
@@ -219,7 +219,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 					$_data = array();
 
-					foreach ( $assoc AS $id ) :
+					foreach ( $assoc as $id ) :
 
 						$_data[] = array( 'post_id' => $_id, 'associated_id' => $id );
 
@@ -381,7 +381,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['gallery'] AS $order => $image_id ) :
+				foreach ( $data['gallery'] as $order => $image_id ) :
 
 					if ( (int) $image_id ) :
 
@@ -415,7 +415,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['categories'] AS $cat_id ) :
+				foreach ( $data['categories'] as $cat_id ) :
 
 					$_data[] = array( 'post_id' => $id, 'category_id' => $cat_id );
 
@@ -438,7 +438,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
 				$_data = array();
 
-				foreach ( $data['tags'] AS $tag_id ) :
+				foreach ( $data['tags'] as $tag_id ) :
 
 					$_data[] = array( 'post_id' => $id, 'tag_id' => $tag_id );
 
@@ -459,7 +459,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 			$this->load->model( 'blog/blog_model' );
 			$_associations = $this->blog_model->get_associations();
 
-			foreach ( $data['associations'] AS $index => $assoc ) :
+			foreach ( $data['associations'] as $index => $assoc ) :
 
 				if ( ! isset( $_associations[$index] ) ) :
 
@@ -474,7 +474,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 				//	Add new ones
 				$_data = array();
 
-				foreach ( $assoc AS $assoc_id ) :
+				foreach ( $assoc as $assoc_id ) :
 
 					$_data[] = array( 'post_id' => $id, 'associated_id' => $assoc_id );
 
@@ -517,7 +517,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$this->load->model( 'blog/blog_model' );
 		$_associations	= $this->blog_model->get_associations();
 
-		foreach ( $_posts AS $post ) :
+		foreach ( $_posts as $post ) :
 
 			//	Fetch associated categories
 			if ( ! empty( $data['include_categories'] ) ) :
@@ -531,7 +531,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 				$this->db->order_by( 'c.label' );
 				$post->categories = $this->db->get( NAILS_DB_PREFIX . 'blog_post_category pc' )->result();
 
-				foreach ( $post->categories AS $c ) :
+				foreach ( $post->categories as $c ) :
 
 					$c->url = $this->blog_category_model->format_url( $c->slug, $c->blog_id );
 
@@ -558,7 +558,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 				$this->db->order_by( 't.label' );
 				$post->tags = $this->db->get( NAILS_DB_PREFIX . 'blog_post_tag pt' )->result();
 
-				foreach ( $post->tags AS $t ) :
+				foreach ( $post->tags as $t ) :
 
 					$t->url = $this->blog_tag_model->format_url( $t->slug, $t->blog_id );
 
@@ -575,7 +575,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 			//	Fetch other associations
 			if ( ! empty( $data['include_associations'] ) && $_associations ) :
 
-				foreach ( $_associations AS $index => $assoc ) :
+				foreach ( $_associations as $index => $assoc ) :
 
 					$post->associations[$index] = $assoc;
 
@@ -972,7 +972,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 		$_posts = $this->db->get( $_associations[$association_index]->target )->result();
 
 		$_ids = array();
-		foreach ( $_posts AS $post ) :
+		foreach ( $_posts as $post ) :
 
 			$_ids[] = $post->post_id;
 

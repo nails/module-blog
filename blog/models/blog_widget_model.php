@@ -39,7 +39,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
-		foreach ( $_posts AS $post ) :
+		foreach ( $_posts as $post ) :
 
 			$post->url = $this->blog_post_model->format_url( $post->slug, $post->blog_id );
 
@@ -80,7 +80,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
-		foreach ( $_posts AS $post ) :
+		foreach ( $_posts as $post ) :
 
 			$post->url = $this->blog_post_model->format_url( $post->slug, $post->blog_id );
 
@@ -128,7 +128,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
-		foreach ( $_categories AS $cat ) :
+		foreach ( $_categories as $cat ) :
 
 			$cat->url = $this->blog_category_model->format_url( $cat->slug, $cat->blog_id );
 
@@ -176,7 +176,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		endif;
 
-		foreach ( $_tags AS $tag ) :
+		foreach ( $_tags as $tag ) :
 
 			$tag->url = $this->blog_tag_model->format_url( $tag->slug, $tag->blog_id );
 
