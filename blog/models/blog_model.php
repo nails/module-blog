@@ -1,117 +1,123 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Name:			blog_model.php
+ * This model allows for the management of blogs.
  *
- * Description:		This model primarily handles blog settings
+ * @TODO: On deletion of blog, wipe blog settings
  *
- **/
-
-/**
- * OVERLOADING NAILS' MODELS
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Model
+ * @author      Nails Dev Team
+ * @link
+ */
 
 class NAILS_Blog_model extends NAILS_Model
 {
-	protected $_table;
-	protected $_table_prefix;
-	protected $blogUrl;
+    protected $_table;
+    protected $_table_prefix;
+    protected $blogUrl;
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    /**
+     * Constructs the model
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-	public function __construct()
-	{
-		parent::__construct();
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        $this->config->load('blog/blog');
 
-		$this->config->load( 'blog/blog' );
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        $this->_table        = NAILS_DB_PREFIX . 'blog';
+        $this->_table_prefix = 'b';
+        $this->blogUrl       = array();
+    }
 
-		$this->_table			= NAILS_DB_PREFIX . 'blog';
-		$this->_table_prefix	= 'b';
-		$this->blogUrl			= array();
-	}
+    // --------------------------------------------------------------------------
 
+    /**
+     * Fetch all the associations for a particular post
+     * @param  int   $post_id The ID f the post
+     * @return array
+     */
+    public function get_associations($post_id = NULL)
+    {
+        $this->config->load('blog/blog');
+        $_associations  = $this->config->item('blog_post_associations');
 
-	// --------------------------------------------------------------------------
+        if (!$_associations) {
 
+            return array();
+        }
 
-	public function get_associations( $post_id = NULL )
-	{
-		$this->config->load( 'blog/blog' );
-		$_associations	= $this->config->item( 'blog_post_associations' );
+        // --------------------------------------------------------------------------
 
-		if ( ! $_associations ) :
+        foreach ($_associations as &$assoc) {
 
-			return array();
+            /**
+             * Fetch the association data from the source, fail ungracefully - the dev
+             * should have this configured correctly.
+             *
+             * Fetch current associations if a post_id has been supplied
+             */
 
-		endif;
+            if ($post_id) {
 
-		// --------------------------------------------------------------------------
+                $this->db->where('post_id', $post_id);
+                $assoc->current = $this->db->get($assoc->target)->result();
 
-		foreach ( $_associations AS &$assoc ) :
+            } else {
 
-			//	Fetch the association data from the source, fail ungracefully - the dev should have this configured correctly.
-			//	Fetch current associations if a post_id has been supplied
+                $assoc->current = array();
+            }
 
-			if ( $post_id ) :
+            //  Fetch the raw data
+            $this->db->select($assoc->source->id . ' id, ' . $assoc->source->label . ' label');
+            $this->db->order_by('label');
 
-				$this->db->where( 'post_id', $post_id );
-				$assoc->current = $this->db->get( $assoc->target )->result();
+            if (isset($assoc->source->where) && $assoc->source->where) {
 
-			else :
+                $this->db->where($assoc->source->where );
+            }
 
-				$assoc->current = array();
+            $assoc->data = $this->db->get($assoc->source->table)->result();
+        }
 
-			endif;
+        return $_associations;
+    }
 
-			//	Fetch the raw data
-			$this->db->select( $assoc->source->id . ' id, ' . $assoc->source->label . ' label' );
-			$this->db->order_by( 'label' );
+    // --------------------------------------------------------------------------
 
-			if ( isset( $assoc->source->where ) && $assoc->source->where ) :
+    /**
+     * Get the URL of a blog
+     * @param  int    $blogId The ID of the blog who's URL to get
+     * @return string
+     */
+    public function getBlogUrl($blogId)
+    {
+        if (isset($this->blogUrl[$blogId])) {
 
-				$this->db->where( $assoc->source->where  );
+            return $this->blogUrl[$blogId];
 
-			endif;
-			$assoc->data = $this->db->get( $assoc->source->table )->result();
+        } else {
 
-		endforeach;
+            $url = app_setting('url', 'blog-' . $blogId);
+            $url = $url ? $url : 'blog/';
+            $url = site_url($url) . '/';
 
-		return $_associations;
-	}
+            $this->blogUrl[$blogId] = $url;
 
-	// --------------------------------------------------------------------------
-
-	public function getBlogUrl($blogId)
-	{
-		if (isset($this->blogUrl[$blogId])) {
-
-			return $this->blogUrl[$blogId];
-
-		} else {
-
-			$url = app_setting('url', 'blog-' . $blogId);
-			$url = $url ? $url : 'blog/';
-			$url = site_url($url) . '/';
-
-			$this->blogUrl[$blogId] = $url;
-
-			return $this->blogUrl[$blogId];
-		}
-	}
+            return $this->blogUrl[$blogId];
+        }
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -137,13 +143,9 @@ class NAILS_Blog_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG_MODEL')) {
 
-	class Blog_model extends NAILS_Blog_model
-	{
-	}
-
-endif;
-
-/* End of file blog_model.php */
-/* Location: ./modules/blog/models/blog_model.php */
+    class Blog_model extends NAILS_Blog_model
+    {
+    }
+}
