@@ -152,24 +152,24 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Assets
         if (app_setting('social_enabled', 'blog-' . $this->_blog_id)) {
 
-            $this->asset->load('social-likes/social-likes.min.js', 'BOWER');
+            $this->asset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
 
             switch (app_setting('social_skin', 'blog-' . $this->_blog_id)) {
 
                 case 'FLAT':
 
-                    $this->asset->load('social-likes/social-likes_flat.css', 'BOWER');
+                    $this->asset->load('social-likes/social-likes_flat.css', 'NAILS-BOWER');
                     break;
 
                 case 'BIRMAN':
 
-                    $this->asset->load('social-likes/social-likes_birman.css', 'BOWER');
+                    $this->asset->load('social-likes/social-likes_birman.css', 'NAILS-BOWER');
                     break;
 
                 case 'CLASSIC':
                 default:
 
-                    $this->asset->load('social-likes/social-likes_classic.css', 'BOWER');
+                    $this->asset->load('social-likes/social-likes_classic.css', 'NAILS-BOWER');
                     break;
             }
         }
