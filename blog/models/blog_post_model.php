@@ -1,1113 +1,1096 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Name:		blog_post_model
+ * This model handles everything to do with blog posts.
  *
- * Description:	This model handles all interactions with blog posts on site.
- *
- **/
-
-/**
- * OVERLOADING NAILS' MODELS
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Model
+ * @author      Nails Dev Team
+ * @link
+ */
 
 class NAILS_Blog_post_model extends NAILS_Model
 {
+    protected $reservedWords;
 
-	protected $_reserved;
+    // --------------------------------------------------------------------------
 
+    /**
+     * Constructs the model, setting defaults
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-	// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
+        $this->_table               = NAILS_DB_PREFIX . 'blog_post';
+        $this->_table_prefix        = 'bp'; //  Hard-coded throughout model; take care when changing this
+        $this->_table_label_column  = 'title';
+        $this->_destructive_delete  = false;
 
-	public function __construct()
-	{
-		parent::__construct();
+        // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+        //  Define reserved words (for slugs, basically just controller methods)
+        $this->reservedWords = array('index', 'single', 'category','tag', 'archive');
+    }
 
-		$this->_table				= NAILS_DB_PREFIX . 'blog_post';
-		$this->_table_prefix		= 'bp';	//	Hard-coded throughout model; take care when changing this
-		$this->_table_label_column	= 'title';
-		$this->_destructive_delete	= FALSE;
+    // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+    /**
+     * Creates a new object
+     * @param  array $data The data to create the object with
+     * @return mixed
+     **/
+    public function create($data = array())
+    {
+        //  Prepare slug
+        $counter = 0;
 
-		//	Define reserved words (for slugs, basically just controller methods)
-		$this->_reserved = array( 'index', 'single', 'category','tag', 'archive' );
-	}
+        if (empty($data['title'])) {
 
+            $this->_set_error('Title missing');
+            return false;
+        }
 
-	// --------------------------------------------------------------------------
+        if (empty($data['blog_id'])) {
 
+            $this->_set_error('Blog ID missing');
+            return false;
+        }
 
-	/**
-	 * Creates a new object
-	 *
-	 * @access public
-	 * @param array $data The data to create the object with
-	 * @return mixed
-	 **/
-	public function create( $data = array() )
-	{
-		//	Prepare slug
-		$_counter = 0;
+        // --------------------------------------------------------------------------
 
-		if ( empty( $data['title'] ) ) :
+        //  Generate a slug
+        $prefix = array_search($data['title'], $this->reservedWords) !== false ? 'post-' : '';
+        $this->db->set('slug', $this->_generate_slug($data['title'], $prefix));
 
-			$this->_set_error( 'Title missing' );
-			return FALSE;
+        // --------------------------------------------------------------------------
 
-		endif;
+        //  Set data
+        $this->db->set('blog_id', $data['blog_id']);
+        $this->db->set('title', $data['title']);
 
-		if ( empty( $data['blog_id'] ) ) :
+        if (isset($data['body'])) {
 
-			$this->_set_error( 'Blog ID missing' );
-			return FALSE;
+            $this->db->set('body', $data['body']);
+        }
 
-		endif;
+        if (isset($data['seo_title'])) {
 
-		// --------------------------------------------------------------------------
+            $this->db->set('seo_title', $data['title']);
+        }
 
-		//	Generate a slug
-		$_prefix = array_search( $data['title'], $this->_reserved ) !== FALSE ? 'post-' : '';
-		$this->db->set( 'slug', $this->_generate_slug( $data['title'], $_prefix ) );
+        if (isset($data['seo_description'])) {
 
-		// --------------------------------------------------------------------------
+            $this->db->set('seo_description', $data['seo_description']);
+        }
 
-		//	Set data
-		$this->db->set( 'blog_id', $data['blog_id'] );
-		$this->db->set( 'title', $data['title'] );
+        if (isset($data['seo_keywords'])) {
 
-		if ( isset( $data['body'] ) ) :				$this->db->set( 'body',				$data['body'] );			endif;
-		if ( isset( $data['seo_title'] ) ) :		$this->db->set( 'seo_title',		$data['title'] );			endif;
-		if ( isset( $data['seo_description'] ) ) :	$this->db->set( 'seo_description',	$data['seo_description'] );	endif;
-		if ( isset( $data['seo_keywords'] ) ) :		$this->db->set( 'seo_keywords',		$data['seo_keywords'] );	endif;
-		if ( isset( $data['is_published'] ) ) :		$this->db->set( 'is_published',		$data['is_published'] );	endif;
+            $this->db->set('seo_keywords', $data['seo_keywords']);
+        }
 
-		//	Safety first!
-		if ( array_key_exists( 'image_id', $data ) ) :
+        if (isset($data['is_published'])) {
 
-			$_image_id = (int) $data['image_id'];
-			$_image_id = ! $_image_id ? NULL : $_image_id;
+            $this->db->set('is_published', $data['is_published']);
+        }
 
-			$this->db->set( 'image_id', $_image_id );
+        //  Safety first!
+        if (array_key_exists('image_id', $data)) {
 
-		endif;
+            $imageId = (int) $data['image_id'];
+            $imageId = !$imageId ? null : $imageId;
 
-		//	Excerpt
-		if ( ! empty( $data['excerpt'] ) ) :
+            $this->db->set('image_id', $imageId);
+        }
 
-			$this->db->set( 'excerpt', trim( $data['excerpt'] ) );
+        //  Excerpt
+        if (!empty($data['excerpt'])) {
 
-		elseif ( ! empty( $data['body'] ) ) :
+            $this->db->set('excerpt', trim($data['excerpt']));
 
-			$this->db->set( 'excerpt', word_limiter( trim( strip_tags( $data['body'] ) ) ), 50 );
+        } elseif (!empty($data['body'])) {
 
-		endif;
+            $this->db->set('excerpt', word_limiter(trim(strip_tags($data['body']))), 50);
+        }
 
-		//	Publish date
-		if ( ! empty( $data['is_published'] ) && isset( $data['published'] ) ) :
+        //  Publish date
+        if (!empty($data['is_published']) && isset($data['published'])) {
 
-			//	Published with date set
-			$_published = strtotime( $data['published'] );
+            //  Published with date set
+            $published = strtotime($data['published']);
 
-			if ( $_published ) :
+            if ($published) {
 
-				$_published = user_rdatetime( $data['published'] );
+                $published = user_rdatetime($data['published']);
+                $this->db->set('published', $published);
 
-				$this->db->set( 'published', $_published );
+            } else {
 
-			else :
+                //  Failed, use NOW();
+                $this->db->set('published', 'NOW()', false);
+            }
 
-				//	Failed, use NOW();
-				$this->db->set( 'published', 'NOW()', FALSE );
+        } else {
 
-			endif;
+            //  No date set, use NOW()
+            $this->db->set('published', 'NOW()', false);
+        }
 
-		else :
+        $this->db->set('created', 'NOW()', false);
+        $this->db->set('modified', 'NOW()', false);
+        $this->db->set('created_by', active_user('id'));
+        $this->db->set('modified_by', active_user('id'));
 
-			//	No date set, use NOW()
-			$this->db->set( 'published', 'NOW()', FALSE );
+        $this->db->insert(NAILS_DB_PREFIX . 'blog_post');
 
-		endif;
+        if ($this->db->affected_rows()) {
 
-		$this->db->set( 'created',			'NOW()', FALSE );
-		$this->db->set( 'modified',			'NOW()', FALSE );
-		$this->db->set( 'created_by',		active_user( 'id' ) );
-		$this->db->set( 'modified_by',		active_user( 'id' ) );
+            $id = $this->db->insert_id();
 
-		$this->db->insert( NAILS_DB_PREFIX . 'blog_post' );
+            //  Add Gallery items, if any
+            if (!empty($data['gallery'])) {
 
-		if ( $this->db->affected_rows() ) :
+                $galleryData = array();
 
-			$_id = $this->db->insert_id();
+                foreach ($data['gallery'] as $order => $imageId) {
 
-			//	Add Gallery items, if any
-			if ( ! empty( $data['gallery'] ) ) :
+                    if ((int) $imageId) {
 
-				$_data = array();
+                        $galleryData[] = array('post_id' => $id, 'image_id' => $imageId, 'order' => $order);
+                    }
+                }
 
-				foreach ( $data['gallery'] as $order => $image_id ) :
+                if ($galleryData) {
 
-					if ( (int) $image_id ) :
+                    $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_image', $galleryData);
+                }
+            }
 
-						$_data[] = array( 'post_id' => $_id, 'image_id' => $image_id, 'order' => $order );
+            // --------------------------------------------------------------------------
 
-					endif;
+            //  Add Categories and tags, if any
+            if (!empty($data['categories'])) {
 
-				endforeach;
+                $categoryData = array();
 
-				if ( $_data ) :
+                foreach ($data['categories'] as $catId) {
 
-					$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_image', $_data );
+                    $categoryData[] = array('post_id' => $id, 'category_id' => $catId);
+                }
 
-				endif;
+                $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_category', $categoryData);
+            }
 
-			endif;
+            if (!empty($data['tags'])) {
 
-			// --------------------------------------------------------------------------
+                $tagData = array();
 
-			//	Add Categories and tags, if any
-			if ( ! empty( $data['categories'] ) ) :
+                foreach ($data['tags'] as $tagId) {
 
-				$_data = array();
+                    $tagData[] = array('post_id' => $id, 'tag_id' => $tagId);
+                }
 
-				foreach ( $data['categories'] as $cat_id ) :
+                $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_tag', $tagData);
+            }
 
-					$_data[] = array( 'post_id' => $_id, 'category_id' => $cat_id );
+            // --------------------------------------------------------------------------
 
-				endforeach;
+            //  Add associations, if any
+            if (!empty($data['associations'])) {
 
-				$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_category', $_data );
+                //  Fetch associations config
+                $associations = $this->config->item('blog_post_associations');
 
-			endif;
+                foreach ($data['associations'] as $index => $association) {
 
-			if ( ! empty( $data['tags'] ) ) :
+                    if (!isset($associations[$index])) {
 
-				$_data = array();
+                        continue;
+                    }
 
-				foreach ( $data['tags'] as $tag_id ) :
+                    $associationData = array();
 
-					$_data[] = array( 'post_id' => $_id, 'tag_id' => $tag_id );
+                    foreach ($association as $associationId) {
 
-				endforeach;
+                        $associationData[] = array('post_id' => $id, 'associated_id' => $associationId);
+                    }
 
-				$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_tag', $_data );
+                    if ($associationData) {
 
-			endif;
+                        $this->db->insert_batch($associations[$index]->target, $associationData);
+                    }
+                }
+            }
 
-			// --------------------------------------------------------------------------
+            // --------------------------------------------------------------------------
 
-			//	Add associations, if any
-			if ( ! empty( $data['associations'] ) ) :
+            return $id;
 
-				//	Fetch association config
-				$_association = $this->config->item( 'blog_post_associations' );
+        } else {
 
-				foreach ( $data['associations'] as $index => $assoc ) :
+            return false;
+        }
+    }
 
-					if ( ! isset( $_association[$index] ) ) :
+    // --------------------------------------------------------------------------
 
-						continue;
+    /**
+     * Updates an existing object
+     * @param  int   $id   The ID of the object to update
+     * @param  array $data The data to update the object with
+     * @return bool
+     **/
+    public function update($id, $data = array())
+    {
+        /**
+         * Prepare slug; the slug is regenrated if the blog post is in a transitioning
+         * state to published. We don't want to be changing slugs of published posts
+         * but while it's a draft we can do whatever (even if it was previously published,
+         * made a draft then republished).
+         */
 
-					endif;
+        $this->db->select('is_published');
+        $this->db->where('id', $id);
+        $current = $this->db->get(NAILS_DB_PREFIX . 'blog_post')->row();
 
-					$_data = array();
+        if (!$current->is_published && $data['is_published']) {
 
-					foreach ( $assoc as $id ) :
+            $counter = 0;
 
-						$_data[] = array( 'post_id' => $_id, 'associated_id' => $id );
+            if (!isset($data['title']) || !$data['title']) {
 
-					endforeach;
+                $this->_set_error('Title missing');
+                return false;
+            }
 
-					if ( $_data ) :
+            //  Generate a slug
+            $prefix = array_search($data['title'], $this->reservedWords) !== false ? 'post-' : '';
+            $slug   = $this->_generate_slug($data['title'], $prefix);
 
-						$this->db->insert_batch( $_association[$index]->target, $_data );
+        } else {
 
-					endif;
+            $slug = false;
+        }
 
-				endforeach;
+        // --------------------------------------------------------------------------
 
-			endif;
+        //  Set data
+        if (isset($data['blog_id'])) {
 
-			// --------------------------------------------------------------------------
+            $this->db->set('blog_id', $data['blog_id']);
+        }
 
-			return $_id;
+        if (isset($data['title'])) {
 
-		else :
+            $this->db->set('title', $data['title']);
+        }
 
-			return FALSE;
+        if (isset($data['body'])) {
 
-		endif;
-	}
+            $this->db->set('body', $data['body']);
+        }
 
+        if (isset($data['seo_title'])) {
 
-	// --------------------------------------------------------------------------
+            $this->db->set('seo_title', $data['title']);
+        }
 
+        if (isset($data['seo_description'])) {
 
-	/**
-	 * Updates an existing object
-	 *
-	 * @access public
-	 * @param int $id The ID of the object to update
-	 * @param array $data The data to update the object with
-	 * @return bool
-	 **/
-	public function update( $id, $data = array() )
-	{
-		//	Prepare slug; the slug is regenrated if the blog post is in a transitioning state
-		//	to published. We don't want to be changing slugs of published posts but while
-		//	it's a draft we can do whatever (even if it was previously published, made a draft
-		//	then republished).
+            $this->db->set('seo_description', $data['seo_description']);
+        }
 
-		$this->db->select( 'is_published' );
-		$this->db->where( 'id', $id );
-		$_current = $this->db->get( NAILS_DB_PREFIX . 'blog_post' )->row();
+        if (isset($data['seo_keywords'])) {
 
-		if ( ! $_current->is_published && $data['is_published'] ) :
+            $this->db->set('seo_keywords', $data['seo_keywords']);
+        }
 
-			$_counter = 0;
+        if (isset($data['is_published'])) {
 
-			if ( ! isset( $data['title'] ) || ! $data['title'] ) :
+            $this->db->set('is_published', $data['is_published']);
+        }
 
-				$this->_set_error( 'Title missing' );
-				return FALSE;
+        if (isset($data['is_deleted'])) {
 
-			endif;
+            $this->db->set('is_deleted', $data['is_deleted']);
+        }
 
-			//	Generate a slug
-			$_prefix	= array_search( $data['title'], $this->_reserved ) !== FALSE ? 'post-' : '';
-			$_slug		= $this->_generate_slug( $data['title'], $_prefix );
+        //  Safety first!
+        if (array_key_exists('image_id', $data)) {
 
-		else :
+            $imageId = (int) $data['image_id'];
+            $imageId = !$imageId ? null : $imageId;
 
-			$_slug = FALSE;
+            $this->db->set('image_id', $imageId);
+        }
 
-		endif;
+        //  Excerpt
+        if (!empty($data['excerpt'])) {
 
-		// --------------------------------------------------------------------------
+            $this->db->set('excerpt', trim($data['excerpt']));
 
-		//	Set data
-		if ( isset( $data['blog_id'] ) ) :			$this->db->set( 'blog_id',			$data['blog_id'] );			endif;
-		if ( isset( $data['title'] ) ) :			$this->db->set( 'title',			$data['title'] );			endif;
-		if ( isset( $data['body'] ) ) :				$this->db->set( 'body',				$data['body'] );			endif;
-		if ( isset( $data['seo_title'] ) ) :		$this->db->set( 'seo_title',		$data['title'] );			endif;
-		if ( isset( $data['seo_description'] ) ) :	$this->db->set( 'seo_description',	$data['seo_description'] );	endif;
-		if ( isset( $data['seo_keywords'] ) ) :		$this->db->set( 'seo_keywords',		$data['seo_keywords'] );	endif;
-		if ( isset( $data['is_published'] ) ) :		$this->db->set( 'is_published',		$data['is_published'] );	endif;
-		if ( isset( $data['is_deleted'] ) ) :		$this->db->set( 'is_deleted',		$data['is_deleted'] );		endif;
+        } elseif (!empty($data['body'])) {
 
-		//	Safety first!
-		if ( array_key_exists( 'image_id', $data ) ) :
+            $this->db->set('excerpt', word_limiter(trim(strip_tags($data['body']))), 50);
+        }
 
-			$_image_id = (int) $data['image_id'];
-			$_image_id = ! $_image_id ? NULL : $_image_id;
+        //  Publish date
+        if (!empty($data['is_published']) && isset($data['published'])) {
 
-			$this->db->set( 'image_id', $_image_id );
+            //  Published with date set
+            $published = strtotime($data['published']);
 
-		endif;
+            if ($published) {
 
-		//	Excerpt
-		if ( ! empty( $data['excerpt'] ) ) :
+                $published = user_rdatetime($data['published']);
 
-			$this->db->set( 'excerpt', trim( $data['excerpt'] ) );
+                $this->db->set('published', $published);
 
-		elseif ( ! empty( $data['body'] ) ) :
+            } else {
 
-			$this->db->set( 'excerpt', word_limiter( trim( strip_tags( $data['body'] ) ) ), 50 );
+                //  Failed, use NOW();
+                $this->db->set('published', 'NOW()', false);
+            }
 
-		endif;
+        } else {
 
-		//	Publish date
-		if ( ! empty( $data['is_published'] ) && isset( $data['published'] ) ) :
+            //  No date set, use NOW();
+            $this->db->set('published', 'NOW()', false);
+        }
 
-			//	Published with date set
-			$_published = strtotime( $data['published'] );
+        $this->db->set('modified', 'NOW()', false);
 
-			if ( $_published ) :
+        if (active_user('id')) {
 
-				$_published = user_rdatetime( $data['published'] );
+            $this->db->set('modified_by', active_user('id'));
+        }
 
-				$this->db->set( 'published', $_published );
+        if ($slug) {
 
-			else :
+            $this->db->set('slug', $slug);
+        }
 
-				//	Failed, use NOW();
-				$this->db->set( 'published', 'NOW()', FALSE );
+        $this->db->where('id', $id);
+        $this->db->update(NAILS_DB_PREFIX . 'blog_post');
 
-			endif;
+        // --------------------------------------------------------------------------
 
-		else :
+        //  Update/reset the post gallery if it's been defined
+        if (isset($data['gallery'])) {
 
-			//	No date set, use NOW();
-			$this->db->set( 'published', 'NOW()', FALSE );
+            //  Delete all categories
+            $this->db->where('post_id', $id);
+            $this->db->delete(NAILS_DB_PREFIX . 'blog_post_image');
 
-		endif;
+            //  Recreate new ones
+            if ($data['gallery']) {
 
-		$this->db->set( 'modified', 'NOW()', FALSE );
+                $galleryData = array();
 
-		if ( active_user( 'id' ) ) :
+                foreach ($data['gallery'] as $order => $imageId) {
 
-			$this->db->set( 'modified_by', active_user( 'id' ) );
+                    if ((int) $imageId) {
 
-		endif;
+                        $galleryData[] = array('post_id' => $id, 'image_id' => $imageId, 'order' => $order);
+                    }
+                }
 
-		if ( $_slug ) :
+                if ($galleryData) {
 
-			$this->db->set( 'slug', $_slug );
+                    $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_image', $galleryData);
+                }
+            }
+        }
 
-		endif;
+        // --------------------------------------------------------------------------
 
-		$this->db->where( 'id', $id );
+        //  Update/reset any categories/tags if any have been defined
+        if (isset($data['categories'])) {
 
-		$this->db->update( NAILS_DB_PREFIX . 'blog_post' );
+            //  Delete all categories
+            $this->db->where('post_id', $id);
+            $this->db->delete(NAILS_DB_PREFIX . 'blog_post_category');
 
-		// --------------------------------------------------------------------------
+            //  Recreate new ones
+            if ($data['categories']) {
 
-		//	Update/reset the post gallery if it's been defined
-		if ( isset( $data['gallery'] ) ) :
+                $categoryData = array();
 
-			//	Delete all categories
-			$this->db->where( 'post_id', $id );
-			$this->db->delete( NAILS_DB_PREFIX . 'blog_post_image' );
+                foreach ($data['categories'] as $catId) {
 
-			//	Recreate new ones
-			if ( $data['gallery'] ) :
+                    $categoryData[] = array('post_id' => $id, 'category_id' => $catId);
+                }
 
-				$_data = array();
+                $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_category', $categoryData);
+            }
+        }
 
-				foreach ( $data['gallery'] as $order => $image_id ) :
+        if (isset($data['tags'])) {
 
-					if ( (int) $image_id ) :
+            //  Delete all tags
+            $this->db->where('post_id', $id);
+            $this->db->delete(NAILS_DB_PREFIX . 'blog_post_tag');
 
-						$_data[] = array( 'post_id' => $id, 'image_id' => $image_id, 'order' => $order );
+            //  Recreate new ones
+            if ($data['tags']) {
 
-					endif;
+                $tagData = array();
 
-				endforeach;
+                foreach ($data['tags'] as $tagId) {
 
-				if ( $_data ) :
+                    $tagData[] = array('post_id' => $id, 'tag_id' => $tagId);
+                }
 
-					$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_image', $_data );
+                $this->db->insert_batch(NAILS_DB_PREFIX . 'blog_post_tag', $tagData);
+            }
+        }
 
-				endif;
+        // --------------------------------------------------------------------------
 
-			endif;
+        //  Add associations, if any
+        if (isset($data['associations']) && is_array($data['associations'])) {
 
-		endif;
+            //  Fetch association config
+            $this->load->model('blog/blog_model');
+            $associations = $this->blog_model->get_associations();
 
-		// --------------------------------------------------------------------------
+            foreach ($data['associations'] as $index => $association) {
 
-		//	Update/reset any categories/tags if any have been defined
-		if ( isset( $data['categories'] ) ) :
+                if (!isset($associations[$index])) {
 
-			//	Delete all categories
-			$this->db->where( 'post_id', $id );
-			$this->db->delete( NAILS_DB_PREFIX . 'blog_post_category' );
+                    continue;
+                }
 
-			//	Recreate new ones
-			if ( $data['categories'] ) :
+                //  Clear old associations
+                $this->db->where('post_id', $id);
+                $this->db->delete($associations[$index]->target);
 
-				$_data = array();
+                //  Add new ones
+                $associationData = array();
 
-				foreach ( $data['categories'] as $cat_id ) :
+                foreach ($association as $associationId) {
 
-					$_data[] = array( 'post_id' => $id, 'category_id' => $cat_id );
+                    $associationData[] = array('post_id' => $id, 'associated_id' => $associationId);
+                }
 
-				endforeach;
+                if ($associationData) {
 
-				$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_category', $_data );
+                    $this->db->insert_batch($associations[$index]->target, $associationData);
+                }
+            }
+        }
 
-			endif;
+        // --------------------------------------------------------------------------
 
-		endif;
+        return true;
+    }
 
-		if ( isset( $data['tags'] ) ) :
+    // --------------------------------------------------------------------------
 
-			//	Delete all tags
-			$this->db->where( 'post_id', $id );
-			$this->db->delete( NAILS_DB_PREFIX . 'blog_post_tag' );
+    /**
+     * Fetches all posts
+     * @param int    $page           The page number of the results, if null then no pagination
+     * @param int    $perPage        How many items per page of paginated results
+     * @param mixed  $data           Any data to pass to _getcount_common()
+     * @param bool   $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @param string $_caller        Internal flag to pass to _getcount_common(), contains the calling method
+     * @return array
+     **/
+    public function get_all($page = null, $perPage = null, $data = null, $includeDeleted = false, $_caller = 'GET_ALL')
+    {
+        $posts = parent::get_all($page, $perPage, $data, $includeDeleted, $_caller);
 
-			//	Recreate new ones
-			if ( $data['tags'] ) :
+        $this->load->model('blog/blog_model');
+        $associations = $this->blog_model->get_associations();
 
-				$_data = array();
+        foreach ($posts as $post) {
 
-				foreach ( $data['tags'] as $tag_id ) :
+            //  Fetch associated categories
+            if (!empty($data['include_categories'])) {
 
-					$_data[] = array( 'post_id' => $id, 'tag_id' => $tag_id );
+                $this->load->model('blog/blog_category_model');
 
-				endforeach;
+                $this->db->select('c.id,c.blog_id,c.slug,c.label');
+                $this->db->join(NAILS_DB_PREFIX . 'blog_category c', 'c.id = pc.category_id');
+                $this->db->where('pc.post_id', $post->id);
+                $this->db->group_by('c.id');
+                $this->db->order_by('c.label');
+                $post->categories = $this->db->get(NAILS_DB_PREFIX . 'blog_post_category pc')->result();
 
-				$this->db->insert_batch( NAILS_DB_PREFIX . 'blog_post_tag', $_data );
+                foreach ($post->categories as $c) {
 
-			endif;
+                    $c->url = $this->blog_category_model->format_url($c->slug, $c->blog_id);
+                }
 
-		endif;
+            } else {
 
-		// --------------------------------------------------------------------------
+                $post->categories = array();
+            }
 
-		//	Add associations, if any
-		if ( isset( $data['associations'] ) && is_array( $data['associations'] ) ) :
+            // --------------------------------------------------------------------------
 
-			//	Fetch association config
-			$this->load->model( 'blog/blog_model' );
-			$_associations = $this->blog_model->get_associations();
+            //  Fetch associated tags
+            if (!empty($data['include_tags'])) {
 
-			foreach ( $data['associations'] as $index => $assoc ) :
+                $this->load->model('blog/blog_tag_model');
 
-				if ( ! isset( $_associations[$index] ) ) :
+                //  Fetch associated tags
+                $this->db->select('t.id,t.blog_id,t.slug,t.label');
+                $this->db->join(NAILS_DB_PREFIX . 'blog_tag t', 't.id = pt.tag_id');
+                $this->db->where('pt.post_id', $post->id);
+                $this->db->group_by('t.id');
+                $this->db->order_by('t.label');
+                $post->tags = $this->db->get(NAILS_DB_PREFIX . 'blog_post_tag pt')->result();
 
-					continue;
+                foreach ($post->tags as $t) {
 
-				endif;
+                    $t->url = $this->blog_tag_model->format_url($t->slug, $t->blog_id);
+                }
 
-				//	Clear old associations
-				$this->db->where( 'post_id', $id );
-				$this->db->delete( $_associations[$index]->target );
+            } else {
 
-				//	Add new ones
-				$_data = array();
+                $post->tags = array();
+            }
 
-				foreach ( $assoc as $assoc_id ) :
+            // --------------------------------------------------------------------------
 
-					$_data[] = array( 'post_id' => $id, 'associated_id' => $assoc_id );
+            //  Fetch other associations
+            if (!empty($data['include_associations']) && $associations) {
 
-				endforeach;
+                foreach ($associations as $index => $assoc) {
 
-				if ( $_data ) :
+                    $post->associations[$index] = $assoc;
 
-					$this->db->insert_batch( $_associations[$index]->target, $_data );
+                    //  Fetch the association data from the source, fail ungracefully - the dev should have this configured correctly.
+                    $this->db->select('src.' . $assoc->source->id . ' id, src.' . $assoc->source->label . ' label');
+                    $this->db->join($assoc->source->table . ' src', 'src.' . $assoc->source->id . '=target.associated_id', 'LEFT');
+                    $this->db->where('target.post_id', $post->id);
+                    $post->associations[$index]->current = $this->db->get($assoc->target . ' target')->result();
+                }
 
-				endif;
+            } else {
 
-			endforeach;
+                $post->associations = array();
+            }
 
-		endif;
+            // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+            //  Fetch associated images
+            if (!empty($data['include_gallery']) ) {
 
-		return TRUE;
-	}
+                $this->db->where('post_id', $post->id);
+                $this->db->order_by('order');
+                $post->gallery = $this->db->get(NAILS_DB_PREFIX . 'blog_post_image')->result();
 
+            } else {
 
-	// --------------------------------------------------------------------------
+                $post->gallery = array();
+            }
+        }
 
+        // --------------------------------------------------------------------------
 
-	/**
-	 * Fetches all objects
-	 *
-	 * @access public
-	 * @param int $page The page number of the results, if NULL then no pagination
-	 * @param int $per_page How many items per page of paginated results
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @param bool $include_deleted If non-destructive delete is enabled then this flag allows you to include deleted items
-	 * @param string $_caller Internal flag to pass to _getcount_common(), contains the calling method
-	 * @return array
-	 **/
-	public function get_all( $page = NULL, $per_page = NULL, $data = NULL, $include_deleted = FALSE, $_caller = 'GET_ALL' )
-	{
-		$_posts = parent::get_all( $page, $per_page, $data, $include_deleted, $_caller );
+        return $posts;
+    }
 
-		$this->load->model( 'blog/blog_model' );
-		$_associations	= $this->blog_model->get_associations();
+    // --------------------------------------------------------------------------
 
-		foreach ( $_posts as $post ) :
+    /**
+     * Fetch a pst by it's ID
+     * @param  int   $id The ID of the object to fetch
+     * @param  mixed $data Any data to pass to _getcount_common()
+     * @return stdClass
+     **/
+    public function get_by_id($id, $data = null)
+    {
+        $data = $this->_include_everything($data);
+        return parent::get_by_id($id, $data);
+    }
 
-			//	Fetch associated categories
-			if ( ! empty( $data['include_categories'] ) ) :
+    // --------------------------------------------------------------------------
 
-				$this->load->model( 'blog/blog_category_model' );
+    /**
+     * Fetch a post by it's slug
+     * @param  int   $slug The slug of the object to fetch
+     * @param  mixed $data Any data to pass to _getcount_common()
+     * @return stdClass
+     **/
+    public function get_by_slug($id, $data = null)
+    {
+        $data = $this->_include_everything($data);
+        return parent::get_by_slug($id, $data);
+    }
 
-				$this->db->select( 'c.id,c.blog_id,c.slug,c.label' );
-				$this->db->join( NAILS_DB_PREFIX . 'blog_category c', 'c.id = pc.category_id' );
-				$this->db->where( 'pc.post_id', $post->id );
-				$this->db->group_by( 'c.id' );
-				$this->db->order_by( 'c.label' );
-				$post->categories = $this->db->get( NAILS_DB_PREFIX . 'blog_post_category pc' )->result();
+    // --------------------------------------------------------------------------
 
-				foreach ( $post->categories as $c ) :
+    /**
+     * Fetch an object by it's id or slug
+     *
+     * Auto-detects whether to use the ID or slug as the selector when fetching
+     * an object. Note that this method uses is_numeric() to determine whether
+     * an ID or a slug has been passed, thus numeric slugs (which are against
+     * Nails style guidelines) will be interpreted incorrectly.
+     *
+     * @param  mixed $id_slug The ID or slug of the object to fetch
+     * @param  mixed $data Any data to pass to _getcount_common()
+     * @return stdClass
+     **/
+    public function get_by_id_or_slug($id, $data = null)
+    {
+        $data = $this->_include_everything($data);
+        return parent::get_by_id($id, $data);
+    }
 
-					$c->url = $this->blog_category_model->format_url( $c->slug, $c->blog_id );
+    // --------------------------------------------------------------------------
 
-				endforeach;
+    /**
+     * Applies common conditionals
+     *
+     * This method applies the conditionals which are common across the get_*()
+     * methods and the count() method.
+     *
+     * @param string $data Data passed from the calling method
+     * @param string $_caller The name of the calling method
+     * @return void
+     **/
+    protected function _getcount_common($data = null, $_caller = null)
+    {
+        parent::_getcount_common($data, $_caller);
 
-			else :
+        // --------------------------------------------------------------------------
 
-				$post->categories = array();
+        $this->db->select('bp.id, bp.blog_id, b.label blog_label, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title');
+        $this->db->select('bp.seo_description, bp.seo_keywords, bp.is_published, bp.is_deleted, bp.created, bp.created_by, bp.modified, bp.modified_by, bp.published');
 
-			endif;
+        $this->db->select('u.first_name, u.last_name, ue.email, u.profile_img, u.gender');
 
-			// --------------------------------------------------------------------------
+        $this->db->join(NAILS_DB_PREFIX . 'blog b', 'bp.blog_id = b.id', 'LEFT');
+        $this->db->join(NAILS_DB_PREFIX . 'user u', 'bp.modified_by = u.id', 'LEFT');
+        $this->db->join(NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT');
 
-			//	Fetch associated tags
-			if ( ! empty( $data['include_tags'] ) ) :
+        // --------------------------------------------------------------------------
 
-				$this->load->model( 'blog/blog_tag_model' );
+        if (!empty($data['include_body'])) {
 
-				//	Fetch associated tags
-				$this->db->select( 't.id,t.blog_id,t.slug,t.label' );
-				$this->db->join( NAILS_DB_PREFIX . 'blog_tag t', 't.id = pt.tag_id' );
-				$this->db->where( 'pt.post_id', $post->id );
-				$this->db->group_by( 't.id' );
-				$this->db->order_by( 't.label' );
-				$post->tags = $this->db->get( NAILS_DB_PREFIX . 'blog_post_tag pt' )->result();
+            $this->db->select('bp.body');
+        }
 
-				foreach ( $post->tags as $t ) :
+        // --------------------------------------------------------------------------
 
-					$t->url = $this->blog_tag_model->format_url( $t->slug, $t->blog_id );
+        if (!empty($data['search'])) {
 
-				endforeach;
+            $this->db->or_like($this->_table_prefix . '.title', $data['search']);
+            $this->db->or_like($this->_table_prefix . '.excerpt', $data['search']);
+            $this->db->or_like($this->_table_prefix . '.body', $data['search']);
+            $this->db->or_like($this->_table_prefix . '.seo_description', $data['search']);
+            $this->db->or_like($this->_table_prefix . '.seo_keywords', $data['search']);
+        }
+    }
 
-			else :
+    // --------------------------------------------------------------------------
 
-				$post->tags = array();
+    /**
+     * Sets the data array to include everything
+     *
+     * This method is called by the get_by_*() methods and, if not already set,
+     * will alter the $data array so that all the include_* parameters are set.
+     *
+     * @param string $data Data passed from the calling method
+     * @return void
+     **/
+    protected function _include_everything($data)
+    {
+        if (is_null($data)) {
 
-			endif;
+            $data = array();
+        }
 
-			// --------------------------------------------------------------------------
+        if (!isset($data['include_body'])) {
 
-			//	Fetch other associations
-			if ( ! empty( $data['include_associations'] ) && $_associations ) :
+            $data['include_body'] = true;
+        }
 
-				foreach ( $_associations as $index => $assoc ) :
+        if (!isset($data['include_categories'])) {
 
-					$post->associations[$index] = $assoc;
+            $data['include_categories'] = true;
+        }
 
-					//	Fetch the association data from the source, fail ungracefully - the dev should have this configured correctly.
-					$this->db->select( 'src.' . $assoc->source->id . ' id, src.' . $assoc->source->label . ' label' );
-					$this->db->join( $assoc->source->table . ' src', 'src.' . $assoc->source->id . '=target.associated_id', 'LEFT' );
-					$this->db->where( 'target.post_id', $post->id );
-					$post->associations[$index]->current = $this->db->get( $assoc->target . ' target')->result();
+        if (!isset($data['include_tags'])) {
 
-				endforeach;
+            $data['include_tags'] = true;
+        }
 
-			else :
+        if (!isset($data['include_associations'])) {
 
-				$post->associations = array();
+            $data['include_associations'] = true;
+        }
 
-			endif;
+        if (!isset($data['include_gallery'])) {
 
-			// --------------------------------------------------------------------------
+            $data['include_gallery'] = true;
+        }
 
-			//	Fetch associated images
-			if ( ! empty( $data['include_gallery'] )  ) :
+        // --------------------------------------------------------------------------
 
-				$this->db->where( 'post_id', $post->id );
-				$this->db->order_by( 'order' );
-				$post->gallery = $this->db->get( NAILS_DB_PREFIX . 'blog_post_image' )->result();
+        return $data;
+    }
 
-			else :
+    // --------------------------------------------------------------------------
 
-				$post->gallery = array();
+    /**
+     * Fetches latestposts
+     * @param int   $limit The number of posts to return
+     * @param mixed $data Any data to pass to _getcount_common()
+     * @param bool  $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @return array
+     **/
+    public function get_latest($limit = 9, $data = null, $includeDeleted = false)
+    {
+        $this->db->limit($limit);
+        $this->db->order_by('bp.published', 'DESC');
+        return $this->get_all(null, null, $data, $includeDeleted, 'GET_LATEST');
+    }
 
-			endif;
+    // --------------------------------------------------------------------------
 
-		endforeach;
+    /**
+     * Fetches posts published within a certain year and/or month
+     * @param int $year The year to restrict the search to
+     * @param int $month The month to restrict the search to
+     * @param mixed $data Any data to pass to _getcount_common()
+     * @param bool $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @return array
+     **/
+    public function get_archive($year = null, $month = null, $data = null, $includeDeleted = false)
+    {
+        if ($year) {
 
-		// --------------------------------------------------------------------------
+            $this->db->where('YEAR(bp.published) = ', (int) $year);
+        }
 
-		return $_posts;
-	}
+        // --------------------------------------------------------------------------
 
+        if ($month) {
 
-	// --------------------------------------------------------------------------
+            $this->db->where('MONTH(bp.published) = ', (int) $month);
+        }
 
+        // --------------------------------------------------------------------------
 
-	/**
-	 * Fetch an object by it's ID
-	 *
-	 * @access public
-	 * @param int $id The ID of the object to fetch
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @return	stdClass
-	 **/
-	public function get_by_id( $id, $data = NULL )
-	{
-		$data = $this->_include_everything( $data );
-		return parent::get_by_id( $id, $data );
-	}
+        return $this->get_all(null, null, $data, $includeDeleted, 'GET_ARCHIVE');
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    /**
+     * Gets posts which are in a particular category
+     * @param  mixed   $categoryIdSlug The category's ID or slug
+     * @param  int     $page           The page to render
+     * @param  int     $perPage        The number of posts per page
+     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     * @return array
+     */
+    public function get_with_category($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
+    {
+        //  Join the blog_post_category table so we can WHERE on it.
+        $this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
+        $this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
 
+        //  Set the where
+        if (is_null($data)) {
 
-	/**
-	 * Fetch an object by it's slug
-	 *
-	 * @access public
-	 * @param int $slug The slug of the object to fetch
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @return	stdClass
-	 **/
-	public function get_by_slug( $id, $data = NULL )
-	{
-		$data = $this->_include_everything( $data );
-		return parent::get_by_slug( $id, $data );
-	}
+            $data = array('where' => array());
+        }
 
+        if (!isset($data['where'])) {
 
-	// --------------------------------------------------------------------------
+            $data['where'] = array();
+        }
 
+        if (is_numeric($categoryIdSlug)) {
 
-	/**
-	 * Fetch an object by it's id or slug
-	 *
-	 * Auto-detects whether to use the ID or slug as the selector when fetching
-	 * an object. Note that this method uses is_numeric() to determine whether
-	 * an ID or a slug has been passed, thus numeric slugs (which are against
-	 * Nails style guidelines) will be interpreted incorrectly.
-	 *
-	 * @access public
-	 * @param mixed $id_slug The ID or slug of the object to fetch
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @return stdClass
-	 **/
-	public function get_by_id_or_slug( $id, $data = NULL )
-	{
-		$data = $this->_include_everything( $data );
-		return parent::get_by_id( $id, $data );
-	}
+            $data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
 
+        } else {
 
-	// --------------------------------------------------------------------------
+            $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+        }
 
+        $this->db->group_by($this->_table_prefix . '.id');
 
-	/**
-	 * Applies common conditionals
-	 *
-	 * This method applies the conditionals which are common across the get_*()
-	 * methods and the count() method.
-	 *
-	 * @access public
-	 * @param string $data Data passed from the calling method
-	 * @param string $_caller The name of the calling method
-	 * @return void
-	 **/
-	protected function _getcount_common( $data = NULL, $_caller = NULL )
-	{
-		parent::_getcount_common( $data, $_caller );
+        return $this->get_all($page, $perPage, $data, $includeDeleted);
+    }
 
-		// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-		$this->db->select( 'bp.id, bp.blog_id, b.label blog_label, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title' );
-		$this->db->select( 'bp.seo_description, bp.seo_keywords, bp.is_published, bp.is_deleted, bp.created, bp.created_by, bp.modified, bp.modified_by, bp.published' );
+    /**
+     * Count the number of posts in a particular category
+     * @param  mixed   $categoryIdSlug The category's ID or slug
+     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     * @return int
+     */
+    public function count_with_category($categoryIdSlug, $data = null, $includeDeleted = false)
+    {
+        //  Join the blog_post_category table so we can WHERE on it.
+        $this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
+        $this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
 
-		$this->db->select( 'u.first_name, u.last_name, ue.email, u.profile_img, u.gender' );
+        //  Set the where
+        if (is_null($data)) {
 
-		$this->db->join( NAILS_DB_PREFIX . 'blog b', 'bp.blog_id = b.id', 'LEFT' );
-		$this->db->join( NAILS_DB_PREFIX . 'user u', 'bp.modified_by = u.id', 'LEFT' );
-		$this->db->join( NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT' );
+            $data = array('where' => array());
+        }
 
-		// --------------------------------------------------------------------------
+        if (is_numeric($categoryIdSlug)) {
 
-		if ( ! empty( $data['include_body'] ) ) :
+            $data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
 
-			$this->db->select( 'bp.body' );
+        } else {
 
-		endif;
+            $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+        }
 
-		// --------------------------------------------------------------------------
+        return $this->count_all($data, $includeDeleted);
+    }
 
-		if ( ! empty( $data['search'] ) ) :
+    // --------------------------------------------------------------------------
 
-			$this->db->or_like( $this->_table_prefix . '.title', $data['search'] );
-			$this->db->or_like( $this->_table_prefix . '.excerpt', $data['search'] );
-			$this->db->or_like( $this->_table_prefix . '.body', $data['search'] );
-			$this->db->or_like( $this->_table_prefix . '.seo_description', $data['search'] );
-			$this->db->or_like( $this->_table_prefix . '.seo_keywords', $data['search'] );
+    /**
+     * Gets posts which are in a particular tag
+     * @param  mixed   $tagIdSlug      The tag's ID or slug
+     * @param  int     $page           The page to render
+     * @param  int     $perPage        The number of posts per page
+     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     * @return array
+     */
+    public function get_with_tag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
+    {
+        //  Join the blog_post_tag table so we can WHERE on it.
+        $this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
+        $this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
 
-		endif;
-	}
+        //  Set the where
+        if (is_null($data)) {
 
+            $data = array('where' => array());
+        }
 
-	// --------------------------------------------------------------------------
+        if (is_numeric($tagIdSlug)) {
 
+            $data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
 
-	/**
-	 * Sets the data array to include everything
-	 *
-	 * This method is called by the get_by_*() methods and, if not already set,
-	 * will alter the $data array so that all the include_* parameters are set.
-	 *
-	 * @access public
-	 * @param string $data Data passed from the calling method
-	 * @return void
-	 **/
-	protected function _include_everything( $data )
-	{
-		if ( NULL === $data ) :
+        } else {
 
-			$data = array();
+            $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+        }
 
-		endif;
+        $this->db->group_by($this->_table_prefix . '.id');
 
-		if ( ! isset( $data['include_body'] ) ) :
+        return $this->get_all($page, $perPage, $data, $includeDeleted);
+    }
 
-			$data['include_body'] = TRUE;
+    // --------------------------------------------------------------------------
 
-		endif;
+    /**
+     * Count the number of posts in a particular tag
+     * @param  mixed   $tagIdSlug      The tag's ID or slug
+     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     * @return int
+     */
+    public function count_with_tag($tagIdSlug, $data = null, $includeDeleted = false)
+    {
+        //  Join the blog_post_category table so we can WHERE on it.
+        $this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
+        $this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
 
-		if ( ! isset( $data['include_categories'] ) ) :
+        //  Set the where
+        if (is_null($data)) {
 
-			$data['include_categories'] = TRUE;
+            $data = array('where' => array());
+        }
 
-		endif;
+        if (is_numeric($tagIdSlug)) {
 
-		if ( ! isset( $data['include_tags'] ) ) :
+            $data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
 
-			$data['include_tags'] = TRUE;
+        } else {
 
-		endif;
+            $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+        }
 
-		if ( ! isset( $data['include_associations'] ) ) :
+        return $this->count_all($data, $includeDeleted);
+    }
 
-			$data['include_associations'] = TRUE;
+    // --------------------------------------------------------------------------
 
-		endif;
+    /**
+     * Get posts with a particular association
+     * @param  int $associationIndex The association's index
+     * @param  int $associatedId     The Id of the item to be associated with
+     * @return array
+     */
+    public function get_with_association($associationIndex, $associatedId)
+    {
+        $this->config->load('blog/blog');
 
-		if ( ! isset( $data['include_gallery'] ) ) :
+        $associations = $this->config->item('blog_post_associations');
 
-			$data['include_gallery'] = TRUE;
+        if (!isset($associations[$associationIndex])) {
 
-		endif;
+            return array();
+        }
 
-		// --------------------------------------------------------------------------
+        $this->db->select('post_id');
+        $this->db->where('associated_id', $associatedId);
+        $posts = $this->db->get($associations[$associationIndex]->target)->result();
 
-		return $data;
-	}
+        $ids = array();
+        foreach ($posts as $post) {
 
+            $ids[] = $post->post_id;
+        }
 
-	// --------------------------------------------------------------------------
+        if (empty($ids)) {
 
+            //  No IDs? No posts.
+            return array();
+        }
 
-	/**
-	 * Fetches latest
-	 *
-	 * @access public
-	 * @param int $limit The number of posts to return
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @param bool $include_deleted If non-destructive delete is enabled then this flag allows you to include deleted items
-	 * @return array
-	 **/
-	public function get_latest( $limit = 9, $data = NULL, $include_deleted = FALSE )
-	{
-		$this->db->limit( $limit );
-		$this->db->order_by( 'bp.published', 'DESC' );
-		return $this->get_all( NULL, NULL, $data, $include_deleted, 'GET_LATEST' );
-	}
+        $this->db->where_in($this->_table_prefix . '.id', $ids);
 
+        return $this->get_all();
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
+    /**
+     * Add a hit to a post
+     * @param int    $id   The post's ID
+     * @param array  $data Details about the hit
+     */
+    public function add_hit($id, $data = array())
+    {
+        if (!$id) {
 
-	/**
-	 * Fetches posts published within a certain year and/or month
-	 *
-	 * @access public
-	 * @param int $year The year to restrict the search to
-	 * @param int $month The month to restrict the search to
-	 * @param mixed $data Any data to pass to _getcount_common()
-	 * @param bool $include_deleted If non-destructive delete is enabled then this flag allows you to include deleted items
-	 * @return array
-	 **/
-	public function get_archive( $year = NULL, $month = NULL, $data = NULL, $include_deleted = FALSE )
-	{
-		if ( $year ) :
+            $this->_set_error('Post ID is required.');
+            return false;
+        }
 
-			$this->db->where( 'YEAR( bp.published ) = ', (int) $year );
+        // --------------------------------------------------------------------------
 
-		endif;
+        $hitData               = array();
+        $hitData['post_id']    = $id;
+        $hitData['user_id']    = empty($data['user_id']) ? null : $data['user_id'];
+        $hitData['ip_address'] = $this->input->ip_address();
+        $hitData['created']    = date('Y-m-d H:i:s');
+        $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 
-		// --------------------------------------------------------------------------
+        if ($hitData['user_id'] && $this->user_model->is_admin($hitData['user_id'])) {
 
-		if ( $month ) :
+            $this->_set_error('Administrators cannot affect the post\'s popularity.');
+            return false;
+        }
 
-			$this->db->where( 'MONTH( bp.published ) = ', (int) $month );
+        // --------------------------------------------------------------------------
 
-		endif;
+        /**
+         * Registered a hit on this post in the past 5 minutes? Try to prevent abuse
+         * of the popularity system.
+         */
 
-		// --------------------------------------------------------------------------
+        $this->db->where('post_id', $hitData['post_id']);
+        $this->db->where('user_id', $hitData['user_id']);
+        $this->db->where('ip_address', $hitData['ip_address']);
+        $this->db->where('created > "' . date('Y-m-d H:i:s', strtotime('-5 MINS')) . '"');
 
-		return $this->get_all( NULL, NULL, $data, $include_deleted, 'GET_ARCHIVE' );
-	}
+        if ($this->db->count_all_results(NAILS_DB_PREFIX . 'blog_post_hit')) {
 
+            $this->_set_error('Hit timeout in effect.');
+            return false;
+        }
 
-	// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
+        $this->db->set($hitData);
 
-	public function get_with_category($categoryIdSlug, $page = NULL, $perPage = NULL, $data = NULL, $includeDeleted = FALSE)
-	{
-		//	Join the blog_post_category table so we can WHERE on it.
-		$this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
-		$this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
+        if ($this->db->insert(NAILS_DB_PREFIX . 'blog_post_hit')) {
 
-		//	Set the where
-		if (is_null($data)) {
+            return true;
 
-			$data = array('where' => array());
-		}
+        } else {
 
-		if (is_numeric($categoryIdSlug)) {
+            $this->_set_error('Failed to add hit.');
+            return false;
+        }
+    }
 
-			$data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
+    // --------------------------------------------------------------------------
 
-		} else {
+    /**
+     * Format a posts's URL
+     * @param  string $slug   The post's slug
+     * @param  int    $blogId The blog's ID
+     * @return string
+     */
+    public function format_url($slug, $blogId)
+    {
+        $this->load->model('blog/blog_model');
+        return $this->blog_model->getBlogUrl($blogId) . $slug;
+    }
 
-			$data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
-		}
+    // --------------------------------------------------------------------------
 
-		$this->db->group_by($this->_table_prefix . '.id');
+    /**
+     * Format a post object
+     * @param  stdClass &$post The post Object to format
+     * @return void
+     */
+    protected function _format_object(&$post)
+    {
+        parent::_format_object($post);
 
-		return $this->get_all($page, $perPage, $data, $includeDeleted);
-	}
+        // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+        //  Type casting
+        $post->is_published = (bool) $post->is_published;
+        $post->is_deleted   = (bool) $post->is_deleted;
 
+        //  Generate URL
+        $post->url = $this->format_url($post->slug, $post->blog_id);
 
-	public function count_with_category($categoryIdSlug, $data = null, $includeDeleted = false)
-	{
-		//	Join the blog_post_category table so we can WHERE on it.
-		$this->db->join(NAILS_DB_PREFIX . 'blog_post_category bpc', 'bpc.post_id = bp.id');
-		$this->db->join(NAILS_DB_PREFIX . 'blog_category bc', 'bc.id = bpc.category_id');
+        //  Blog
+        $post->blog        = new stdClass();
+        $post->blog->id    = (int) $post->blog_id;
+        $post->blog->label = $post->blog_label;
 
-		//	Set the where
-		if (is_null($data)) {
+        //  Author
+        $post->author              = new stdClass();
+        $post->author->id          = (int) $post->modified_by;
+        $post->author->first_name  = $post->first_name;
+        $post->author->last_name   = $post->last_name;
+        $post->author->email       = $post->email;
+        $post->author->profile_img = $post->profile_img;
+        $post->author->gender      = $post->gender;
 
-			$data = array('where' => array());
-		}
-
-		if (is_numeric($categoryIdSlug)) {
-
-			$data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
-
-		} else {
-
-			$data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
-		}
-
-		return $this->count_all($data, $includeDeleted);
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function get_with_tag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
-	{
-		//	Join the blog_post_tag table so we can WHERE on it.
-		$this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
-		$this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
-
-		//	Set the where
-		if (is_null($data)) {
-
-			$data = array('where' => array());
-		}
-
-		if (is_numeric($tagIdSlug)) {
-
-			$data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
-
-		} else {
-
-			$data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
-		}
-
-		$this->db->group_by($this->_table_prefix . '.id');
-
-		return $this->get_all($page, $perPage, $data, $includeDeleted);
-	}
-
-	// --------------------------------------------------------------------------
-
-
-	public function count_with_tag($tagIdSlug, $data = null, $includeDeleted = false)
-	{
-		//	Join the blog_post_category table so we can WHERE on it.
-		$this->db->join(NAILS_DB_PREFIX . 'blog_post_tag bpt', 'bpt.post_id = bp.id');
-		$this->db->join(NAILS_DB_PREFIX . 'blog_tag bt', 'bt.id = bpt.tag_id');
-
-		//	Set the where
-		if (is_null($data)) {
-
-			$data = array('where' => array());
-		}
-
-		if (is_numeric($tagIdSlug)) {
-
-			$data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
-
-		} else {
-
-			$data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
-		}
-
-		return $this->count_all($data, $includeDeleted);
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function get_with_association( $association_index, $associated_id )
-	{
-		$this->config->load( 'blog/blog' );
-
-		$_associations = $this->config->item( 'blog_post_associations' );
-
-		if ( ! isset( $_associations[$association_index] ) ) :
-
-			return array();
-
-		endif;
-
-		$this->db->select( 'post_id' );
-		$this->db->where( 'associated_id', $associated_id );
-		$_posts = $this->db->get( $_associations[$association_index]->target )->result();
-
-		$_ids = array();
-		foreach ( $_posts as $post ) :
-
-			$_ids[] = $post->post_id;
-
-		endforeach;
-
-		if ( empty( $_ids ) ) :
-
-			//	No IDs? No posts.
-			return array();
-
-		endif;
-
-		$this->db->where_in( $this->_table_prefix . '.id', $_ids );
-
-		return $this->get_all();
-
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function add_hit( $id, $data = array() )
-	{
-		if ( ! $id ) :
-
-			$this->_set_error( 'Post ID is required.' );
-			return FALSE;
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		$_data					= array();
-		$_data['post_id']		= $id;
-		$_data['user_id']		= empty( $data['user_id'] ) ? NULL : $data['user_id'];
-		$_data['ip_address']	= $this->input->ip_address();
-		$_data['created']		= date( 'Y-m-d H:i:s' );
-		$_data['referrer']		= empty( $data['referrer'] ) ? NULL : prep_url( trim( $data['referrer'] ) );
-
-		if ( $_data['user_id'] && $this->user_model->is_admin( $_data['user_id'] ) ) :
-
-			$this->_set_error( 'Administrators cannot affect the post\'s popularity.' );
-			return FALSE;
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		//	Registered a hit on this post in the past 5 minutes? Try to prevent abuse
-		//	of the popularity system.
-
-		$this->db->where( 'post_id', $_data['post_id'] );
-		$this->db->where( 'user_id', $_data['user_id'] );
-		$this->db->where( 'ip_address', $_data['ip_address'] );
-		$this->db->where( 'created > "' . date( 'Y-m-d H:i:s', strtotime( '-5 MINS' ) ) . '"' );
-
-		if ( $this->db->count_all_results( NAILS_DB_PREFIX . 'blog_post_hit' ) ) :
-
-			$this->_set_error( 'Hit timeout in effect.' );
-			return FALSE;
-
-		endif;
-
-		// --------------------------------------------------------------------------
-
-		$this->db->set( $_data );
-
-		if ( $this->db->insert( NAILS_DB_PREFIX . 'blog_post_hit' ) ) :
-
-			return TRUE;
-
-		else :
-
-			$this->_set_error( 'Failed to add hit.' );
-			return FALSE;
-
-		endif;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function format_url($slug, $blogId)
-	{
-		$this->load->model('blog/blog_model');
-		return $this->blog_model->getBlogUrl($blogId) . $slug;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	protected function _format_object( &$post )
-	{
-		parent::_format_object($post);
-
-		// --------------------------------------------------------------------------
-
-		//	Type casting
-		$post->is_published			= (bool) $post->is_published;
-		$post->is_deleted			= (bool) $post->is_deleted;
-
-		//	Generate URL
-		$post->url					= $this->format_url($post->slug, $post->blog_id);
-
-		//	Blog
-		$post->blog					= new stdClass();
-		$post->blog->id				= (int) $post->blog_id;
-		$post->blog->label			= $post->blog_label;
-
-		//	Author
-		$post->author				= new stdClass();
-		$post->author->id			= (int) $post->modified_by;
-		$post->author->first_name	= $post->first_name;
-		$post->author->last_name	= $post->last_name;
-		$post->author->email		= $post->email;
-		$post->author->profile_img	= $post->profile_img;
-		$post->author->gender		= $post->gender;
-
-		unset($post->blog_id);
-		unset($post->blog_label);
-		unset($post->modified_by);
-		unset($post->first_name);
-		unset($post->last_name);
-		unset($post->email);
-		unset($post->profile_img);
-		unset($post->gender);
-	}
+        unset($post->blog_id);
+        unset($post->blog_label);
+        unset($post->modified_by);
+        unset($post->first_name);
+        unset($post->last_name);
+        unset($post->email);
+        unset($post->profile_img);
+        unset($post->gender);
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -1133,13 +1116,9 @@ class NAILS_Blog_post_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG_POST_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG_POST_MODEL')) {
 
-	class Blog_post_model extends NAILS_Blog_post_model
-	{
-	}
-
-endif;
-
-/* End of file blog_post_model.php */
-/* Location: ./application/models/blog_post_model.php */
+    class Blog_post_model extends NAILS_Blog_post_model
+    {
+    }
+}
