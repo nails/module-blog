@@ -38,6 +38,7 @@
     {
         "nails" :
         {
+            "moduleName": "blog",
             "type": "module"
         }
     }
