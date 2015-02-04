@@ -1,7 +1,7 @@
 <div class="group-blog manage tags overview">
 	<?php
 
-		if ( $is_fancybox ) :
+		if ( $isFancybox ) :
 
 			echo '<h1>' . $page->title . '</h1>';
 			$_class = 'system-alert';
@@ -19,20 +19,20 @@
 
 			if ( app_setting( 'categories_enabled', 'blog-' . $blog_id ) ) :
 
-				echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor( 'admin/blog/' . $blog_id . '/manage/category' . $is_fancybox, 'category' ) . '.';
+				echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor( 'admin/blog/' . $blog_id . '/manage/category' . $isFancybox, 'category' ) . '.';
 
 			endif;
 
 		?>
 	</p>
-	<?=$is_fancybox ? '' : '<hr />'?>
+	<?=$isFancybox ? '' : '<hr />'?>
 	<ul class="tabs disabled">
 		<li class="tab active">
-			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $is_fancybox, 'Overview' )?>
+			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $isFancybox, 'Overview' )?>
 		</li>
-		<?php if ( user_has_permission( 'admin.blog:' . $this->_blog_id . '.tag_create' ) ) : ?>
+		<?php if ( userHasPermission( 'admin.blog:' . $this->_blog_id . '.tag_create' ) ) : ?>
 		<li class="tab">
-			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag/create' . $is_fancybox, 'Create Tag' )?>
+			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag/create' . $isFancybox, 'Create Tag' )?>
 		</li>
 		<?php endif; ?>
 	</ul>
@@ -62,18 +62,18 @@
 								echo '<td class="count">';
 									echo isset( $tag->post_count ) ? $tag->post_count : '&mdash;';
 								echo '</td>';
-								echo $this->load->view( '_utilities/table-cell-datetime', array( 'datetime' => $tag->modified ), TRUE );
+								echo \Nails\Admin\Helper::loadDatetimeCell($tag->modified);
 								echo '<td class="actions">';
 
-									if ( user_has_permission( 'admin.blog:' . $blog_id. '.tag_edit' ) ) :
+									if ( userHasPermission( 'admin.blog:' . $blog_id. '.tag_edit' ) ) :
 
-										echo anchor( 'admin/blog/' . $blog_id . '/manage/tag/edit/' . $tag->id . $is_fancybox, lang( 'action_edit' ), 'class="awesome small"' );
+										echo anchor( 'admin/blog/' . $blog_id . '/manage/tag/edit/' . $tag->id . $isFancybox, lang( 'action_edit' ), 'class="awesome small"' );
 
 									endif;
 
-									if ( user_has_permission( 'admin.blog:' . $blog_id . '.tag_delete' ) ) :
+									if ( userHasPermission( 'admin.blog:' . $blog_id . '.tag_delete' ) ) :
 
-										echo anchor( 'admin/blog/' . $blog_id . '/manage/tag/delete/' . $tag->id . $is_fancybox, lang( 'action_delete' ), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."' );
+										echo anchor( 'admin/blog/' . $blog_id . '/manage/tag/delete/' . $tag->id . $isFancybox, lang( 'action_delete' ), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."' );
 
 									endif;
 

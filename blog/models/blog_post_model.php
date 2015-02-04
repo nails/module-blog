@@ -124,7 +124,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             if ($published) {
 
-                $published = user_rdatetime($data['published']);
+                $published = userReverseDatetime($data['published']);
                 $this->db->set('published', $published);
 
             } else {
@@ -345,7 +345,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             if ($published) {
 
-                $published = user_rdatetime($data['published']);
+                $published = userReverseDatetime($data['published']);
 
                 $this->db->set('published', $published);
 

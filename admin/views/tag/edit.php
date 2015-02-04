@@ -1,7 +1,7 @@
 <div class="group-blog manage tags edit">
 	<?php
 
-		if ( $is_fancybox ) :
+		if ( $isFancybox ) :
 
 			echo '<h1>' . $page->title . '</h1>';
 			$_class = 'system-alert';
@@ -12,7 +12,7 @@
 
 		endif;
 
-		echo form_open( uri_string() . $is_fancybox );
+		echo form_open( uri_string() . $isFancybox );
 
 	?>
 	<p class="<?=$_class?>">
@@ -21,19 +21,19 @@
 
 			if ( app_setting( 'categories_enabled', 'blog-' . $blog_id ) ) :
 
-				echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor( 'admin/blog/' . $blog_id . '/manage/category' . $is_fancybox, 'category' ) . '.';
+				echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor( 'admin/blog/' . $blog_id . '/manage/category' . $isFancybox, 'category' ) . '.';
 
 			endif;
 
 		?>
 	</p>
-	<?=$is_fancybox ? '' : '<hr />'?>
+	<?=$isFancybox ? '' : '<hr />'?>
 	<ul class="tabs disabled">
 		<li class="tab">
-			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $is_fancybox, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."' )?>
+			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $isFancybox, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."' )?>
 		</li>
 		<li class="tab active">
-			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag/create' . $is_fancybox, 'Create Tag' )?>
+			<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag/create' . $isFancybox, 'Create Tag' )?>
 		</li>
 	</ul>
 	<section class="tabs pages">
@@ -111,7 +111,7 @@
 			</fieldset>
 			<p style="margin-top:1em;">
 				<?=form_submit( 'submit', 'Save', 'class="awesome"' )?>
-				<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $is_fancybox, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."' )?>
+				<?=anchor( 'admin/blog/' . $blog_id . '/manage/tag' . $isFancybox, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."' )?>
 			</p>
 		</div>
 	</section>
