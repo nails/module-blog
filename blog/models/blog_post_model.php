@@ -124,7 +124,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             if ($published) {
 
-                $published = userReverseDatetime($data['published']);
+                $published = toNailsDatetime($data['published']);
                 $this->db->set('published', $published);
 
             } else {
@@ -345,7 +345,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             if ($published) {
 
-                $published = userReverseDatetime($data['published']);
+                $published = toNailsDatetime($data['published']);
 
                 $this->db->set('published', $published);
 
@@ -680,13 +680,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        if (!empty($data['search'])) {
+        if (!empty($data['keywords'])) {
 
-            $this->db->or_like($this->_table_prefix . '.title', $data['search']);
-            $this->db->or_like($this->_table_prefix . '.excerpt', $data['search']);
-            $this->db->or_like($this->_table_prefix . '.body', $data['search']);
-            $this->db->or_like($this->_table_prefix . '.seo_description', $data['search']);
-            $this->db->or_like($this->_table_prefix . '.seo_keywords', $data['search']);
+            $this->db->or_like($this->_table_prefix . '.title', $data['keywords']);
+            $this->db->or_like($this->_table_prefix . '.excerpt', $data['keywords']);
+            $this->db->or_like($this->_table_prefix . '.body', $data['keywords']);
+            $this->db->or_like($this->_table_prefix . '.seo_description', $data['keywords']);
+            $this->db->or_like($this->_table_prefix . '.seo_keywords', $data['keywords']);
         }
     }
 

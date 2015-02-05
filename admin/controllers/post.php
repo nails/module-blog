@@ -87,36 +87,46 @@ class Post extends \AdminController
 
         // --------------------------------------------------------------------------
 
-        //  Define the $data variable, this'll be passed to the get_all() and count_all() methods
-        $data = array('where' => array(), 'sort' => array());
+        //  Get pagination and search/sort variables
+        $page      = $this->input->get('page')      ? $this->input->get('page')      : 0;
+        $perPage   = $this->input->get('perPage')   ? $this->input->get('perPage')   : 50;
+        $sortOn    = $this->input->get('sortOn')    ? $this->input->get('sortOn')    : 'bp.published';
+        $sortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
+        $keywords  = $this->input->get('keywords')  ? $this->input->get('keywords')  : '';
 
         // --------------------------------------------------------------------------
 
-        //  Restricting to appropriate blog
-        $data['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
+        //  Define the sortable columns
+        $sortColumns = array(
+            'bp.published' => 'Published Date',
+            'bp.modified'  => 'Modified Date',
+            'bp.title'     => 'Title'
+        );
 
         // --------------------------------------------------------------------------
 
-        //  Set useful vars
-        $page       = $this->input->get('page')     ? $this->input->get('page')     : 0;
-        $per_page   = $this->input->get('per_page') ? $this->input->get('per_page') : 50;
-        $sort_on    = $this->input->get('sort_on')  ? $this->input->get('sort_on')  : 'bp.published';
-        $sort_order = $this->input->get('order')    ? $this->input->get('order')    : 'desc';
-        $search     = $this->input->get('search')   ? $this->input->get('search')   : '';
+        //  Define the $data variable for the queries
+        $data = array(
+            'where' => array(
+                array(
+                    'column' => 'blog_id',
+                    'value' => $this->blog->id
+                )
+            ),
+            'sort'  => array(
+                'column' => $sortOn,
+                'order'  => $sortOrder
+            ),
+            'keywords' => $keywords
+        );
 
-        //  Set sort variables for view and for $data
-        $this->data['sort_on']      = $data['sort']['column']  = $sort_on;
-        $this->data['sort_order']   = $data['sort']['order']   = $sort_order;
-        $this->data['search']       = $data['search']          = $search;
+        //  Get the items for the page
+        $totalRows           = $this->blog_post_model->count_all($data);
+        $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
 
-        //  Define and populate the pagination object
-        $this->data['pagination']             = new \stdClass();
-        $this->data['pagination']->page       = $page;
-        $this->data['pagination']->per_page   = $per_page;
-        $this->data['pagination']->total_rows = $this->blog_post_model->count_all($data);
-
-        //  Fetch all the items for this page
-        $this->data['posts'] = $this->blog_post_model->get_all($page, $per_page, $data);
+        //  Set Search and Pagination objects for the view
+        $this->data['search']     = \Nails\Admin\Helper::searchObject($sortColumns, $sortOn, $sortOrder, $perPage, $keywords);
+        $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
         // --------------------------------------------------------------------------
 

@@ -13,13 +13,8 @@
     <hr />
     <?php
 
-        $sortOn = array(
-            'bp.published' => 'Published Date',
-            'bp.modified'  => 'Modified Date',
-            'bp.title'     => 'Title'
-       );
-        echo \Nails\Admin\Helper::loadSearch($sortOn);
-        echo \Nails\Admin\Helper::loadPagination($pagination->total_rows);
+        echo \Nails\Admin\Helper::loadSearch($search);
+        echo \Nails\Admin\Helper::loadPagination($pagination);
 
     ?>
     <table>
@@ -138,7 +133,7 @@
     </table>
     <?php
 
-        echo \Nails\Admin\Helper::loadPagination($pagination->total_rows);
+        echo \Nails\Admin\Helper::loadPagination($pagination);
 
     ?>
 </div>

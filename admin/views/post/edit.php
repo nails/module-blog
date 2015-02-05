@@ -47,7 +47,7 @@
                 $field                 = array();
                 $field['key']          = 'title';
                 $field['label']        = 'Title';
-                $field['required']     = TRUE;
+                $field['required']     = true;
                 $field['default']      = isset($post->title) ? $post->title : '';
                 $field['placeholder']  = 'The title of the post';
 
@@ -88,7 +88,7 @@
                 $field['label']        = 'Published';
                 $field['text_on']      = 'YES';
                 $field['text_off']     = 'NO';
-                $field['default']      = isset($post->is_published) ? $post->is_published : FALSE;
+                $field['default']      = isset($post->is_published) ? $post->is_published : false;
                 $field['id']           = 'is-published';
 
                 echo form_field_boolean($field);
@@ -101,8 +101,8 @@
                     $field                 = array();
                     $field['key']          = 'published';
                     $field['label']        = 'Publish Date';
-                    $field['required']     = TRUE;
-                    $field['default']      = isset($post->published) ? userMysqlDatetime($post->published) : '';
+                    $field['required']     = true;
+                    $field['default']      = isset($post->published) ? toUserDate($post->published, 'Y-m-d H:i:s') : '';
                     $field['placeholder']  = 'The publish date for this blog post';
 
                     echo form_field_datetime($field);
@@ -148,7 +148,7 @@
 
                             foreach ($_post_raw as $key => $value) :
 
-                                $_post[$value] = TRUE;
+                                $_post[$value] = true;
 
                             endforeach;
 
@@ -193,7 +193,7 @@
 
                             foreach ($_post_raw as $key => $value) :
 
-                                $_post[$value] = TRUE;
+                                $_post[$value] = true;
 
                             endforeach;
 
@@ -251,7 +251,7 @@
 
                             foreach ($assoc->data as $data) :
 
-                                $_checked = array_search($data->id, $_selected) !== FALSE ? 'selected="selected"' : '';
+                                $_checked = array_search($data->id, $_selected) !== false ? 'selected="selected"' : '';
                                 echo '<option value="' . $data->id . '" ' . $_checked . '>' . $data->label . '</option>';
 
                             endforeach;
