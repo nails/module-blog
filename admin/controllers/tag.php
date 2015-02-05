@@ -5,7 +5,7 @@
  *
  * @package     Nails
  * @subpackage  module-blog
- * @category    AdminController
+ * @tag    AdminController
  * @author      Nails Dev Team
  * @link
  */
@@ -30,6 +30,12 @@ class Tag extends \AdminController
         if (!empty($blogs)) {
 
             foreach ($blogs as $blog) {
+
+                //  Categories enabled for this blog?
+                if (!app_setting('tags_enabled', 'blog-' . $blog->id)) {
+
+                    return false;
+                }
 
                 //  Clear group naming
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
@@ -73,6 +79,25 @@ class Tag extends \AdminController
         }
 
         $this->data['blog'] = $this->blog;
+
+        // --------------------------------------------------------------------------
+
+        //  Tags enabled?
+        if (!app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+
+            show_404();
+        }
+
+        // --------------------------------------------------------------------------
+
+        $this->isFancybox = $this->input->get('isFancybox') ? '?isFancybox=1' : '';
+        $this->data['isFancybox'] = $this->isFancybox;
+
+        if ($this->isFancybox) {
+
+            $this->data['headerOverride'] = 'structure/headerBlank';
+            $this->data['footerOverride'] = 'structure/footerBlank';
+        }
     }
 
     // --------------------------------------------------------------------------
@@ -83,18 +108,21 @@ class Tag extends \AdminController
      */
     public function index()
     {
+        //  Page data
+        $this->data['page']->title = 'Blog &rsaquo; Tags';
+
+        // --------------------------------------------------------------------------
+
         $data                  = array();
         $data['include_count'] = true;
         $data['where']         = array();
-        $data['where'][]       = array('column' => 'blog_id', 'value' => $this->blogId);
+        $data['where'][]       = array('column' => 'blog_id', 'value' => $this->blog->id);
 
         $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $data);
 
         // --------------------------------------------------------------------------
 
-        $this->load->view('structure/header', $this->data);
-        $this->load->view('admin/blog/manage/tag/index', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        \Nails\Admin\Helper::loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -105,7 +133,7 @@ class Tag extends \AdminController
      */
     public function create()
     {
-        if (!userHasPermission('admin.blog:' . $this->blogId . '.tag_create')) {
+        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_create')) {
 
             unauthorised();
         }
@@ -123,12 +151,12 @@ class Tag extends \AdminController
             $this->form_validation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
 
             $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('max_length',   lang('fv_max_length'));
+            $this->form_validation->set_message('max_length', lang('fv_max_length'));
 
             if ($this->form_validation->run()) {
 
                 $data                  = new \stdClass();
-                $data->blog_id         = $this->blogId;
+                $data->blog_id         = $this->blog->id;
                 $data->label           = $this->input->post('label');
                 $data->description     = $this->input->post('description');
                 $data->seo_title       = $this->input->post('seo_title');
@@ -137,8 +165,10 @@ class Tag extends \AdminController
 
                 if ($this->blog_tag_model->create($data)) {
 
-                    $this->session->set_flashdata('success', '<strong>Success!</strong> Tag created successfully.');
-                    redirect('admin/blog/' . $this->blogId . '/manage/tag' . $this->data['isFancybox']);
+                    $status  = 'success';
+                    $message = '<strong>Success!</strong> Tag created successfully.';
+                    $this->session->set_flashdata($status, $message);
+                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
@@ -155,19 +185,17 @@ class Tag extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Page data
-        $this->data['page']->title .= '&rsaquo; Create';
+        $this->data['page']->title = 'Blog &rsaquo; Tags &rsaquo; Create';
 
         // --------------------------------------------------------------------------
 
         //  Fetch data
-        $this->data['categories'] = $this->blog_tag_model->get_all();
+        $this->data['tags'] = $this->blog_tag_model->get_all();
 
         // --------------------------------------------------------------------------
 
         //  Load views
-        $this->load->view('structure/header', $this->data);
-        $this->load->view('admin/blog/manage/tag/edit', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        \Nails\Admin\Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -178,14 +206,14 @@ class Tag extends \AdminController
      */
     public function edit()
     {
-        if (!userHasPermission('admin.blog:' . $this->blogId . '.tag_edit')) {
+        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_edit')) {
 
             unauthorised();
         }
 
         // --------------------------------------------------------------------------
 
-        $this->data['tag'] = $this->blog_tag_model->get_by_id($this->uri->segment(7));
+        $this->data['tag'] = $this->blog_tag_model->get_by_id($this->uri->segment(6));
 
         if (empty($this->data['tag'])) {
 
@@ -219,7 +247,7 @@ class Tag extends \AdminController
                 if ($this->blog_tag_model->update($this->data['tag']->id, $data)) {
 
                     $this->session->set_flashdata('success', '<strong>Success!</strong> Tag saved successfully.');
-                    redirect('admin/blog/' . $this->blogId . '/manage/tag' . $this->data['isFancybox']);
+                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
@@ -236,7 +264,7 @@ class Tag extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Page data
-        $this->data['page']->title = 'Edit &rsaquo; ' . $this->data['tag']->label;
+        $this->data['page']->title = 'Blog &rsaquo; Catrgories &rsaquo; Edit &rsaquo; ' . $this->data['tag']->label;
 
         // --------------------------------------------------------------------------
 
@@ -246,9 +274,7 @@ class Tag extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Load views
-        $this->load->view('structure/header', $this->data);
-        $this->load->view('admin/blog/manage/tag/edit', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        \Nails\Admin\Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -259,14 +285,14 @@ class Tag extends \AdminController
      */
     public function delete()
     {
-        if (!userHasPermission('admin.blog:' . $this->blogId . '.tag_delete')) {
+        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_delete')) {
 
             unauthorised();
         }
 
         // --------------------------------------------------------------------------
 
-        $id = $this->uri->segment(7);
+        $id = $this->uri->segment(6);
 
         if ($this->blog_tag_model->delete($id)) {
 
@@ -280,6 +306,6 @@ class Tag extends \AdminController
             $this->session->set_flashdata($status, $message);
         }
 
-        redirect('admin/blog/' . $this->blogId . '/manage/tag' . $this->data['isFancybox']);
+        redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
     }
 }

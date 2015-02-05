@@ -28,6 +28,7 @@
                     echo '<tr>';
                         echo '<td class="label">';
                             echo $blog->label;
+                            echo $blog->description ? '<small>' . $blog->description . '</small>' : '';
                         echo '</td>';
                         echo '<td class="actions">';
 

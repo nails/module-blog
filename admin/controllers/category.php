@@ -31,6 +31,12 @@ class Category extends \AdminController
 
             foreach ($blogs as $blog) {
 
+                //  Categories enabled for this blog?
+                if (!app_setting('tags_enabled', 'blog-' . $blog->id)) {
+
+                    return false;
+                }
+
                 //  Clear group naming
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 
@@ -76,8 +82,22 @@ class Category extends \AdminController
 
         // --------------------------------------------------------------------------
 
+        //  Categories enabled?
+        if (!app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
+
+            show_404();
+        }
+
+        // --------------------------------------------------------------------------
+
         $this->isFancybox = $this->input->get('isFancybox') ? '?isFancybox=1' : '';
         $this->data['isFancybox'] = $this->isFancybox;
+
+        if ($this->isFancybox) {
+
+            $this->data['headerOverride'] = 'structure/headerBlank';
+            $this->data['footerOverride'] = 'structure/footerBlank';
+        }
     }
 
     // --------------------------------------------------------------------------

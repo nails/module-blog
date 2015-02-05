@@ -1,22 +1,31 @@
 <div class="group-settings blog edit">
-	<?=form_open()?>
-	<fieldset id="settings-blog-edit-basic">
-		<legend>Basic Details</legend>
-		<?php
+    <?=form_open()?>
+    <fieldset id="settings-blog-edit-basic">
+        <legend>Basic Details</legend>
+        <?php
 
 
-			$_field				= array();
-			$_field['key']		= 'label';
-			$_field['label']	= 'Label';
-			$_field['required']	= TRUE;
-			$_field['default']	= isset( $blog->label ) ? $blog->label : '';
+            $field             = array();
+            $field['key']      = 'label';
+            $field['label']    = 'Label';
+            $field['required'] = true;
+            $field['default']  = isset($blog->{$field['key']}) ? $blog->{$field['key']} : '';
 
-			echo form_field( $_field );
+            echo form_field($field);
 
-		?>
-	</fieldset>
-	<p>
-		<?=form_submit( 'submit', lang( 'action_save_changes' ), 'class="awesome"' );?>
-	</p>
-	<?=form_close();?>
+            // --------------------------------------------------------------------------
+
+            $field            = array();
+            $field['key']     = 'description';
+            $field['label']   = 'Description';
+            $field['default'] = isset($blog->{$field['key']}) ? $blog->{$field['key']} : '';
+
+            echo form_field($field);
+
+        ?>
+    </fieldset>
+    <p>
+        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome"');?>
+    </p>
+    <?=form_close();?>
 </div>

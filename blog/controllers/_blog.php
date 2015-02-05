@@ -12,7 +12,7 @@
 
 class NAILS_Blog_Controller extends NAILS_Controller
 {
-    protected $_blog_id;
+    protected $blog;
 
     // --------------------------------------------------------------------------
 
@@ -34,10 +34,10 @@ class NAILS_Blog_Controller extends NAILS_Controller
         //  Check the blog is valid
         $this->load->model('blog/blog_model');
 
-        $blogId = $this->uri->rsegment(2);
-        $blog   = $this->blog_model->get_by_id($blogId);
+        $blogId     = $this->uri->rsegment(2);
+        $this->blog = $this->blog_model->get_by_id($blogId);
 
-        if (empty($blog)) {
+        if (empty($this->blog)) {
 
             show_404();
         }
@@ -56,7 +56,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
-        $settingStr = 'blog-' . $blog->id;
+        $settingStr = 'blog-' . $this->blog->id;
 
         if (app_setting('categories_enabled', $settingStr)) {
 
@@ -93,12 +93,6 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Set view data
-        $this->_blog_id                 = $blog->id;
-        $this->_blog_url                = $this->blog_model->getBlogUrl($blog->id);
-        $this->_blog_name               = app_setting('name', $settingStr) ? app_setting('name', $settingStr) : 'Blog';
-        $this->data['blog_id']          = $blog->id;
-        $this->data['blog_url']         = $this->_blog_url;
-        $this->data['blog_name']        = $this->_blog_name;
-        $this->data['blog_description'] = $this->_blog_description;
+        $this->data['blog'] = $this->blog;
     }
 }

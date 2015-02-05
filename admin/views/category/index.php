@@ -1,29 +1,15 @@
 <div class="group-blog manage categories overview">
-    <?php
-
-        if ($isFancybox) {
-
-            echo '<h1>' . $page->title . '</h1>';
-            $class = 'system-alert';
-
-        } else {
-
-            $class = '';
-        }
-
-    ?>
-    <p class="<?=$class?>">
+    <p>
         Use categories to group broad post topics together. For example, a category might be 'Music', or 'Travel'.
         <?php
 
             if (app_setting('tags_enabled', 'blog-' . $blog->id)) {
 
-                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/' . $blog->id . '/manage/tag' . $isFancybox, 'tag') . '.';
+                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/tag/index/' . $blog->id . $isFancybox, 'tag') . '.';
             }
 
         ?>
     </p>
-    <?=$isFancybox ? '' : '<hr />'?>
     <ul class="tabs disabled">
         <li class="tab active">
             <?=anchor('admin/blog/category/index/' . $blog->id . $isFancybox, 'Overview')?>

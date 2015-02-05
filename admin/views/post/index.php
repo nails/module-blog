@@ -61,7 +61,6 @@
                             if (app_setting('use_excerpt', 'blog-' . $blog->id)) {
 
                                 echo '<small>' . strip_tags($post->excerpt) . '</small>';
-
                             }
 
                         echo '</td>';
@@ -70,7 +69,7 @@
 
                             echo '<td class="status success">';
                                 echo '<span class="fa fa-check-circle"></span>';
-                                echo '<br />' . niceTime($post->published);
+                                echo niceTime($post->published);
                             echo '</td>';
 
                         } elseif ($post->is_published && strtotime($post->published) > time()) {
@@ -92,9 +91,13 @@
 
                         echo '<td class="actions">';
 
-                            if ($post->is_published) {
+                            if ($post->is_published && strtotime($post->published) <= time()) {
 
                                 echo anchor($post->url, lang('action_view'), 'class="awesome small green" target="_blank"');
+
+                            } else {
+
+                                echo anchor($post->url . '?preview=1', lang('action_preview'), 'class="awesome small green" target="_blank"');
                             }
 
                             if (userHasPermission('admin.blog:' . $blog->id . '.post_edit')) {

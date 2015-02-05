@@ -48,7 +48,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page      = $this->uri->rsegment(3);
-        $perPage  = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage  = app_setting('home_per_page', 'blog-' . $this->blog->id);
         $perPage  = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -59,13 +59,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'blog_id',      'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->blog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -120,10 +120,14 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
-        //  If this post's status is not published then 404, unless logged in as an admin
-        if (!$this->data['post']->is_published && !$this->user_model->is_admin()) {
+        //  If this post's status is not published then 404, unless logged in as a user with post managing permissions
+        if (!$this->data['post']->is_published || strtotime($this->data['post']->published) > time()) {
 
-            show_404();
+            //  This post hasn't been published, or is scheduled. However, check to see if the user has post management permissions
+            if (!userHasPermission('admin.blog.post_manage')) {
+
+                show_404();
+            }
         }
 
         // --------------------------------------------------------------------------
@@ -142,7 +146,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->_blog_name . ': ';
+        $this->data['page']->title            = $this->blog->label . ': ';
         $this->data['page']->title           .= $this->data['post']->seo_title ? $this->data['post']->seo_title : $this->data['post']->title;
         $this->data['page']->seo->description = $this->data['post']->seo_description;
         $this->data['page']->seo->keywords    = $this->data['post']->seo_keywords;
@@ -150,11 +154,11 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Assets
-        if (app_setting('social_enabled', 'blog-' . $this->_blog_id)) {
+        if (app_setting('social_enabled', 'blog-' . $this->blog->id)) {
 
             $this->asset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
 
-            switch (app_setting('social_skin', 'blog-' . $this->_blog_id)) {
+            switch (app_setting('social_skin', 'blog-' . $this->blog->id)) {
 
                 case 'FLAT':
 
@@ -203,7 +207,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function category()
     {
-        if (!app_setting('categories_enabled', 'blog-' . $this->_blog_id) || !$this->uri->rsegment(4)) {
+        if (!app_setting('categories_enabled', 'blog-' . $this->blog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -226,7 +230,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->_blog_name . ': Posts in category "' . $this->data['category']->label . '"';
+        $this->data['page']->title            = $this->blog->label . ': Posts in category "' . $this->data['category']->label . '"';
         $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' posted in the  ' . $this->data['category']->label . ' category ';
         $this->data['page']->seo->keywords    = '';
 
@@ -234,7 +238,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->blog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -245,13 +249,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->blog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -301,7 +305,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function tag()
     {
-        if (!app_setting('tags_enabled', 'blog-' . $this->_blog_id) || !$this->uri->rsegment(4)) {
+        if (!app_setting('tags_enabled', 'blog-' . $this->blog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -324,7 +328,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->_blog_name . ': Posts tagged with "' . $this->data['tag']->label . '"';
+        $this->data['page']->title            = $this->blog->label . ': Posts tagged with "' . $this->data['tag']->label . '"';
         $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' tagged with  ' . $this->data['tag']->label . ' ';
         $this->data['page']->seo->keywords    = '';
 
@@ -332,7 +336,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->_blog_id);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->blog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -343,13 +347,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->_blog_id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->blog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -399,7 +403,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function rss()
     {
-        if (!app_setting('rss_enabled', 'blog-' . $this->_blog_id)) {
+        if (!app_setting('rss_enabled', 'blog-' . $this->blog->id)) {
 
             show_404();
         }
@@ -409,12 +413,12 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Get posts
         $data                    = array();
         $data['include_body']    = true;
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->_blog_id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'blog_id',      'value' => $this->_blog_id);
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->blog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -459,24 +463,24 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         $this->data['widget'] = new stdClass();
 
-        if (app_setting('sidebar_latest_posts', 'blog-' . $this->_blog_id)) {
+        if (app_setting('sidebar_latest_posts', 'blog-' . $this->blog->id)) {
 
-            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->_blog_id);
+            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->blog->id);
         }
 
-        if (app_setting('sidebar_categories', 'blog-' . $this->_blog_id)) {
+        if (app_setting('sidebar_categories', 'blog-' . $this->blog->id)) {
 
-            $this->data['widget']->categories = $this->blog_widget_model->categories($this->_blog_id);
+            $this->data['widget']->categories = $this->blog_widget_model->categories($this->blog->id);
         }
 
-        if (app_setting('sidebar_tags', 'blog-' . $this->_blog_id)) {
+        if (app_setting('sidebar_tags', 'blog-' . $this->blog->id)) {
 
-            $this->data['widget']->tags = $this->blog_widget_model->tags($this->_blog_id);
+            $this->data['widget']->tags = $this->blog_widget_model->tags($this->blog->id);
         }
 
-        if (app_setting('sidebar_popular_posts', 'blog-' . $this->_blog_id)) {
+        if (app_setting('sidebar_popular_posts', 'blog-' . $this->blog->id)) {
 
-            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->_blog_id);
+            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->blog->id);
         }
     }
 

@@ -1,31 +1,15 @@
 <div class="group-blog manage categories edit">
-    <?php
-
-        if ($isFancybox) {
-
-            echo '<h1>' . $page->title . '</h1>';
-            $class = 'system-alert';
-
-        } else {
-
-            $class = '';
-        }
-
-        echo form_open(uri_string() . $isFancybox);
-
-    ?>
-    <p class="<?=$class?>">
+    <p>
         Use categories to group broad post topics together. For example, a category might be 'Music', or 'Travel'.
         <?php
 
             if (app_setting('tags_enabled', 'blog-' . $blog->id)) {
 
-                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/' . $blog->id . '/manage/tag' . $isFancybox, 'tag') . '.';
+                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/tag/index/' . $blog->id . $isFancybox, 'tag') . '.';
             }
 
         ?>
     </p>
-    <?=$isFancybox ? '' : '<hr />'?>
     <ul class="tabs disabled">
         <li class="tab">
             <?=anchor('admin/blog/category/index/' . $blog->id . $isFancybox, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."')?>
@@ -36,6 +20,7 @@
     </ul>
     <section class="tabs pages">
         <div class="tab page active">
+            <?=form_open(uri_string() . '?' . $this->input->server('QUERY_STRING'))?>
             <fieldset>
                 <legend>Basic Details</legend>
                 <?php

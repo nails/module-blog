@@ -40,6 +40,17 @@ class NAILS_Blog_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
+    protected function _format_object(&$object)
+    {
+        parent::_format_object($object);
+
+        $object->url = app_setting('url', 'blog-' . $object->id);
+        $object->url = $object->url ? $object->url : 'blog';
+        $object->url = site_url($object->url);
+    }
+
+    // --------------------------------------------------------------------------
+
     /**
      * Fetch all the associations for a particular post
      * @param  int   $post_id The ID f the post

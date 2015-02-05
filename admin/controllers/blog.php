@@ -123,12 +123,14 @@ class Blog extends \AdminController
 
             $this->load->library('form_validation');
             $this->form_validation->set_rules('label', '', 'xss_clean|required');
+            $this->form_validation->set_rules('description', '', 'xss_clean');
             $this->form_validation->set_message('required', lang('fv_required'));
 
             if ($this->form_validation->run()) {
 
-                $data        = new \stdClass();
-                $data->label = $this->input->post('label');
+                $data              = new \stdClass();
+                $data->label       = $this->input->post('label');
+                $data->description = $this->input->post('description');
 
                 $id = $this->blog_model->create($data);
 
@@ -191,12 +193,14 @@ class Blog extends \AdminController
 
             $this->load->library('form_validation');
             $this->form_validation->set_rules('label', '', 'xss_clean|required');
+            $this->form_validation->set_rules('description', '', 'xss_clean');
             $this->form_validation->set_message('required', lang('fv_required'));
 
             if ($this->form_validation->run()) {
 
-                $data        = new \stdClass();
-                $data->label = $this->input->post('label');
+                $data              = new \stdClass();
+                $data->label       = $this->input->post('label');
+                $data->description = $this->input->post('description');
 
                 if ($this->blog_model->update($this->uri->Segment(5), $data)) {
 
