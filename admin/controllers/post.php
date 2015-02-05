@@ -59,6 +59,8 @@ class Post extends \AdminController
         //  Load models
         $this->load->model('blog/blog_model');
         $this->load->model('blog/blog_post_model');
+        $this->load->model('blog/blog_category_model');
+        $this->load->model('blog/blog_tag_model');
 
         // --------------------------------------------------------------------------
 
@@ -573,5 +575,16 @@ class Post extends \AdminController
         }
 
         redirect('admin/blog/post/' . $this->blog->id);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Renders a preview of the post
+     * @return void
+     */
+    public function preview()
+    {
+
     }
 }

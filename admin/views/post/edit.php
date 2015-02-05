@@ -383,7 +383,8 @@
         </section>
 
         <p>
-            <?=form_submit('submit', lang('action_save_changes'), 'class="awesome"')?>
+            <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" id="btnSubmit"')?>
+            <button class="awesome right orange js-only" id="btnPreview">Preview</button>
         </p>
 
     <?=form_close()?>
