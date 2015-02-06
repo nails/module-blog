@@ -1,14 +1,6 @@
 <div class="group-settings blog index">
     <p>
         The following blogs are enabled on your site.
-        <?php
-
-            if ($this->user_model->is_superuser()) {
-
-                echo anchor('admin/blog/blog/create', 'Create Blog', 'class="right awesome small green"');
-            }
-
-        ?>
     </p>
     <hr />
     <table>

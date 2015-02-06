@@ -95,6 +95,14 @@ class Blog extends \AdminController
 
         // --------------------------------------------------------------------------
 
+        //  Add a header button
+        if (userHasPermission('admin.blog:0.blog_create')) {
+
+             \Nails\Admin\Helper::addHeaderButton('admin/blog/blog/create', 'Create Blog');
+        }
+
+        // --------------------------------------------------------------------------
+
         //  Load views
         \Nails\Admin\Helper::loadView('index');
     }

@@ -130,6 +130,12 @@ class Post extends \AdminController
         $this->data['search']     = \Nails\Admin\Helper::searchObject($sortColumns, $sortOn, $sortOrder, $perPage, $keywords);
         $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
+        //  Add a header button
+        if (userHasPermission('admin.blog:' . $blog->id . '.post_create')) {
+
+             \Nails\Admin\Helper::addHeaderButton('admin/blog/post/create/' . $blog->id, 'New Blog Post');
+        }
+
         // --------------------------------------------------------------------------
 
         \Nails\Admin\Helper::loadView('index');
@@ -252,7 +258,7 @@ class Post extends \AdminController
         //  Load assets
         $this->asset->library('uploadify');
         $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
-        $this->asset->load('nails.admin.blog.create_edit.js', 'NAILS');
+        $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
         // --------------------------------------------------------------------------
 
@@ -476,7 +482,7 @@ class Post extends \AdminController
         //  Load assets
         $this->asset->library('uploadify');
         $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
-        $this->asset->load('nails.admin.blog.create_edit.js', 'NAILS');
+        $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
         $inlineJs  = 'var _EDIT;';
         $inlineJs .= '$(function()';

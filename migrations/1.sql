@@ -1,1 +1,1 @@
-ALTER TABLE `nails_blog` ADD `description` VARCHAR(255)  NULL  DEFAULT NULL  AFTER `label`;
+ALTER TABLE `{{NAILS_DB_PREFIX}}blog` ADD `description` VARCHAR(255)  NULL  DEFAULT NULL  AFTER `label`;
