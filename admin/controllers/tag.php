@@ -166,13 +166,13 @@ class Tag extends \AdminController
                 if ($this->blog_tag_model->create($data)) {
 
                     $status  = 'success';
-                    $message = '<strong>Success!</strong> Tag created successfully.';
+                    $message = 'Tag created successfully.';
                     $this->session->set_flashdata($status, $message);
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> there was a problem creating the Tag. ';
+                    $this->data['error']  = 'There was a problem creating the Tag. ';
                     $this->data['error'] .= $this->blog_tag_model->last_error();
                 }
 
@@ -246,12 +246,12 @@ class Tag extends \AdminController
 
                 if ($this->blog_tag_model->update($this->data['tag']->id, $data)) {
 
-                    $this->session->set_flashdata('success', '<strong>Success!</strong> Tag saved successfully.');
+                    $this->session->set_flashdata('success', 'Tag saved successfully.');
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> there was a problem saving the Tag. ';
+                    $this->data['error']  = 'There was a problem saving the Tag. ';
                     $this->data['error'] .= $this->blog_tag_model->last_error();
                 }
 
@@ -296,12 +296,12 @@ class Tag extends \AdminController
 
         if ($this->blog_tag_model->delete($id)) {
 
-            $this->session->set_flashdata('success', '<strong>Success!</strong> Tag was deleted successfully.');
+            $this->session->set_flashdata('success', 'Tag was deleted successfully.');
 
         } else {
 
             $status   = 'error';
-            $message  = '<strong>Sorry,</strong> there was a problem deleting the Tag. ';
+            $message  = 'There was a problem deleting the Tag. ';
             $message .= $this->blog_tag_model->last_error();
             $this->session->set_flashdata($status, $message);
         }

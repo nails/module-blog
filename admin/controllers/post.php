@@ -213,7 +213,7 @@ class Post extends \AdminController
                     // --------------------------------------------------------------------------
 
                     //  Set flashdata and redirect
-                    $this->session->set_flashdata('success', '<strong>Success!</strong> Post was created.');
+                    $this->session->set_flashdata('success', 'Post was created.');
                     redirect('admin/blog/post/index/' . $this->blog->id);
 
                 } else {
@@ -437,7 +437,7 @@ class Post extends \AdminController
 
                     // --------------------------------------------------------------------------
 
-                    $this->session->set_flashdata('success', '<strong>Success!</strong> Post was updated.');
+                    $this->session->set_flashdata('success', 'Post was updated.');
                     redirect('admin/blog/post/index/' . $this->blog->id);
 
                 } else {
@@ -519,7 +519,7 @@ class Post extends \AdminController
 
         if (!$post || $post->blog->id != $this->blog->id) {
 
-            $this->session->set_flashdata('error', '<strong>Sorry,</strong> I could\'t find a post by that ID.');
+            $this->session->set_flashdata('error', 'I could\'t find a post by that ID.');
             redirect('admin/blog/post/' . $this->blog->id);
         }
 
@@ -527,7 +527,7 @@ class Post extends \AdminController
 
         if ($this->blog_post_model->delete($post_id)) {
 
-            $flashdata  = '<strong>Success!</strong> Post was deleted successfully.';
+            $flashdata  = 'Post was deleted successfully.';
             $flashdata .=  userHasPermission('admin.blog:' . $this->blog->id . '.post_restore') ? ' ' . anchor('admin/blog/' . $this->blog->id . '/restore/' . $post_id, 'Undo?') : '';
 
             $this->session->set_flashdata('success', $flashdata);
@@ -537,7 +537,7 @@ class Post extends \AdminController
 
         } else {
 
-            $this->session->set_flashdata('error', '<strong>Sorry,</strong> I failed to delete that post.');
+            $this->session->set_flashdata('error', 'I failed to delete that post.');
         }
 
         redirect('admin/blog/post/index/' . $this->blog->id);
@@ -567,7 +567,7 @@ class Post extends \AdminController
 
             $post = $this->blog_post_model->get_by_id($post_id);
 
-            $this->session->set_flashdata('success', '<strong>Success!</strong> Post was restored successfully.');
+            $this->session->set_flashdata('success', 'Post was restored successfully.');
 
             //  Update admin changelog
             $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/edit/' . $post_id);
@@ -575,7 +575,7 @@ class Post extends \AdminController
         } else {
 
             $status   = 'error';
-            $message  = '<strong>Sorry,</strong> I failed to restore that post. ';
+            $message  = 'I failed to restore that post. ';
             $message .= $this->blog_post_model->last_error();
             $this->session->set_flashdata($status, $message);
         }

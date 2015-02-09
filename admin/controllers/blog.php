@@ -145,14 +145,14 @@ class Blog extends \AdminController
                 if ($id) {
 
                     $status   = 'success';
-                    $message  = '<strong>Success!</strong> Blog was created successfully, ';
+                    $message  = 'Blog was created successfully, ';
                     $message .= 'now please confirm blog settings.';
                     $this->session->set_flashdata($status, $message);
                     redirect('admin/blog/settings?blog_id=' . $id);
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> failed to create blog. ';
+                    $this->data['error']  = 'Failed to create blog. ';
                     $this->data['error'] .= $this->blog_model->last_error();
                 }
 
@@ -213,13 +213,13 @@ class Blog extends \AdminController
                 if ($this->blog_model->update($this->uri->Segment(5), $data)) {
 
                     $status  = 'success';
-                    $message = '<strong>Success!</strong> Blog was updated successfully.';
+                    $message = 'Blog was updated successfully.';
                     $this->session->set_flashdata($status, $message);
                     redirect('admin/blog/blog/index');
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> failed to create blog. ';
+                    $this->data['error']  = 'Failed to create blog. ';
                     $this->data['error'] .= $this->blog_model->last_error();
                 }
 
@@ -254,7 +254,7 @@ class Blog extends \AdminController
 
         if (empty($blog)) {
 
-            $this->session->set_flashdata('error', '<strong>Sorry,</strong> you specified an invalid Blog ID.');
+            $this->session->set_flashdata('error', 'You specified an invalid Blog ID.');
             redirect('admin/blog/blog/index');
         }
 
@@ -262,11 +262,11 @@ class Blog extends \AdminController
 
         if ($this->blog_model->delete($blog->id)) {
 
-            $this->session->set_flashdata('success', '<strong>Success!</strong> blog was deleted successfully.');
+            $this->session->set_flashdata('success', 'Blog was deleted successfully.');
 
         } else {
 
-            $this->session->set_flashdata('error', '<strong>Sorry,</strong> failed to delete blog. ' . $this->blog_model->last_error());
+            $this->session->set_flashdata('error', 'Failed to delete blog. ' . $this->blog_model->last_error());
         }
 
         redirect('admin/blog/blog/index');

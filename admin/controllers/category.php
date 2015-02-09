@@ -166,13 +166,13 @@ class Category extends \AdminController
                 if ($this->blog_category_model->create($data)) {
 
                     $status  = 'success';
-                    $message = '<strong>Success!</strong> Category created successfully.';
+                    $message = 'Category created successfully.';
                     $this->session->set_flashdata($status, $message);
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> there was a problem creating the Category. ';
+                    $this->data['error']  = 'There was a problem creating the Category. ';
                     $this->data['error'] .= $this->blog_category_model->last_error();
                 }
 
@@ -246,12 +246,12 @@ class Category extends \AdminController
 
                 if ($this->blog_category_model->update($this->data['category']->id, $data)) {
 
-                    $this->session->set_flashdata('success', '<strong>Success!</strong> Category saved successfully.');
+                    $this->session->set_flashdata('success', 'Category saved successfully.');
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isFancybox);
 
                 } else {
 
-                    $this->data['error']  = '<strong>Sorry,</strong> there was a problem saving the Category. ';
+                    $this->data['error']  = 'There was a problem saving the Category. ';
                     $this->data['error'] .= $this->blog_category_model->last_error();
                 }
 
@@ -296,12 +296,12 @@ class Category extends \AdminController
 
         if ($this->blog_category_model->delete($id)) {
 
-            $this->session->set_flashdata('success', '<strong>Success!</strong> Category was deleted successfully.');
+            $this->session->set_flashdata('success', 'Category was deleted successfully.');
 
         } else {
 
             $status   = 'error';
-            $message  = '<strong>Sorry,</strong> there was a problem deleting the Category. ';
+            $message  = 'There was a problem deleting the Category. ';
             $message .= $this->blog_category_model->last_error();
             $this->session->set_flashdata($status, $message);
         }

@@ -77,7 +77,7 @@ class Settings extends \AdminController
 
             if (empty($this->data['selectedBlogId'])) {
 
-                $this->data['error'] = '<strong>Sorry,</strong> there is no blog by that ID.';
+                $this->data['error'] = 'There is no blog by that ID.';
             }
         }
 
@@ -94,7 +94,7 @@ class Settings extends \AdminController
 
             } else {
 
-                $this->data['error']  = '<strong>Sorry,</strong> I can\'t determine what ';
+                $this->data['error']  = 'I can\'t determine what ';
                 $this->data['error'] .= 'type of update you are trying to perform.';
             }
         }
@@ -147,7 +147,7 @@ class Settings extends \AdminController
         //  Save
         if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
-            $this->data['success'] = '<strong>Success!</strong> Blog settings have been saved.';
+            $this->data['success'] = 'Blog settings have been saved.';
 
             $this->load->model('routes_model');
 
@@ -159,7 +159,7 @@ class Settings extends \AdminController
 
         } else {
 
-            $this->data['error'] = '<strong>Sorry,</strong> there was a problem saving settings.';
+            $this->data['error'] = 'There was a problem saving settings.';
         }
     }
 
@@ -179,11 +179,11 @@ class Settings extends \AdminController
 
         if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
-            $this->data['success'] = '<strong>Success!</strong> Skin settings have been saved.';
+            $this->data['success'] = 'Skin settings have been saved.';
 
         } else {
 
-            $this->data['error'] = '<strong>Sorry,</strong> there was a problem saving settings.';
+            $this->data['error'] = 'There was a problem saving settings.';
         }
     }
 
@@ -206,11 +206,11 @@ class Settings extends \AdminController
         //  Save
         if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
-            $this->data['success'] = '<strong>Success!</strong> Blog commenting settings have been saved.';
+            $this->data['success'] = 'Blog commenting settings have been saved.';
 
         } else {
 
-            $this->data['error'] = '<strong>Sorry,</strong> there was a problem saving commenting settings.';
+            $this->data['error'] = 'There was a problem saving commenting settings.';
         }
     }
 
@@ -242,11 +242,11 @@ class Settings extends \AdminController
         //  Save
         if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
-            $this->data['success'] = '<strong>Success!</strong> Blog social settings have been saved.';
+            $this->data['success'] = 'Blog social settings have been saved.';
 
         } else {
 
-            $this->data['error'] = '<strong>Sorry,</strong> there was a problem saving social settings.';
+            $this->data['error'] = 'There was a problem saving social settings.';
         }
     }
 
@@ -272,11 +272,11 @@ class Settings extends \AdminController
         //  Save
         if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
-            $this->data['success'] = '<strong>Success!</strong> Blog sidebar settings have been saved.';
+            $this->data['success'] = 'Blog sidebar settings have been saved.';
 
         } else {
 
-            $this->data['error'] = '<strong>Sorry,</strong> there was a problem saving sidebar settings.';
+            $this->data['error'] = 'There was a problem saving sidebar settings.';
         }
     }
 }
