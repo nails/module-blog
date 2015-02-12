@@ -2,7 +2,6 @@
     <p>
         This page shows all the posts on site and allows you to manage them.
     </p>
-    <hr />
     <?php
 
         echo \Nails\Admin\Helper::loadSearch($search);

@@ -127,7 +127,7 @@ class Post extends \AdminController
         $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
 
         //  Set Search and Pagination objects for the view
-        $this->data['search']     = \Nails\Admin\Helper::searchObject($sortColumns, $sortOn, $sortOrder, $perPage, $keywords);
+        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $sortColumns, $sortOn, $sortOrder, $perPage, $keywords);
         $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
         //  Add a header button
@@ -208,7 +208,7 @@ class Post extends \AdminController
                 if ($post_id) {
 
                     //  Update admin changelog
-                    $this->admin_changelog_model->add('created', 'a', 'blog post', $post_id, $data['title'], 'admin/blog/edit/' . $post_id);
+                    $this->admin_changelog_model->add('created', 'a', 'blog post', $post_id, $data['title'], 'admin/blog/post/edit/' . $this->blog->id . '/' . $post_id);
 
                     // --------------------------------------------------------------------------
 
@@ -392,7 +392,7 @@ class Post extends \AdminController
                                     $old_categories = implode(',', $old_categories);
                                     $new_categories = implode(',', $new_categories);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/accounts/edit/' . $post_id, $field, $old_categories, $new_categories, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $old_categories, $new_categories, false);
                                     break;
 
                                 case 'tags':
@@ -424,12 +424,12 @@ class Post extends \AdminController
                                     $old_tags = implode(',', $old_tags);
                                     $new_tags = implode(',', $new_tags);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/accounts/edit/' . $post_id, $field, $old_tags, $new_tags, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $old_tags, $new_tags, false);
                                     break;
 
                                 default :
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/accounts/edit/' . $post_id, $field, $this->data['post']->$field, $value, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $this->data['post']->$field, $value, false);
                                     break;
                             }
                         }
@@ -520,7 +520,7 @@ class Post extends \AdminController
         if (!$post || $post->blog->id != $this->blog->id) {
 
             $this->session->set_flashdata('error', 'I could\'t find a post by that ID.');
-            redirect('admin/blog/post/' . $this->blog->id);
+            redirect('admin/blog/post/index/' . $this->blog->id);
         }
 
         // --------------------------------------------------------------------------
@@ -528,7 +528,7 @@ class Post extends \AdminController
         if ($this->blog_post_model->delete($post_id)) {
 
             $flashdata  = 'Post was deleted successfully.';
-            $flashdata .=  userHasPermission('admin.blog:' . $this->blog->id . '.post_restore') ? ' ' . anchor('admin/blog/' . $this->blog->id . '/restore/' . $post_id, 'Undo?') : '';
+            $flashdata .=  userHasPermission('admin.blog:' . $this->blog->id . '.post_restore') ? ' ' . anchor('admin/blog/post/restore/' . $blog->id . '/' . $post_id, 'Undo?') : '';
 
             $this->session->set_flashdata('success', $flashdata);
 
@@ -570,7 +570,7 @@ class Post extends \AdminController
             $this->session->set_flashdata('success', 'Post was restored successfully.');
 
             //  Update admin changelog
-            $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/edit/' . $post_id);
+            $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/post/create/' . $blog->id . '/' . $post_id);
 
         } else {
 
@@ -580,7 +580,7 @@ class Post extends \AdminController
             $this->session->set_flashdata($status, $message);
         }
 
-        redirect('admin/blog/post/' . $this->blog->id);
+        redirect('admin/blog/post/index/' . $this->blog->id);
     }
 
     // --------------------------------------------------------------------------
