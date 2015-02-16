@@ -5,18 +5,18 @@
 
             if (app_setting('tags_enabled', 'blog-' . $blog->id)) {
 
-                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/tag/index/' . $blog->id . $isFancybox, 'tag') . '.';
+                echo 'For specific details (e.g New Year ' . date('Y') . ') consider using a ' . anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'tag') . '.';
             }
 
         ?>
     </p>
     <ul class="tabs disabled">
         <li class="tab active">
-            <?=anchor('admin/blog/category/index/' . $blog->id . $isFancybox, 'Overview')?>
+            <?=anchor('admin/blog/category/index/' . $blog->id . $isModal, 'Overview')?>
         </li>
         <?php if (userHasPermission('admin.blog:' . $blog->id . '.category_create')) { ?>
         <li class="tab">
-            <?=anchor('admin/blog/category/create/' . $blog->id . $isFancybox, 'Create Category')?>
+            <?=anchor('admin/blog/category/create/' . $blog->id . $isModal, 'Create Category')?>
         </li>
         <?php } ?>
     </ul>
@@ -51,12 +51,12 @@
 
                                     if (userHasPermission('admin.blog:' . $blog->id . '.category_edit')) {
 
-                                        echo anchor('admin/blog/category/edit/' . $blog->id . '/' . $category->id . $isFancybox, lang('action_edit'), 'class="awesome small"');
+                                        echo anchor('admin/blog/category/edit/' . $blog->id . '/' . $category->id . $isModal, lang('action_edit'), 'class="awesome small"');
                                     }
 
                                     if (userHasPermission('admin.blog:' . $blog->id . '.category_delete')) {
 
-                                        echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isFancybox, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
+                                        echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
                                     }
 
                                 echo '</td>';

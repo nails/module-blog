@@ -5,17 +5,17 @@
 
             if (app_setting('categories_enabled', 'blog-' . $blog->id)) {
 
-                echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor('admin/blog/category/index/' . $blog->id . $isFancybox, 'category') . '.';
+                echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor('admin/blog/category/index/' . $blog->id . $isModal, 'category') . '.';
             }
 
         ?>
     </p>
     <ul class="tabs disabled">
         <li class="tab">
-            <?=anchor('admin/blog/tag/index/' . $blog->id . $isFancybox, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."')?>
+            <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."')?>
         </li>
         <li class="tab active">
-            <?=anchor('admin/blog/tag/create/' . $blog->id . $isFancybox, 'Create Tag')?>
+            <?=anchor('admin/blog/tag/create/' . $blog->id . $isModal, 'Create Tag')?>
         </li>
     </ul>
     <section class="tabs pages">
@@ -86,7 +86,7 @@
             </fieldset>
             <p style="margin-top:1em;">
                 <?=form_submit('submit', 'Save', 'class="awesome"')?>
-                <?=anchor('admin/blog/' . $blog->id . '/manage/tag' . $isFancybox, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."')?>
+                <?=anchor('admin/blog/' . $blog->id . '/manage/tag' . $isModal, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."')?>
             </p>
         </div>
     </section>

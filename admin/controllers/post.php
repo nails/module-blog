@@ -115,9 +115,8 @@ class Post extends \AdminController
                     'value' => $this->blog->id
                 )
             ),
-            'sort'  => array(
-                'column' => $sortOn,
-                'order'  => $sortOrder
+            'sort' => array(
+                array($sortOn, $sortOrder)
             ),
             'keywords' => $keywords
         );

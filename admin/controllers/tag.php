@@ -90,10 +90,10 @@ class Tag extends \AdminController
 
         // --------------------------------------------------------------------------
 
-        $this->isFancybox = $this->input->get('isFancybox') ? '?isFancybox=1' : '';
-        $this->data['isFancybox'] = $this->isFancybox;
+        $this->isModal = $this->input->get('isModal') ? '?isModal=1' : '';
+        $this->data['isModal'] = $this->isModal;
 
-        if ($this->isFancybox) {
+        if ($this->isModal) {
 
             $this->data['headerOverride'] = 'structure/headerBlank';
             $this->data['footerOverride'] = 'structure/footerBlank';
@@ -168,7 +168,7 @@ class Tag extends \AdminController
                     $status  = 'success';
                     $message = 'Tag created successfully.';
                     $this->session->set_flashdata($status, $message);
-                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
+                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
@@ -247,7 +247,7 @@ class Tag extends \AdminController
                 if ($this->blog_tag_model->update($this->data['tag']->id, $data)) {
 
                     $this->session->set_flashdata('success', 'Tag saved successfully.');
-                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
+                    redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
@@ -306,6 +306,6 @@ class Tag extends \AdminController
             $this->session->set_flashdata($status, $message);
         }
 
-        redirect('admin/blog/tag/index/' . $this->blog->id . $this->isFancybox);
+        redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
     }
 }

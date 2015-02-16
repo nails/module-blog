@@ -5,18 +5,18 @@
 
             if (app_setting('categories_enabled', 'blog-' . $blog->id)) {
 
-                echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor('admin/blog/category/index/' . $blog->id . $isFancybox, 'category') . '.';
+                echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor('admin/blog/category/index/' . $blog->id . $isModal, 'category') . '.';
             }
 
         ?>
     </p>
     <ul class="tabs disabled">
         <li class="tab active">
-            <?=anchor('admin/blog/tag/index/' . $blog->id . $isFancybox, 'Overview')?>
+            <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Overview')?>
         </li>
         <?php if (userHasPermission('admin.blog:' . $blog->id . '.tag_create')) { ?>
         <li class="tab">
-            <?=anchor('admin/blog/tag/create/' . $blog->id . $isFancybox, 'Create Tag')?>
+            <?=anchor('admin/blog/tag/create/' . $blog->id . $isModal, 'Create Tag')?>
         </li>
         <?php } ?>
     </ul>
@@ -51,12 +51,12 @@
 
                                     if (userHasPermission('admin.blog:' . $blog->id . '.tag_edit')) {
 
-                                        echo anchor('admin/blog/tag/edit/' . $blog->id . '/' . $tag->id . $isFancybox, lang('action_edit'), 'class="awesome small"');
+                                        echo anchor('admin/blog/tag/edit/' . $blog->id . '/' . $tag->id . $isModal, lang('action_edit'), 'class="awesome small"');
                                     }
 
                                     if (userHasPermission('admin.blog:' . $blog->id . '.tag_delete')) {
 
-                                        echo anchor('admin/blog/tag/delete/' . $blog->id . '/' . $tag->id . $isFancybox, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
+                                        echo anchor('admin/blog/tag/delete/' . $blog->id . '/' . $tag->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
                                     }
 
                                 echo '</td>';
