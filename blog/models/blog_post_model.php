@@ -664,10 +664,6 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     protected function _getcount_common($data = null, $_caller = null)
     {
-        parent::_getcount_common($data, $_caller);
-
-        // --------------------------------------------------------------------------
-
         $this->db->select('bp.id, bp.blog_id, b.label blog_label, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title');
         $this->db->select('bp.seo_description, bp.seo_keywords, bp.is_published, bp.is_deleted, bp.created, bp.created_by, bp.modified, bp.modified_by, bp.published');
 
@@ -688,12 +684,36 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if (!empty($data['keywords'])) {
 
-            $this->db->or_like($this->_table_prefix . '.title', $data['keywords']);
-            $this->db->or_like($this->_table_prefix . '.excerpt', $data['keywords']);
-            $this->db->or_like($this->_table_prefix . '.body', $data['keywords']);
-            $this->db->or_like($this->_table_prefix . '.seo_description', $data['keywords']);
-            $this->db->or_like($this->_table_prefix . '.seo_keywords', $data['keywords']);
+            if (empty($data['or_like'])) {
+
+                $data['or_like'] = array();
+            }
+
+            $data['or_like'][] = array(
+                'column' => $this->_table_prefix . '.title',
+                'value'  => $data['keywords']
+            );
+            $data['or_like'][] = array(
+                'column' => $this->_table_prefix . '.excerpt',
+                'value'  => $data['keywords']
+            );
+            $data['or_like'][] = array(
+                'column' => $this->_table_prefix . '.body',
+                'value'  => $data['keywords']
+            );
+            $data['or_like'][] = array(
+                'column' => $this->_table_prefix . '.seo_description',
+                'value'  => $data['keywords']
+            );
+            $data['or_like'][] = array(
+                'column' => $this->_table_prefix . '.seo_keywords',
+                'value'  => $data['keywords']
+            );
         }
+
+        // --------------------------------------------------------------------------
+
+        parent::_getcount_common($data, $_caller);
     }
 
     // --------------------------------------------------------------------------
