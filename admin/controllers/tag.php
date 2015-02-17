@@ -55,6 +55,37 @@ class Tag extends \AdminController
     // --------------------------------------------------------------------------
 
     /**
+     * Returns an array of extra permissions for this controller
+     * @return array
+     */
+    public static function permissions()
+    {
+        $permissions = parent::permissions();
+
+        //  Fetch the blogs, each blog should have its own admin nav grouping
+        $ci =& get_instance();
+        $ci->load->model('blog/blog_model');
+        $blogs = $ci->blog_model->get_all();
+
+        $out = array();
+
+        if (!empty($blogs)) {
+
+            foreach ($blogs as $blog) {
+
+                $permissions[$blog->id . ':manage']  = $blog->label . ': Can manage tags';
+                $permissions[$blog->id . ':create']  = $blog->label . ': Can create tags';
+                $permissions[$blog->id . ':edit']    = $blog->label . ': Can edit tags';
+                $permissions[$blog->id . ':delete']  = $blog->label . ': Can delete tags';
+            }
+        }
+
+        return $permissions;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Constructs the controller
      */
     public function __construct()

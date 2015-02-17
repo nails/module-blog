@@ -43,6 +43,24 @@ class Blog extends \AdminController
     // --------------------------------------------------------------------------
 
     /**
+     * Returns an array of extra permissions for this controller
+     * @return array
+     */
+    public static function permissions()
+    {
+        $permissions = parent::permissions();
+
+        $permissions['manage'] = 'Can manage blogs';
+        $permissions['create'] = 'Can create blogs';
+        $permissions['edit']   = 'Can edit blogs';
+        $permissions['delete'] = 'Can delete blogs';
+
+        return $permissions;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Constructs the controller
      */
     public function __construct()

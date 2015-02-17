@@ -48,6 +48,39 @@ class Post extends \AdminController
     // --------------------------------------------------------------------------
 
     /**
+     * Returns an array of extra permissions for this controller
+     * @return array
+     */
+    public static function permissions()
+    {
+        $permissions = parent::permissions();
+
+        //  Fetch the blogs, each blog should have its own admin nav grouping
+        $ci =& get_instance();
+        $ci->load->model('blog/blog_model');
+        $blogs = $ci->blog_model->get_all();
+
+        $out = array();
+
+        if (!empty($blogs)) {
+
+            foreach ($blogs as $blog) {
+
+                $permissions[$blog->id . ':manage']  = $blog->label . ': Can manage posts';
+                $permissions[$blog->id . ':create']  = $blog->label . ': Can create posts';
+                $permissions[$blog->id . ':edit']    = $blog->label . ': Can edit posts';
+                $permissions[$blog->id . ':delete']  = $blog->label . ': Can delete posts';
+                $permissions[$blog->id . ':restore'] = $blog->label . ': Can restore posts';
+
+            }
+        }
+
+        return $permissions;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Constructs the controller
      */
     public function __construct()
