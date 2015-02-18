@@ -25,8 +25,8 @@
 
                 if ($posts) {
 
-                    $_date_format = active_user('pref_date_format');
-                    $_time_format = active_user('pref_time_format');
+                    $_date_format = activeUser('pref_date_format');
+                    $_time_format = activeUser('pref_time_format');
 
                     foreach ($posts as $post) {
 

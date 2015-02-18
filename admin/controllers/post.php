@@ -31,6 +31,11 @@ class Post extends \AdminController
 
             foreach ($blogs as $blog) {
 
+                if (!userHasPermission('admin:blog:post:' . $blog->id . ':manage')) {
+
+                    continue;
+                }
+
                 //  Clear group naming
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 

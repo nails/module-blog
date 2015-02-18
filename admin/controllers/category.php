@@ -34,14 +34,18 @@ class Category extends \AdminController
                 //  Categories enabled for this blog?
                 if (!app_setting('tags_enabled', 'blog-' . $blog->id)) {
 
-                    return false;
+                    continue;
+                }
+
+                if (!userHasPermission('admin:blog:category:' . $blog->id . ':manage')) {
+
+                    continue;
                 }
 
                 //  Clear group naming
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 
                 //  Create the navGrouping
-                //  @todo respect permissions for managing categories
                 $navGroup = new \Nails\Admin\Nav($groupLabel);
                 $navGroup->addMethod('Manage Categories', 'index/' . $blog->id);
 

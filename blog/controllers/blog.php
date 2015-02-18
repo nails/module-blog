@@ -193,7 +193,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Register a hit
         $data             = array();
-        $data['user_id']  = active_user('id');
+        $data['user_id']  = activeUser('id');
         $data['referrer'] = $this->input->server('HTTP_REFERER');
 
         $this->blog_post_model->add_hit($this->data['post']->id, $data);

@@ -30,11 +30,17 @@ class Blog extends \AdminController
 
         if (!empty($blogs)) {
 
-            $navGroup->addMethod('Manage Blogs');
+            if (userHasPermission('admin:blog:blog:manage')) {
+
+                $navGroup->addMethod('Manage Blogs');
+            }
 
         } else {
 
-            $navGroup->addMethod('Create New Blog', 'create');
+            if (userHasPermission('admin:blog:blog:create')) {
+
+                $navGroup->addMethod('Create New Blog', 'create');
+            }
         }
 
         return $navGroup;
@@ -75,7 +81,7 @@ class Blog extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Overall permissions?
-        if (!userHasPermission('admin:blog:blog_manage')) {
+        if (!userHasPermission('admin:blog:blog:manage')) {
 
             unauthorised();
         }
@@ -98,7 +104,7 @@ class Blog extends \AdminController
 
         if (empty($this->data['blogs'])) {
 
-            if (!userHasPermission('admin:blog:blog_create')) {
+            if (!userHasPermission('admin:blog:blog:create')) {
 
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
@@ -114,7 +120,7 @@ class Blog extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Add a header button
-        if (userHasPermission('admin.blog:0.blog_create')) {
+        if (userHasPermission('admin.blog:blog:create')) {
 
              \Nails\Admin\Helper::addHeaderButton('admin/blog/blog/create', 'Create Blog');
         }
@@ -133,7 +139,7 @@ class Blog extends \AdminController
      */
     public function create()
     {
-        if (!userHasPermission('admin:blog:blog_create')) {
+        if (!userHasPermission('admin:blog:blog:create')) {
 
             unauthorised();
         }
@@ -194,7 +200,7 @@ class Blog extends \AdminController
      */
     public function edit()
     {
-        if (!userHasPermission('admin:blog:blog_edit')) {
+        if (!userHasPermission('admin:blog:blog:edit')) {
 
             unauthorised();
         }
@@ -261,7 +267,7 @@ class Blog extends \AdminController
      */
     public function delete()
     {
-        if (!userHasPermission('admin:blog:blog_delete')) {
+        if (!userHasPermission('admin:blog:blog:delete')) {
 
             unauthorised();
         }

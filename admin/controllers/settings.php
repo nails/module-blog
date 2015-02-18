@@ -49,7 +49,7 @@ class Settings extends \AdminController
 
         if (empty($this->data['blogs'])) {
 
-            if ($this->user_model->is_superuser()) {
+            if ($this->user_model->isSuperuser()) {
 
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';

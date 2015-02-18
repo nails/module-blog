@@ -141,8 +141,8 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         $this->db->set('created', 'NOW()', false);
         $this->db->set('modified', 'NOW()', false);
-        $this->db->set('created_by', active_user('id'));
-        $this->db->set('modified_by', active_user('id'));
+        $this->db->set('created_by', activeUser('id'));
+        $this->db->set('modified_by', activeUser('id'));
 
         $this->db->insert(NAILS_DB_PREFIX . 'blog_post');
 
@@ -363,9 +363,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         $this->db->set('modified', 'NOW()', false);
 
-        if (active_user('id')) {
+        if (activeUser('id')) {
 
-            $this->db->set('modified_by', active_user('id'));
+            $this->db->set('modified_by', activeUser('id'));
         }
 
         if ($slug) {
@@ -1018,7 +1018,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         $hitData['created']    = date('Y-m-d H:i:s');
         $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 
-        if ($hitData['user_id'] && $this->user_model->is_admin($hitData['user_id'])) {
+        if ($hitData['user_id'] && $this->user_model->isAdmin($hitData['user_id'])) {
 
             $this->_set_error('Administrators cannot affect the post\'s popularity.');
             return false;
