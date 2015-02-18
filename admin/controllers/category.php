@@ -127,12 +127,6 @@ class Category extends \AdminController
 
         $this->isModal = $this->input->get('isModal') ? '?isModal=1' : '';
         $this->data['isModal'] = $this->isModal;
-
-        if ($this->isModal) {
-
-            $this->data['headerOverride'] = 'structure/headerBlank';
-            $this->data['footerOverride'] = 'structure/footerBlank';
-        }
     }
 
     // --------------------------------------------------------------------------

@@ -21,9 +21,41 @@ class Settings extends \AdminController
     public static function announce()
     {
         $navGroup = new \Nails\Admin\Nav('Settings');
-        $navGroup->addMethod('Blog');
+
+        if (userHasPermission('admin:blog:settings:\d+:update')) {
+
+            $navGroup->addMethod('Blog');
+        }
 
         return $navGroup;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns an array of permissions which can be configured for the user
+     * @return array
+     */
+    public static function permissions()
+    {
+        $permissions = parent::permissions();
+
+        //  Fetch the blogs, each blog should have its own permission
+        $ci =& get_instance();
+        $ci->load->model('blog/blog_model');
+        $blogs = $ci->blog_model->get_all();
+
+        $out = array();
+
+        if (!empty($blogs)) {
+
+            foreach ($blogs as $blog) {
+
+                $permissions[$blog->id . ':update']  = $blog->label . ': Can update settings';
+            }
+        }
+
+        return $permissions;
     }
 
     // --------------------------------------------------------------------------
@@ -34,14 +66,16 @@ class Settings extends \AdminController
      */
     public function index()
     {
-        //  Load models
-        $this->load->model('blog/blog_model');
-        $this->load->model('blog/blog_skin_model');
+        if (!userHasPermission('admin:blog:settings:\d+:update')) {
+
+            unauthorised();
+        }
 
         // --------------------------------------------------------------------------
 
-        //  Set method info
-        $this->data['page']->title = 'Blog';
+        //  Load models
+        $this->load->model('blog/blog_model');
+        $this->load->model('blog/blog_skin_model');
 
         // --------------------------------------------------------------------------
 
@@ -49,7 +83,7 @@ class Settings extends \AdminController
 
         if (empty($this->data['blogs'])) {
 
-            if ($this->user_model->isSuperuser()) {
+            if (userHasPermission('admin:blog:blog:create')) {
 
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
@@ -78,6 +112,15 @@ class Settings extends \AdminController
             if (empty($this->data['selectedBlogId'])) {
 
                 $this->data['error'] = 'There is no blog by that ID.';
+            }
+        }
+
+        //  Check user has permission
+        if (!empty($this->data['selectedBlogId'])) {
+
+            if (!userHasPermission('admin:blog:settings:' . $this->data['selectedBlogId'] . ':update')) {
+
+                unauthorised();
             }
         }
 
@@ -112,7 +155,27 @@ class Settings extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->load('nails.admin.blog.settings.min.js', true);
+        $this->asset->load('nails.admin.blog.settings.min.js', 'NAILS');
+
+        // --------------------------------------------------------------------------
+
+        //  Set page title
+        $this->data['page']->title = 'Settings &rsaquo; Blog';
+
+        if (!empty($this->data['blogs'][$this->input->get('blog_id')])) {
+
+            $this->data['page']->title .= ' &rsaquo; ' . $this->data['blogs'][$this->input->get('blog_id')];
+        }
+
+        // --------------------------------------------------------------------------
+
+        //  Add a header button
+        if (userHasPermission('admin:blog:blog:manage')) {
+            \Nails\Admin\Helper::addHeaderButton(
+                'admin/blog/blog/index',
+                'Manage Blogs'
+            );
+        }
 
         // --------------------------------------------------------------------------
 

@@ -168,9 +168,9 @@ class Post extends \AdminController
         $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
         //  Add a header button
-        if (userHasPermission('admin.blog:' . $blog->id . '.post_create')) {
+        if (userHasPermission('admin.blog:' . $this->blog->id . '.post_create')) {
 
-             \Nails\Admin\Helper::addHeaderButton('admin/blog/post/create/' . $blog->id, 'New Blog Post');
+             \Nails\Admin\Helper::addHeaderButton('admin/blog/post/create/' . $this->blog->id, 'New Blog Post');
         }
 
         // --------------------------------------------------------------------------

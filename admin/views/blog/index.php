@@ -25,8 +25,15 @@
                             echo '</td>';
                             echo '<td class="actions">';
 
-                                echo anchor('admin/blog/blog/edit/' . $blog->id, lang('action_edit'), 'class="awesome small"');
-                                echo anchor('admin/blog/blog/delete/' . $blog->id, lang('action_delete'), 'class="awesome small red confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone." data-title="Are you sure?"');
+                                if (userHasPermission('admin:blog:blog:edit')) {
+
+                                    echo anchor('admin/blog/blog/edit/' . $blog->id, lang('action_edit'), 'class="awesome small"');
+                                }
+
+                                if (userHasPermission('admin:blog:blog:delete')) {
+
+                                    echo anchor('admin/blog/blog/delete/' . $blog->id, lang('action_delete'), 'class="awesome small red confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone." data-title="Are you sure?"');
+                                }
 
                             echo '</td>';
                         echo '</tr>';

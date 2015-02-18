@@ -6,7 +6,6 @@
 
             echo '<p>';
                 echo 'Please select which blog you\'d like to configure:';
-                echo anchor('admin/settings/blog/index', 'Manage Blogs', 'class="awesome small right green"');
             echo '</p>';
 
             echo form_open(null, 'method="GET"');
@@ -15,8 +14,11 @@
 
                     foreach ($blogs as $id => $label) {
 
-                        $selected = !empty($selectedBlogId) && $selectedBlogId == $id ? 'selected="selected"' : '';
-                        echo '<option ' . $selected . ' value="' . $id . '">' . $label . '</option>';
+                        if (userHasPermission('admin:blog:settings:' . $id . ':update')) {
+
+                            $selected = !empty($selectedBlogId) && $selectedBlogId == $id ? 'selected="selected"' : '';
+                            echo '<option ' . $selected . ' value="' . $id . '">' . $label . '</option>';
+                        }
                     }
 
                 echo '</select>';
@@ -29,7 +31,6 @@
 
             echo '<p>';
                 echo 'Configure your blog using the options below.';
-                echo anchor('admin/settings/blog/index', 'Manage Blogs', 'class="awesome small right green"');
             echo '</p>';
         }
 
