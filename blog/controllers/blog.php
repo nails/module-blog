@@ -120,11 +120,17 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
-        //  If this post's status is not published then 404, unless logged in as a user with post managing permissions
+        /**
+         * If this post's status is not published then 404, unless logged in as a user
+         * with post managing permissions.
+         */
         if (!$this->data['post']->is_published || strtotime($this->data['post']->published) > time()) {
 
-            //  This post hasn't been published, or is scheduled. However, check to see if the user has post management permissions
-            if (!userHasPermission('admin.blog.post_manage')) {
+            /**
+             * This post hasn't been published, or is scheduled. However, check to see
+             * if the user has post management permissions.
+             */
+            if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':manage')) {
 
                 show_404();
             }

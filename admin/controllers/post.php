@@ -40,8 +40,8 @@ class Post extends \AdminController
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 
                 //  Create the navGrouping
-                $navGroup = new \Nails\Admin\Nav($groupLabel);
-                $navGroup->addMethod('Manage Posts', 'index/' . $blog->id);
+                $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
+                $navGroup->addAction('Manage Posts', 'index/' . $blog->id);
 
                 $out[] = $navGroup;
             }
@@ -168,7 +168,7 @@ class Post extends \AdminController
         $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
         //  Add a header button
-        if (userHasPermission('admin.blog:' . $this->blog->id . '.post_create')) {
+        if (userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
 
              \Nails\Admin\Helper::addHeaderButton('admin/blog/post/create/' . $this->blog->id, 'New Blog Post');
         }
@@ -186,7 +186,7 @@ class Post extends \AdminController
      **/
     public function create()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.post_create')) {
+        if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
 
             unauthorised();
         }
@@ -321,7 +321,7 @@ class Post extends \AdminController
      **/
     public function edit()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.post_edit')) {
+        if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':edit')) {
 
             unauthorised();
         }
@@ -543,7 +543,7 @@ class Post extends \AdminController
      */
     public function delete()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.post_delete')) {
+        if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':delete')) {
 
             unauthorised();
         }
@@ -565,7 +565,7 @@ class Post extends \AdminController
         if ($this->blog_post_model->delete($post_id)) {
 
             $flashdata  = 'Post was deleted successfully.';
-            $flashdata .=  userHasPermission('admin.blog:' . $this->blog->id . '.post_restore') ? ' ' . anchor('admin/blog/post/restore/' . $blog->id . '/' . $post_id, 'Undo?') : '';
+            $flashdata .=  userHasPermission('admin:blog:post:' . $this->blog->id . ':restore') ? ' ' . anchor('admin/blog/post/restore/' . $blog->id . '/' . $post_id, 'Undo?') : '';
 
             $this->session->set_flashdata('success', $flashdata);
 
@@ -588,7 +588,7 @@ class Post extends \AdminController
      */
     public function restore()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.post_restore')) {
+        if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':restore')) {
 
             unauthorised();
         }

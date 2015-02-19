@@ -46,8 +46,8 @@ class Category extends \AdminController
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 
                 //  Create the navGrouping
-                $navGroup = new \Nails\Admin\Nav($groupLabel);
-                $navGroup->addMethod('Manage Categories', 'index/' . $blog->id);
+                $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
+                $navGroup->addAction('Manage Categories', 'index/' . $blog->id);
 
                 $out[] = $navGroup;
             }
@@ -162,7 +162,7 @@ class Category extends \AdminController
      */
     public function create()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.category_create')) {
+        if (!userHasPermission('admin:blog:category:' . $this->blog->id . ':create')) {
 
             unauthorised();
         }
@@ -235,7 +235,7 @@ class Category extends \AdminController
      */
     public function edit()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.category_edit')) {
+        if (!userHasPermission('admin:blog:category:' . $this->blog->id . ':edit')) {
 
             unauthorised();
         }
@@ -314,7 +314,7 @@ class Category extends \AdminController
      */
     public function delete()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.category_delete')) {
+        if (!userHasPermission('admin:blog:category:' . $this->blog->id . ':delete')) {
 
             unauthorised();
         }

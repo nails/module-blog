@@ -14,7 +14,7 @@
         <li class="tab active">
             <?=anchor('admin/blog/category/index/' . $blog->id . $isModal, 'Overview')?>
         </li>
-        <?php if (userHasPermission('admin.blog:' . $blog->id . '.category_create')) { ?>
+        <?php if (userHasPermission('admin:blog:category:' . $blog->id . '.create')) { ?>
         <li class="tab">
             <?=anchor('admin/blog/category/create/' . $blog->id . $isModal, 'Create Category')?>
         </li>
@@ -49,12 +49,12 @@
                                 echo \Nails\Admin\Helper::loadDatetimeCell($category->modified);
                                 echo '<td class="actions">';
 
-                                    if (userHasPermission('admin.blog:' . $blog->id . '.category_edit')) {
+                                    if (userHasPermission('admin:blog:category:' . $blog->id . ':edit')) {
 
                                         echo anchor('admin/blog/category/edit/' . $blog->id . '/' . $category->id . $isModal, lang('action_edit'), 'class="awesome small"');
                                     }
 
-                                    if (userHasPermission('admin.blog:' . $blog->id . '.category_delete')) {
+                                    if (userHasPermission('admin:blog:category:' . $blog->id . ':delete')) {
 
                                         echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
                                     }

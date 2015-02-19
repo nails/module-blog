@@ -92,7 +92,7 @@
                                     echo anchor($post->url . '?preview=1', lang('action_preview'), 'class="awesome small green" target="_blank"');
                                 }
 
-                                if (userHasPermission('admin.blog:' . $blog->id . '.post_edit')) {
+                                if (userHasPermission('admin:blog:post:' . $blog->id . ':edit')) {
 
                                     echo anchor(
                                         'admin/blog/post/edit/' . $blog->id . '/' . $post->id,
@@ -101,7 +101,7 @@
                                     );
                                 }
 
-                                if (userHasPermission('admin.blog:' . $blog->id. '.post_delete')) {
+                                if (userHasPermission('admin:blog:post:' . $blog->id. ':delete')) {
 
                                     echo anchor(
                                         'admin/blog/post/delete/' . $blog->id . '/' . $post->id,

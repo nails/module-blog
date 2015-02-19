@@ -46,8 +46,8 @@ class Tag extends \AdminController
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
 
                 //  Create the navGrouping
-                $navGroup = new \Nails\Admin\Nav($groupLabel);
-                $navGroup->addMethod('Manage Tags', 'index/' . $blog->id);
+                $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
+                $navGroup->addAction('Manage Tags', 'index/' . $blog->id);
 
                 $out[] = $navGroup;
             }
@@ -162,7 +162,7 @@ class Tag extends \AdminController
      */
     public function create()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_create')) {
+        if (!userHasPermission('admin:blog:tag:' . $this->blog->id . ':create')) {
 
             unauthorised();
         }
@@ -235,7 +235,7 @@ class Tag extends \AdminController
      */
     public function edit()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_edit')) {
+        if (!userHasPermission('admin:blog:tag:' . $this->blog->id . ':edit')) {
 
             unauthorised();
         }
@@ -314,7 +314,7 @@ class Tag extends \AdminController
      */
     public function delete()
     {
-        if (!userHasPermission('admin.blog:' . $this->blog->id . '.tag_delete')) {
+        if (!userHasPermission('admin:blog:tag:' . $this->blog->id . ':delete')) {
 
             unauthorised();
         }

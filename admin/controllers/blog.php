@@ -26,20 +26,20 @@ class Blog extends \AdminController
 
         //  Clear group naming
         $groupLabel = count($blogs) > 1 ? 'Blog: All' : 'Blog';
-        $navGroup   = new \Nails\Admin\Nav($groupLabel);
+        $navGroup   = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
 
         if (!empty($blogs)) {
 
             if (userHasPermission('admin:blog:blog:manage')) {
 
-                $navGroup->addMethod('Manage Blogs');
+                $navGroup->addAction('Manage Blogs');
             }
 
         } else {
 
             if (userHasPermission('admin:blog:blog:create')) {
 
-                $navGroup->addMethod('Create New Blog', 'create');
+                $navGroup->addAction('Create New Blog', 'create');
             }
         }
 
@@ -120,7 +120,7 @@ class Blog extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Add a header button
-        if (userHasPermission('admin.blog:blog:create')) {
+        if (userHasPermission('admin:blog:blog:create')) {
 
              \Nails\Admin\Helper::addHeaderButton('admin/blog/blog/create', 'Create Blog');
         }
