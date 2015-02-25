@@ -14,8 +14,6 @@
 
 class NAILS_Blog_model extends NAILS_Model
 {
-    protected $_table;
-    protected $_table_prefix;
     protected $blogUrl;
 
     // --------------------------------------------------------------------------
@@ -33,8 +31,8 @@ class NAILS_Blog_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->_table        = NAILS_DB_PREFIX . 'blog';
-        $this->_table_prefix = 'b';
+        $this->table        = NAILS_DB_PREFIX . 'blog';
+        $this->tablePrefix = 'b';
         $this->blogUrl       = array();
     }
 

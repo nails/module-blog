@@ -25,10 +25,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->_table               = NAILS_DB_PREFIX . 'blog_post';
-        $this->_table_prefix        = 'bp'; //  Hard-coded throughout model; take care when changing this
-        $this->_table_label_column  = 'title';
-        $this->_destructive_delete  = false;
+        $this->table               = NAILS_DB_PREFIX . 'blog_post';
+        $this->tablePrefix        = 'bp'; //  Hard-coded throughout model; take care when changing this
+        $this->tableLabelColumn  = 'title';
+        $this->destructiveDelete  = false;
 
         // --------------------------------------------------------------------------
 
@@ -690,23 +690,23 @@ class NAILS_Blog_post_model extends NAILS_Model
             }
 
             $data['or_like'][] = array(
-                'column' => $this->_table_prefix . '.title',
+                'column' => $this->tablePrefix . '.title',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->_table_prefix . '.excerpt',
+                'column' => $this->tablePrefix . '.excerpt',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->_table_prefix . '.body',
+                'column' => $this->tablePrefix . '.body',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->_table_prefix . '.seo_description',
+                'column' => $this->tablePrefix . '.seo_description',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->_table_prefix . '.seo_keywords',
+                'column' => $this->tablePrefix . '.seo_keywords',
                 'value'  => $data['keywords']
             );
         }
@@ -846,7 +846,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
         }
 
-        $this->db->group_by($this->_table_prefix . '.id');
+        $this->db->group_by($this->tablePrefix . '.id');
 
         return $this->get_all($page, $perPage, $data, $includeDeleted);
     }
@@ -916,7 +916,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
         }
 
-        $this->db->group_by($this->_table_prefix . '.id');
+        $this->db->group_by($this->tablePrefix . '.id');
 
         return $this->get_all($page, $perPage, $data, $includeDeleted);
     }
@@ -989,7 +989,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             return array();
         }
 
-        $this->db->where_in($this->_table_prefix . '.id', $ids);
+        $this->db->where_in($this->tablePrefix . '.id', $ids);
 
         return $this->get_all();
     }

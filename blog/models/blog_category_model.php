@@ -23,8 +23,8 @@ class NAILS_Blog_category_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		$this->_table			= NAILS_DB_PREFIX . 'blog_category';
-		$this->_table_prefix	= 'bc';
+		$this->table			= NAILS_DB_PREFIX . 'blog_category';
+		$this->tablePrefix	= 'bc';
 	}
 
 
@@ -37,18 +37,18 @@ class NAILS_Blog_category_model extends NAILS_Model
 
 		// --------------------------------------------------------------------------
 
-		$this->db->select( $this->_table_prefix . '.*' );
+		$this->db->select( $this->tablePrefix . '.*' );
 
 		if ( ! empty( $data['include_count'] ) ) :
 
-			$this->db->select( '(SELECT COUNT(DISTINCT post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_category WHERE category_id = ' . $this->_table_prefix . '.id) post_count' );
+			$this->db->select( '(SELECT COUNT(DISTINCT post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_category WHERE category_id = ' . $this->tablePrefix . '.id) post_count' );
 
 		endif;
 
 		//	Default sort
 		if ( empty( $data['sort'] ) ) :
 
-			$this->db->order_by( $this->_table_prefix . '.label' );
+			$this->db->order_by( $this->tablePrefix . '.label' );
 
 		endif;
 	}
