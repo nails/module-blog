@@ -31,9 +31,9 @@ class NAILS_Blog_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->table        = NAILS_DB_PREFIX . 'blog';
+        $this->table       = NAILS_DB_PREFIX . 'blog';
         $this->tablePrefix = 'b';
-        $this->blogUrl       = array();
+        $this->blogUrl     = array();
     }
 
     // --------------------------------------------------------------------------
@@ -42,9 +42,7 @@ class NAILS_Blog_model extends NAILS_Model
     {
         parent::_format_object($object);
 
-        $object->url = app_setting('url', 'blog-' . $object->id);
-        $object->url = $object->url ? $object->url : 'blog';
-        $object->url = site_url($object->url);
+        $object->url = $this->getBlogUrl($object->id);
     }
 
     // --------------------------------------------------------------------------
@@ -117,7 +115,7 @@ class NAILS_Blog_model extends NAILS_Model
 
             $url = app_setting('url', 'blog-' . $blogId);
             $url = $url ? $url : 'blog/';
-            $url = site_url($url) . '/';
+            $url = site_url($url);
 
             $this->blogUrl[$blogId] = $url;
 

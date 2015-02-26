@@ -1068,7 +1068,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     public function format_url($slug, $blogId)
     {
         $this->load->model('blog/blog_model');
-        return $this->blog_model->getBlogUrl($blogId) . $slug;
+        return $this->blog_model->getBlogUrl($blogId) . '/' . $slug;
     }
 
     // --------------------------------------------------------------------------

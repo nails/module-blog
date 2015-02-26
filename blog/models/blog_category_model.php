@@ -176,7 +176,7 @@ class NAILS_Blog_category_model extends NAILS_Model
 	public function format_url($slug, $blogId)
 	{
 		$this->load->model('blog/blog_model');
-		return $this->blog_model->getBlogUrl($blogId) . 'category/' . $slug;
+		return $this->blog_model->getBlogUrl($blogId) . '/category/' . $slug;
 	}
 
 
