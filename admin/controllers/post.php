@@ -429,7 +429,7 @@ class Post extends \AdminController
                                     $old_categories = implode(',', $old_categories);
                                     $new_categories = implode(',', $new_categories);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $old_categories, $new_categories, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $old_categories, $new_categories, false);
                                     break;
 
                                 case 'tags':
@@ -461,12 +461,12 @@ class Post extends \AdminController
                                     $old_tags = implode(',', $old_tags);
                                     $new_tags = implode(',', $new_tags);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $old_tags, $new_tags, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $old_tags, $new_tags, false);
                                     break;
 
                                 default :
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $blog->id . '/' . $post_id, $field, $this->data['post']->$field, $value, false);
+                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $this->data['post']->$field, $value, false);
                                     break;
                             }
                         }
@@ -565,7 +565,7 @@ class Post extends \AdminController
         if ($this->blog_post_model->delete($post_id)) {
 
             $flashdata  = 'Post was deleted successfully.';
-            $flashdata .=  userHasPermission('admin:blog:post:' . $this->blog->id . ':restore') ? ' ' . anchor('admin/blog/post/restore/' . $blog->id . '/' . $post_id, 'Undo?') : '';
+            $flashdata .=  userHasPermission('admin:blog:post:' . $this->blog->id . ':restore') ? ' ' . anchor('admin/blog/post/restore/' . $this->blog->id . '/' . $post_id, 'Undo?') : '';
 
             $this->session->set_flashdata('success', $flashdata);
 
@@ -607,7 +607,7 @@ class Post extends \AdminController
             $this->session->set_flashdata('success', 'Post was restored successfully.');
 
             //  Update admin changelog
-            $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/post/create/' . $blog->id . '/' . $post_id);
+            $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id);
 
         } else {
 
