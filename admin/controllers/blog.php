@@ -24,22 +24,20 @@ class Blog extends \AdminController
         $ci->load->model('blog/blog_model');
         $blogs = $ci->blog_model->get_all();
 
-        //  Clear group naming
-        $groupLabel = count($blogs) > 1 ? 'Blog: All' : 'Blog';
-        $navGroup   = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
+        $navGroup = new \Nails\Admin\Nav('Settings');
 
         if (!empty($blogs)) {
 
             if (userHasPermission('admin:blog:blog:manage')) {
 
-                $navGroup->addAction('Manage Blogs');
+                $navGroup->addAction('Blog: Manage');
             }
 
         } else {
 
             if (userHasPermission('admin:blog:blog:create')) {
 
-                $navGroup->addAction('Create New Blog', 'create');
+                $navGroup->addAction('Blog: Create New', 'create');
             }
         }
 

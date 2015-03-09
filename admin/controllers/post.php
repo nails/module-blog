@@ -37,7 +37,7 @@ class Post extends \AdminController
                 }
 
                 //  Clear group naming
-                $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : 'Blog';
+                $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
 
                 //  Create the navGrouping
                 $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
