@@ -956,6 +956,18 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
+    public function countDrafts($blogId, $data = array(), $includeDeleted = false) {
+
+        $data['where'] = array(
+            array('blog_id', $blogId),
+            array('is_published', false)
+        );
+
+        return $this->count_all($data, $includeDeleted);
+    }
+
+    // --------------------------------------------------------------------------
+
     /**
      * Get posts with a particular association
      * @param  int $associationIndex The association's index

@@ -23,6 +23,7 @@ class Post extends \AdminController
         //  Fetch the blogs, each blog should have its own admin nav grouping
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
+        $ci->load->model('blog/blog_post_model');
         $blogs = $ci->blog_model->get_all();
 
         $out = array();
@@ -39,9 +40,13 @@ class Post extends \AdminController
                 //  Clear group naming
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
 
+                //  Any draft posts?
+                $numDrafts = $ci->blog_post_model->countDrafts($blog->id);
+                $alerts    = array(\Nails\Admin\Nav::alertObject($numDrafts, '', 'Drafts'));
+
                 //  Create the navGrouping
                 $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
-                $navGroup->addAction('Manage Posts', 'index/' . $blog->id);
+                $navGroup->addAction('Manage Posts', 'index/' . $blog->id, $alerts, 0);
 
                 $out[] = $navGroup;
             }
@@ -127,10 +132,14 @@ class Post extends \AdminController
 
         // --------------------------------------------------------------------------
 
+        $tablePrefix = $this->blog_post_model->getTablePrefix();
+
+        // --------------------------------------------------------------------------
+
         //  Get pagination and search/sort variables
         $page      = $this->input->get('page')      ? $this->input->get('page')      : 0;
         $perPage   = $this->input->get('perPage')   ? $this->input->get('perPage')   : 50;
-        $sortOn    = $this->input->get('sortOn')    ? $this->input->get('sortOn')    : 'bp.published';
+        $sortOn    = $this->input->get('sortOn')    ? $this->input->get('sortOn')    : $tablePrefix . '.published';
         $sortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
         $keywords  = $this->input->get('keywords')  ? $this->input->get('keywords')  : '';
 
@@ -138,9 +147,22 @@ class Post extends \AdminController
 
         //  Define the sortable columns
         $sortColumns = array(
-            'bp.published' => 'Published Date',
-            'bp.modified'  => 'Modified Date',
-            'bp.title'     => 'Title'
+            $tablePrefix . '.published' => 'Published Date',
+            $tablePrefix . '.modified'  => 'Modified Date',
+            $tablePrefix . '.title'     => 'Title'
+        );
+
+        // --------------------------------------------------------------------------
+
+        //  Checkbox filters
+        $cbFilters   = array();
+        $cbFilters[] = \Nails\Admin\Helper::searchFilterObject(
+            $tablePrefix . '.is_published',
+            'State',
+            array(
+                array('Published', true, true),
+                array('Unpublished', false, true)
+           )
         );
 
         // --------------------------------------------------------------------------
@@ -156,7 +178,8 @@ class Post extends \AdminController
             'sort' => array(
                 array($sortOn, $sortOrder)
             ),
-            'keywords' => $keywords
+            'keywords' => $keywords,
+            'cbFilters' => $cbFilters
         );
 
         //  Get the items for the page
@@ -164,7 +187,7 @@ class Post extends \AdminController
         $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
 
         //  Set Search and Pagination objects for the view
-        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $sortColumns, $sortOn, $sortOrder, $perPage, $keywords);
+        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $sortColumns, $sortOn, $sortOrder, $perPage, $keywords, $cbFilters);
         $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
 
         //  Add a header button
@@ -551,9 +574,8 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $post_id = $this->uri->segment(5);
+        $post_id = $this->uri->segment(6);
         $post    = $this->blog_post_model->get_by_id($post_id);
-
         if (!$post || $post->blog->id != $this->blog->id) {
 
             $this->session->set_flashdata('error', 'I could\'t find a post by that ID.');
@@ -596,7 +618,7 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $post_id = $this->uri->segment(5);
+        $post_id = $this->uri->segment(6);
 
         // --------------------------------------------------------------------------
 
