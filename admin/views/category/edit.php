@@ -106,7 +106,7 @@
 
     foreach ($categories as $cat) {
 
-        $temp        = new stdClass();
+        $temp        = new \stdClass();
         $temp->id    = $cat->id;
         $temp->label = $cat->label;
 
