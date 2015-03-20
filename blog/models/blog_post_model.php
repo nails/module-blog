@@ -767,10 +767,10 @@ class NAILS_Blog_post_model extends NAILS_Model
     // --------------------------------------------------------------------------
 
     /**
-     * Fetches latestposts
-     * @param int   $limit The number of posts to return
-     * @param mixed $data Any data to pass to _getcount_common()
-     * @param bool  $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * Fetches latest posts
+     * @param  int   $limit The number of posts to return
+     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  bool  $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
      * @return array
      **/
     public function get_latest($limit = 9, $data = null, $includeDeleted = false)
@@ -784,10 +784,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetches posts published within a certain year and/or month
-     * @param int $year The year to restrict the search to
-     * @param int $month The month to restrict the search to
-     * @param mixed $data Any data to pass to _getcount_common()
-     * @param bool $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @param  int $year The year to restrict the search to
+     * @param  int $month The month to restrict the search to
+     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  bool $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
      * @return array
      **/
     public function get_archive($year = null, $month = null, $data = null, $includeDeleted = false)
