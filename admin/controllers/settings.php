@@ -214,7 +214,7 @@ class Settings extends \AdminController
 
             $this->load->model('routes_model');
 
-            if (!$this->routes_model->update('shop')) {
+            if (!$this->routes_model->update()) {
 
                 $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the routes ';
                 $this->data['warning'] .= 'file could not be updated. The blog may not behave as expected,';

@@ -1,205 +1,214 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Name:		blog_category_model
+ * This model handles blog categories
  *
- * Description:	This model handles all things category related
- *
- **/
-
-/**
- * OVERLOADING NAILS' MODELS
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Model
+ * @author      Nails Dev Team
+ * @link
+ */
 
 class NAILS_Blog_category_model extends NAILS_Model
 {
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Construct the model
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
-		$this->table			= NAILS_DB_PREFIX . 'blog_category';
-		$this->tablePrefix	= 'bc';
-	}
+        $this->table        = NAILS_DB_PREFIX . 'blog_category';
+        $this->tablePrefix  = 'bc';
+    }
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    /**
+     * Set some common data
+     * @param  array  $data    Data passed from the calling method
+     * @param  string $_caller The name of the calling method
+     * @return void
+     */
+    protected function _getcount_common($data = array(), $_caller = null)
+    {
+        parent::_getcount_common($data, $_caller);
 
+        // --------------------------------------------------------------------------
 
-	protected function _getcount_common( $data = array(), $_caller = NULL )
-	{
-		parent::_getcount_common( $data, $_caller );
+        $this->db->select($this->tablePrefix . '.*');
 
-		// --------------------------------------------------------------------------
+        if (!empty($data['include_count'])) {
 
-		$this->db->select( $this->tablePrefix . '.*' );
+            $subQuery = '
+                SELECT
+                    COUNT(DISTINCT post_id)
+                FROM ' . NAILS_DB_PREFIX . 'blog_post_category
+                WHERE
+                category_id = ' . $this->tablePrefix . '.id';
 
-		if ( ! empty( $data['include_count'] ) ) :
+            $this->db->select('(' . $subQuery . ') post_count');
+        }
 
-			$this->db->select( '(SELECT COUNT(DISTINCT post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_category WHERE category_id = ' . $this->tablePrefix . '.id) post_count' );
+        //  Default sort
+        if (empty($data['sort'])) {
 
-		endif;
+            $this->db->order_by($this->tablePrefix . '.label');
+        }
+    }
 
-		//	Default sort
-		if ( empty( $data['sort'] ) ) :
+    // --------------------------------------------------------------------------
 
-			$this->db->order_by( $this->tablePrefix . '.label' );
+    /**
+     * Creates a new category
+     * @param  stdClass $data The data to create the category with
+     * @return mixed
+     */
+    public function create($data, $returnObject = false)
+    {
+        $categoryData = new stdClass();
 
-		endif;
-	}
+        // --------------------------------------------------------------------------
 
+        //  Some basic sanity testing
+        if (empty($data->label)) {
 
-	// --------------------------------------------------------------------------
+            $this->_set_error('"label" is a required field.');
+            return false;
 
+        } else {
 
-	public function create( $data )
-	{
-		$_data = new stdClass();
+            $categoryData->label = trim($data->label);
+        }
 
-		// --------------------------------------------------------------------------
+        if (empty($data->blog_id)) {
 
-		//	Some basic sanity testing
-		if ( empty( $data->label ) ) :
+            $this->_set_error('"blog_id" is a required field.');
+            return false;
 
-			$this->_set_error( '"label" is a required field.' );
-			return FALSE;
+        } else {
 
-		else :
+            $categoryData->blog_id = $data->blog_id;
+        }
 
-			$_data->label = trim( $data->label );
+        // --------------------------------------------------------------------------
 
-		endif;
+        $categoryData->slug = $this->_generate_slug($data->label);
 
-		if ( empty( $data->blog_id ) ) :
+        if (isset($data->description)) {
 
-			$this->_set_error( '"blog_id" is a required field.' );
-			return FALSE;
+            $categoryData->description = $data->description;
+        }
 
-		else :
+        if (isset($data->seo_title)) {
 
-			$_data->blog_id = $data->blog_id;
+            $categoryData->seo_title = strip_tags($data->seo_title);
+        }
 
-		endif;
+        if (isset($data->seo_description)) {
 
-		// --------------------------------------------------------------------------
+            $categoryData->seo_description = strip_tags($data->seo_description);
+        }
 
-		$_data->slug = $this->_generate_slug( $data->label );
+        if (isset($data->seo_keywords)) {
 
-		if ( isset( $data->description ) ) :
+            $categoryData->seo_keywords = strip_tags($data->seo_keywords);
+        }
 
-			$_data->description = $data->description;
+        return parent::create($categoryData, $returnObject);
+    }
 
-		endif;
+    // --------------------------------------------------------------------------
 
-		if ( isset( $data->seo_title ) ) :
+    /**
+     * Updates an existing category
+     * @param  int      $id   The category's ID
+     * @param  stdClass $data The data to update the category with
+     * @return boolean
+     */
+    public function update($id, $data)
+    {
+        $categoryData = new stdClass();
 
-			$_data->seo_title = strip_tags( $data->seo_title );
+        // --------------------------------------------------------------------------
 
-		endif;
+        //  Some basic sanity testing
+        if (empty($data->label)) {
 
-		if ( isset( $data->seo_description ) ) :
+            $this->_set_error('"label" is a required field.');
+            return false;
 
-			$_data->seo_description = strip_tags( $data->seo_description );
+        } else {
 
-		endif;
+            $categoryData->label = trim($data->label);
+        }
 
-		if ( isset( $data->seo_keywords ) ) :
+        // --------------------------------------------------------------------------
 
-			$_data->seo_keywords = strip_tags( $data->seo_keywords );
+        $categoryData->slug = $this->_generate_slug($data->label, '', '', null, null, $id);
 
-		endif;
+        if (isset($data->description)) {
 
-		return parent::create( $_data );
-	}
+            $categoryData->description = $data->description;
+        }
 
-	// --------------------------------------------------------------------------
+        if (isset($data->seo_title)) {
 
+            $data->seo_title = strip_tags($data->seo_title);
+        }
 
-	public function update( $id, $data )
-	{
-		$_data = new stdClass();
+        if (isset($data->seo_description)) {
 
-		// --------------------------------------------------------------------------
+            $categoryData->seo_description = strip_tags($data->seo_description);
+        }
 
-		//	Some basic sanity testing
-		if ( empty( $data->label ) ) :
+        if (isset($data->seo_keywords)) {
 
-			$this->_set_error( '"label" is a required field.' );
-			return FALSE;
+            $categoryData->seo_keywords = strip_tags($data->seo_keywords);
+        }
 
-		else :
+        return parent::update($id, $categoryData);
+    }
 
-			$_data->label = trim( $data->label );
 
-		endif;
+    // --------------------------------------------------------------------------
 
-		// --------------------------------------------------------------------------
+    /**
+     * Formats a category's URL
+     * @param  string $slug   The category's slug
+     * @param  int    $blogId The blog ID to which the category belongs
+     * @return string
+     */
+    public function format_url($slug, $blogId)
+    {
+        $this->load->model('blog/blog_model');
+        return $this->blog_model->getBlogUrl($blogId) . '/category/' . $slug;
+    }
 
-		$_data->slug = $this->_generate_slug( $data->label, '', '', NULL, NULL, $id );
+    // --------------------------------------------------------------------------
 
-		if ( isset( $data->description ) ) :
+    /**
+     * Formats a category object
+     * @param  stdClass &$category The category object to format
+     * @return void
+     */
+    protected function _format_object(&$category)
+    {
+        parent::_format_object($category);
 
-			$_data->description = $data->description;
+        $category->url  = $this->format_url($category->slug, $category->blog_id);
 
-		endif;
+        if (isset($category->post_count)) {
 
-		if ( isset( $data->seo_title ) ) :
-
-			$_data->seo_title = strip_tags( $data->seo_title );
-
-		endif;
-
-		if ( isset( $data->seo_description ) ) :
-
-			$_data->seo_description = strip_tags( $data->seo_description );
-
-		endif;
-
-		if ( isset( $data->seo_keywords ) ) :
-
-			$_data->seo_keywords = strip_tags( $data->seo_keywords );
-
-		endif;
-
-		return parent::update( $id, $_data );
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	public function format_url($slug, $blogId)
-	{
-		$this->load->model('blog/blog_model');
-		return $this->blog_model->getBlogUrl($blogId) . '/category/' . $slug;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	protected function _format_object(&$category)
-	{
-		parent::_format_object($category);
-
-		$category->url	= $this->format_url($category->slug, $category->blog_id);
-
-		if (isset($category->post_count)) :
-
-			$category->post_count = (int) $category->post_count;
-
-		endif;
-	}
+            $category->post_count = (int) $category->post_count;
+        }
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -225,14 +234,9 @@ class NAILS_Blog_category_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG_CATEGORY_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG_CATEGORY_MODEL')) {
 
-	class Blog_category_model extends NAILS_Blog_category_model
-	{
-	}
-
-endif;
-
-
-/* End of file blog_category_model.php */
-/* Location: ./modules/blog/models/blog_category_model.php */
+    class Blog_category_model extends NAILS_Blog_category_model
+    {
+    }
+}

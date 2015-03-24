@@ -22,15 +22,6 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
-        //  Check this module is enabled in settings
-        if (! isModuleEnabled('nailsapp/module-blog')) {
-
-            //  Cancel execution, module isn't enabled
-            show_404();
-        }
-
-        // --------------------------------------------------------------------------
-
         //  Check the blog is valid
         $this->load->model('blog/blog_model');
 
