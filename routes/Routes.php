@@ -21,7 +21,9 @@ class Routes
     public function getRoutes()
     {
         get_instance()->load->model('blog/blog_model');
-        $blogs = get_instance()->blog_model->get_all();
+        $blogs  = get_instance()->blog_model->get_all();
+        $routes = array();
+
         foreach ($blogs as $blog) {
 
             $blogUrl = str_replace(site_url(), '', $blog->url);
