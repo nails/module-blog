@@ -234,7 +234,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
  *
  **/
 
-if (!defined('NAILS_ALLOW_EXTENSION_BLOG_CATEGORY_MODEL')) {
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG_TAG_MODEL')) {
 
     class Blog_tag_model extends NAILS_Blog_tag_model
     {

@@ -156,7 +156,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 		foreach ($tags as $tag) {
 
-			$tag->url = $this->blog_category_model->format_url($tag->slug, $tag->blog_id);
+			$tag->url = $this->blog_tag_model->format_url($tag->slug, $tag->blog_id);
 		}
 
 		return $tags;
