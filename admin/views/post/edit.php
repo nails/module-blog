@@ -1,221 +1,280 @@
 <div class="group-blog edit">
+    <?php
 
-    <?=form_open(NULL, 'id="post-form"')?>
+        echo form_open(null, 'id="post-form"');
+        echo '<input type="hidden" name="activeTab" value="' . set_value('activeTab') . '" id="activeTab" />';
 
-        <ul class="tabs">
-            <li class="tab active">
-                <a href="#" data-tab="tab-meta" id="tabber-meta">Basic Information</a>
-            </li>
-            <li class="tab">
-                <a href="#" data-tab="tab-body" id="tabber-body">Body</a>
-            </li>
+    ?>
+    <ul class="tabs">
+        <?php
 
-            <?php if (app_setting('categories_enabled', 'blog-' . $blog->id)) : ?>
-            <li class="tab">
-                <a href="#" data-tab="tab-categories" id="tabber-categories">Categories</a>
-            </li>
-            <?php endif; ?>
+            $active = $this->input->post('activeTab') == 'tab-meta' || !$this->input->post('activeTab') ? 'active' : '';
 
-            <?php if (app_setting('tags_enabled', 'blog-' . $blog->id)) : ?>
-            <li class="tab">
-                <a href="#" data-tab="tab-tags" id="tabber-tags">Tags</a>
-            </li>
-            <?php endif; ?>
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-meta" id="tabber-meta">Basic Information</a>
+        </li>
+        <?php
 
-            <?php if ($associations) : ?>
-            <li class="tab">
-                <a href="#" data-tab="tab-associations" id="tabber-associations">Associations</a>
-            </li>
-            <?php endif; ?>
+            $active = $this->input->post('activeTab') == 'tab-body' ? 'active' : '';
 
-            <?php if (app_setting('gallery_enabled', 'blog-' . $blog->id)) : ?>
-            <li class="tab">
-                <a href="#" data-tab="tab-gallery" id="tabber-gallery">Gallery</a>
-            </li>
-            <?php endif; ?>
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-body" id="tabber-body">Body</a>
+        </li>
 
-            <li class="tab">
-                <a href="#" data-tab="tab-seo" id="tabber-seo">SEO</a>
-            </li>
-        </ul>
-        <section class="tabs pages">
+        <?php if (app_setting('categories_enabled', 'blog-' . $blog->id)) : ?>
+        <?php
 
-            <div class="tab page fieldset active" id="tab-meta">
-            <?php
+            $active = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
 
-                //  Title
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-categories" id="tabber-categories">Categories</a>
+        </li>
+        <?php endif; ?>
+
+        <?php if (app_setting('tags_enabled', 'blog-' . $blog->id)) : ?>
+        <?php
+
+            $active = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
+
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-tags" id="tabber-tags">Tags</a>
+        </li>
+        <?php endif; ?>
+
+        <?php if ($associations) : ?>
+        <?php
+
+            $active = $this->input->post('activeTab') == 'tab-associations' ? 'active' : '';
+
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-associations" id="tabber-associations">Associations</a>
+        </li>
+        <?php endif; ?>
+
+        <?php if (app_setting('gallery_enabled', 'blog-' . $blog->id)) : ?>
+        <?php
+
+            $active = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
+
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-gallery" id="tabber-gallery">Gallery</a>
+        </li>
+        <?php endif; ?>
+
+        <?php
+
+            $active = $this->input->post('activeTab') == 'tab-seo' ? 'active' : '';
+
+        ?>
+        <li class="tab <?=$active?>">
+            <a href="#" data-tab="tab-seo" id="tabber-seo">SEO</a>
+        </li>
+    </ul>
+    <section class="tabs">
+        <?php
+
+            $active = $this->input->post('activeTab') == 'tab-customise' || !$this->input->post('activeTab') ? 'active' : '';
+
+        ?>
+        <div class="tab-page tab-meta <?=$active?> fieldset">
+        <?php
+
+            //  Title
+            $field                 = array();
+            $field['key']          = 'title';
+            $field['label']        = 'Title';
+            $field['required']     = true;
+            $field['default']      = isset($post->title) ? $post->title : '';
+            $field['placeholder']  = 'The title of the post';
+
+            echo form_field($field);
+
+            // --------------------------------------------------------------------------
+
+            //  Excerpt
+            if (app_setting('use_excerpts', 'blog-' . $blog->id)) :
+
                 $field                 = array();
-                $field['key']          = 'title';
-                $field['label']        = 'Title';
+                $field['id']           = 'post_excerpt';
+                $field['key']          = 'excerpt';
+                $field['class']        = 'wysiwyg-basic';
+                $field['label']        = 'Excerpt';
+                $field['default']      = isset($post->excerpt) ? $post->excerpt : '';
+                $field['placeholder']  = 'A short excerpt of the post, this will be shown in locations where a summary is required. If not specified the a truncated version of the main body will be used instead.';
+
+                echo form_field_wysiwyg($field);
+
+            endif;
+
+            // --------------------------------------------------------------------------
+
+            //  Featured Image
+            $field                 = array();
+            $field['key']          = 'image_id';
+            $field['label']        = 'Featured Image';
+            $field['bucket']       = 'blog';
+            $field['default']      = isset($post->image_id) ? $post->image_id : '';
+
+            echo form_field_mm_image($field);
+
+            // --------------------------------------------------------------------------
+
+            //  Published
+            $field                 = array();
+            $field['key']          = 'is_published';
+            $field['label']        = 'Published';
+            $field['text_on']      = 'YES';
+            $field['text_off']     = 'NO';
+            $field['default']      = isset($post->is_published) ? $post->is_published : false;
+            $field['id']           = 'is-published';
+
+            echo form_field_boolean($field);
+
+            // --------------------------------------------------------------------------
+
+            //  Published Date
+            echo '<div id="publish-date">';
+
+                $field                 = array();
+                $field['key']          = 'published';
+                $field['label']        = 'Publish Date';
                 $field['required']     = true;
-                $field['default']      = isset($post->title) ? $post->title : '';
-                $field['placeholder']  = 'The title of the post';
+                $field['default']      = isset($post->published) ? toUserDate($post->published, 'Y-m-d H:i:s') : '';
+                $field['placeholder']  = 'The publish date for this blog post';
 
-                echo form_field($field);
+                echo form_field_datetime($field);
 
-                // --------------------------------------------------------------------------
+            echo '</div>';
 
-                //  Excerpt
-                if (app_setting('use_excerpts', 'blog-' . $blog->id)) :
+        ?>
+        </div>
+        <?php
 
-                    $field                 = array();
-                    $field['key']          = 'excerpt';
-                    $field['class']        = 'wysiwyg-basic';
-                    $field['label']        = 'Excerpt';
-                    $field['default']      = isset($post->excerpt) ? $post->excerpt : '';
-                    $field['placeholder']  = 'A short excerpt of the post, this will be shown in locations where a summary is required. If not specified the a truncated version of the main body will be used instead.';
+            $active = $this->input->post('activeTab') == 'tab-body' ? 'active' : '';
 
-                    echo form_field_wysiwyg($field);
+        ?>
+        <div class="tab-page tab-body <?=$active?>">
+        <?php
 
-                endif;
+            $_key       = 'body';
+            $_default   = isset($post->body) ? $post->body : '';
 
-                // --------------------------------------------------------------------------
+            echo form_error('body', '<p class="system-alert error">', '</p>');
+            echo form_textarea($_key, set_value($_key, $_default), 'class="wysiwyg" id="post_body"');
 
-                //  Featured Image
-                $field                 = array();
-                $field['key']          = 'image_id';
-                $field['label']        = 'Featured Image';
-                $field['bucket']       = 'blog';
-                $field['default']      = isset($post->image_id) ? $post->image_id : '';
-
-                echo form_field_mm_image($field);
-
-                // --------------------------------------------------------------------------
-
-                //  Published
-                $field                 = array();
-                $field['key']          = 'is_published';
-                $field['label']        = 'Published';
-                $field['text_on']      = 'YES';
-                $field['text_off']     = 'NO';
-                $field['default']      = isset($post->is_published) ? $post->is_published : false;
-                $field['id']           = 'is-published';
-
-                echo form_field_boolean($field);
-
-                // --------------------------------------------------------------------------
-
-                //  Published Date
-                echo '<div id="publish-date">';
-
-                    $field                 = array();
-                    $field['key']          = 'published';
-                    $field['label']        = 'Publish Date';
-                    $field['required']     = true;
-                    $field['default']      = isset($post->published) ? toUserDate($post->published, 'Y-m-d H:i:s') : '';
-                    $field['placeholder']  = 'The publish date for this blog post';
-
-                    echo form_field_datetime($field);
-
-                echo '</div>';
-
-            ?>
-            </div>
-
+        ?>
+        </div>
+        <?php if (app_setting('categories_enabled', 'blog-' . $blog->id)) : ?>
             <?php
 
-                $_key       = 'body';
-                $_default   = isset($post->body) ? $post->body : '';
+                $active = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
 
             ?>
-            <div class="tab page" id="tab-body">
-                <?=form_error('body', '<p class="system-alert error">', '</p>')?>
-                <?=form_textarea($_key, set_value($_key, $_default), 'class="wysiwyg" id="post_body"')?>
+            <div class="tab-page tab-categories <?=$active?>">
+                <p>
+                    Organise your posts and help user's find them by assigning <u rel="tipsy" title="Categories allow for a broad grouping of post topics and should be considered top-level 'containers' for posts of similar content.">categories</u>.
+                </p>
+                <p>
+                    <select name="categories[]" multiple="multiple" class="select2 categories">
+                    <?php
+
+                        $_post_cats = array();
+                        if (isset($post->categories)) :
+
+                            foreach ($post->categories as $cat) :
+
+                                $_post_cats[] = $cat->id;
+
+                            endforeach;
+
+                        endif;
+
+                        $_post_raw  = $this->input->post('categories') ? $this->input->post('categories') : $_post_cats;
+                        $_post      = array();
+
+                        foreach ($_post_raw as $key => $value) :
+
+                            $_post[$value] = true;
+
+                        endforeach;
+
+                        foreach ($categories as $category) :
+
+                            $_selected = isset($_post[$category->id]) ? 'selected="selected"' : '';
+                            echo '<option value="' . $category->id . '" ' . $_selected . '>' . $category->label . '</option>';
+
+                        endforeach;
+
+                    ?>
+                    </select>
+                </p>
+                <p>
+                    <a href="#" class="manage-categories awesome orange small">Manage Categories</a>
+                </p>
             </div>
+        <?php endif; ?>
+        <?php if (app_setting('tags_enabled', 'blog-' . $blog->id)) : ?>
+            <?php
 
-            <?php if (app_setting('categories_enabled', 'blog-' . $blog->id)) : ?>
-                <div class="tab page" id="tab-categories">
-                    <p>
-                        Organise your posts and help user's find them by assigning <u rel="tipsy" title="Categories allow for a broad grouping of post topics and should be considered top-level 'containers' for posts of similar content.">categories</u>.
-                    </p>
-                    <p>
-                        <select name="categories[]" multiple="multiple" class="select2 categories">
-                        <?php
+                $active = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
 
-                            $_post_cats = array();
-                            if (isset($post->categories)) :
+            ?>
+            <div class="tab-page tab-tags <?=$active?>">
+                <p>
+                    Organise your posts and help user's find them by assigning <u rel="tipsy" title="Tags are generally used to describe your post in more detail.">tags</u>.
+                </p>
+                <p>
+                    <select name="tags[]" multiple="multiple" class="tags select2">
+                    <?php
 
-                                foreach ($post->categories as $cat) :
+                        $_post_tags = array();
+                        if (isset($post->tags)) :
 
-                                    $_post_cats[] = $cat->id;
+                            foreach ($post->tags as $tag) :
 
-                                endforeach;
-
-                            endif;
-
-                            $_post_raw  = $this->input->post('categories') ? $this->input->post('categories') : $_post_cats;
-                            $_post      = array();
-
-                            foreach ($_post_raw as $key => $value) :
-
-                                $_post[$value] = true;
+                                $_post_tags[] = $tag->id;
 
                             endforeach;
 
-                            foreach ($categories as $category) :
+                        endif;
 
-                                $_selected = isset($_post[$category->id]) ? 'selected="selected"' : '';
-                                echo '<option value="' . $category->id . '" ' . $_selected . '>' . $category->label . '</option>';
+                        $_post_raw  = $this->input->post('tags') ? $this->input->post('tags') : $_post_tags;
+                        $_post      = array();
 
-                            endforeach;
+                        foreach ($_post_raw as $key => $value) :
 
-                        ?>
-                        </select>
-                    </p>
-                    <p>
-                        <a href="#" class="manage-categories awesome orange small">Manage Categories</a>
-                    </p>
-                </div>
-            <?php endif; ?>
+                            $_post[$value] = true;
 
-            <?php if (app_setting('tags_enabled', 'blog-' . $blog->id)) : ?>
-                <div class="tab page" id="tab-tags">
-                    <p>
-                        Organise your posts and help user's find them by assigning <u rel="tipsy" title="Tags are generally used to describe your post in more detail.">tags</u>.
-                    </p>
-                    <p>
-                        <select name="tags[]" multiple="multiple" class="tags select2">
-                        <?php
+                        endforeach;
 
-                            $_post_tags = array();
-                            if (isset($post->tags)) :
+                        foreach ($tags as $tag) :
 
-                                foreach ($post->tags as $tag) :
+                            $_selected = isset($_post[$tag->id]) ? 'selected="selected"' : '';
+                            echo '<option value="' . $tag->id . '" ' . $_selected . '>' . $tag->label . '</option>';
 
-                                    $_post_tags[] = $tag->id;
+                        endforeach;
 
-                                endforeach;
+                    ?>
+                    </select>
+                </p>
+                <p>
+                    <a href="#" class="manage-tags awesome orange small">Manage Tags</a>
+                </p>
+            </div>
+        <?php endif; ?>
+        <?php if ($associations) : ?>
+            <?php
 
-                            endif;
+                $active = $this->input->post('activeTab') == 'tab-associations' ? 'active' : '';
 
-                            $_post_raw  = $this->input->post('tags') ? $this->input->post('tags') : $_post_tags;
-                            $_post      = array();
-
-                            foreach ($_post_raw as $key => $value) :
-
-                                $_post[$value] = true;
-
-                            endforeach;
-
-                            foreach ($tags as $tag) :
-
-                                $_selected = isset($_post[$tag->id]) ? 'selected="selected"' : '';
-                                echo '<option value="' . $tag->id . '" ' . $_selected . '>' . $tag->label . '</option>';
-
-                            endforeach;
-
-                        ?>
-                        </select>
-                    </p>
-                    <p>
-                        <a href="#" class="manage-tags awesome orange small">Manage Tags</a>
-                    </p>
-                </div>
-            <?php endif; ?>
-
-
-            <?php if ($associations) : ?>
-            <div class="tab page" id="tab-associations">
+            ?>
+            <div class="tab-page tab-associations <?=$active?>">
 
                 <p>
                     It's possible for you to associate this blog post with other bits of related content. The following associations can be defined.
@@ -262,12 +321,15 @@
                     endforeach;
 
                 ?>
-
             </div>
-            <?php endif; ?>
+        <?php endif; ?>
+        <?php if (app_setting('gallery_enabled', 'blog-' . $blog->id)) : ?>
+            <?php
 
-            <?php if (app_setting('gallery_enabled', 'blog-' . $blog->id)) : ?>
-            <div class="tab page" id="tab-gallery">
+                $active = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
+
+            ?>
+            <div class="tab-page tab-gallery <?=$active?>">
                 <p>
                     Upload images to the post gallery.
                     <small>
@@ -340,53 +402,54 @@
                     ?>
                 </ul>
             </div>
-            <?php endif; ?>
+        <?php endif; ?>
+        <?php
 
-            <div class="tab page fieldset" id="tab-seo">
-                <?php
+            $active = $this->input->post('activeTab') == 'tab-seo' ? 'active' : '';
 
-                //  Keywords
-                $field                 = array();
-                $field['key']          = 'seo_title';
-                $field['label']        = 'Title';
-                $field['default']      = isset($post->seo_title) ? $post->seo_title : '';
-                $field['placeholder']  = 'The SEO optimised title of the post.';
+        ?>
+        <div class="tab-page tab-seo <?=$active?> fieldset">
+            <?php
 
-                echo form_field($field, 'Should you want or need to specify a different title for the page for SEO purposes do so here.');
+            //  Keywords
+            $field                 = array();
+            $field['key']          = 'seo_title';
+            $field['label']        = 'Title';
+            $field['default']      = isset($post->seo_title) ? $post->seo_title : '';
+            $field['placeholder']  = 'The SEO optimised title of the post.';
 
-                // --------------------------------------------------------------------------
+            echo form_field($field, 'Should you want or need to specify a different title for the page for SEO purposes do so here.');
 
-                //  Description
-                $field                 = array();
-                $field['key']          = 'seo_description';
-                $field['type']         = 'textarea';
-                $field['label']        = 'Description';
-                $field['default']      = isset($post->seo_description) ? $post->seo_description : '';
-                $field['placeholder']  = 'The post\'s SEO description';
+            // --------------------------------------------------------------------------
 
-                echo form_field($field, 'This should be kept short (< 160 characters) and concise. It\'ll be shown in search result listings and search engines will use it to help determine the post\'s content.');
+            //  Description
+            $field                 = array();
+            $field['key']          = 'seo_description';
+            $field['type']         = 'textarea';
+            $field['label']        = 'Description';
+            $field['default']      = isset($post->seo_description) ? $post->seo_description : '';
+            $field['placeholder']  = 'The post\'s SEO description';
 
-                // --------------------------------------------------------------------------
+            echo form_field($field, 'This should be kept short (< 160 characters) and concise. It\'ll be shown in search result listings and search engines will use it to help determine the post\'s content.');
 
-                //  Keywords
-                $field                 = array();
-                $field['key']          = 'seo_keywords';
-                $field['label']        = 'Keywords';
-                $field['default']      = isset($post->seo_keywords) ? $post->seo_keywords : '';
-                $field['placeholder']  = 'Comma separated keywords relating to the content of the post.';
+            // --------------------------------------------------------------------------
 
-                echo form_field($field, 'SEO good practice recommend keeping the number of keyword phrases below 10 and less than 160 characters in total.');
+            //  Keywords
+            $field                 = array();
+            $field['key']          = 'seo_keywords';
+            $field['label']        = 'Keywords';
+            $field['default']      = isset($post->seo_keywords) ? $post->seo_keywords : '';
+            $field['placeholder']  = 'Comma separated keywords relating to the content of the post.';
 
-                ?>
-            </div>
+            echo form_field($field, 'SEO good practice recommend keeping the number of keyword phrases below 10 and less than 160 characters in total.');
 
-        </section>
-
-        <p>
-            <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" id="btnSubmit"')?>
-            <button class="awesome right orange js-only" id="btnPreview">Preview</button>
-        </p>
-
+            ?>
+        </div>
+    </section>
+    <p>
+        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" id="btnSubmit"')?>
+        <button class="awesome right orange js-only" id="btnPreview">Preview</button>
+    </p>
     <?=form_close()?>
 </div>
 <script type="text/template" id="template-gallery-item">

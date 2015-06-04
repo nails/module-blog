@@ -66,9 +66,9 @@
                 </li>
             </ul>
 
-            <section class="tabs pages">
+            <section class="tabs">
                 <?php $display = $this->input->post('update') == 'settings' || !$this->input->post() ? 'active' : ''?>
-                <div id="tab-general" class="tab page <?=$display?> general">
+                <div class="tab-page tab-general <?=$display?>">
                     <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
                     <?=form_hidden('update', 'settings')?>
                     <p>
@@ -186,7 +186,7 @@
                 </div>
 
                 <?php $display = $this->input->post('update') == 'skin' ? 'active' : ''?>
-                <div id="tab-skin" class="tab page <?=$display?> skin">
+                <div class="tab-page tab-skin <?=$display?>">
                     <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
                     <?=form_hidden('update', 'skin')?>
                     <p>
@@ -251,11 +251,10 @@
                         <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
-
                 </div>
 
                 <?php $display = $this->input->post('update') == 'commenting' ? 'active' : ''?>
-                <div id="tab-commenting" class="tab page <?=$display?> commenting">
+                <div class="tab-page tab-commenting <?=$display?>">
                     <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
                     <?=form_hidden('update', 'commenting')?>
                     <p>
@@ -336,7 +335,7 @@
                 </div>
 
                 <?php $display = $this->input->post('update') == 'social' ? 'active' : ''?>
-                <div id="tab-social" class="tab page <?=$display?> social">
+                <div class="tab-page tab-social <?=$display?>">
                     <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
                     <?=form_hidden('update', 'social')?>
                     <p>
@@ -467,7 +466,7 @@
                 </div>
 
                 <?php $display = $this->input->post('update') == 'sidebar' ? 'active' : ''?>
-                <div id="tab-sidebar" class="tab page <?=$display?> sidebar">
+                <div class="tab-page tab-sidebar <?=$display?>">
                     <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
                     <?=form_hidden('update', 'sidebar')?>
                     <p>
