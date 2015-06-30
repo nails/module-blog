@@ -19,7 +19,7 @@
         </li>
     </ul>
     <section class="tabs pages">
-        <div class="tab page active">
+        <div class="tab-page active">
             <?=form_open(uri_string() . '?' . $this->input->server('QUERY_STRING'))?>
             <fieldset>
                 <legend>Basic Details</legend>

@@ -64,113 +64,114 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
     /**
      * Creates a new tag
-     * @param  stdClass $data The data to create the tag with
+     * @param  array   $aData         The data to create the tag with
+     * @param  boolean $bReturnObject Whether to return the full tag object (or just the ID)
      * @return mixed
      */
-    public function create($data, $returnObject = false)
+    public function create($aData, $bReturnObject = false)
     {
-        $tagData = new stdClass();
+        $aTagData = array();
 
         // --------------------------------------------------------------------------
 
         //  Some basic sanity testing
-        if (empty($data->label)) {
+        if (empty($aData['label'])) {
 
             $this->_set_error('"label" is a required field.');
             return false;
 
         } else {
 
-            $tagData->label = trim($data->label);
+            $aTagData['label'] = trim($aData['label']);
         }
 
-        if (empty($data->blog_id)) {
+        if (empty($aData['blog_id'])) {
 
             $this->_set_error('"blog_id" is a required field.');
             return false;
 
         } else {
 
-            $tagData->blog_id = $data->blog_id;
+            $aTagData['blog_id'] = $aData['blog_id'];
         }
 
         // --------------------------------------------------------------------------
 
-        $tagData->slug = $this->_generate_slug($data->label);
+        $aTagData['slug'] = $this->_generate_slug($aData['label']);
 
-        if (isset($data->description)) {
+        if (isset($aData['description'])) {
 
-            $tagData->description = $data->description;
+            $aTagData['description'] = $aData['description'];
         }
 
-        if (isset($data->seo_title)) {
+        if (isset($aData['seo_title'])) {
 
-            $tagData->seo_title = strip_tags($data->seo_title);
+            $aTagData['seo_title'] = strip_tags($aData['seo_title']);
         }
 
-        if (isset($data->seo_description)) {
+        if (isset($aData['seo_description'])) {
 
-            $tagData->seo_description = strip_tags($data->seo_description);
+            $aTagData['seo_description'] = strip_tags($aData['seo_description']);
         }
 
-        if (isset($data->seo_keywords)) {
+        if (isset($aData['seo_keywords'])) {
 
-            $tagData->seo_keywords = strip_tags($data->seo_keywords);
+            $aTagData['seo_keywords'] = strip_tags($aData['seo_keywords']);
         }
 
-        return parent::create($tagData, $returnObject);
+        return parent::create($aTagData, $bReturnObject);
     }
 
     // --------------------------------------------------------------------------
 
     /**
      * Updates an existing tag
-     * @param  int      $id   The tag's ID
-     * @param  stdClass $data The data to update the tag with
+     * @param  integer  $iId   The tag's ID
+     * @param  stdClass $aData The data to update the tag with
      * @return boolean
      */
-    public function update($id, $data)
+    public function update($iId, $aData)
     {
-        $tagData = new stdClass();
+        $aTagData = array();
 
         // --------------------------------------------------------------------------
 
         //  Some basic sanity testing
-        if (empty($data->label)) {
+        if (empty($aData['label'])) {
 
             $this->_set_error('"label" is a required field.');
             return false;
 
         } else {
 
-            $tagData->label = trim($data->label);
+            $aTagData['label'] = trim($aData['label']);
         }
 
         // --------------------------------------------------------------------------
 
-        $tagData->slug = $this->_generate_slug($data->label, '', '', null, null, $id);
+        $aTagData['slug'] = $this->_generate_slug($aData['label'], '', '', null, null, $iId);
 
-        if (isset($data->description)) {
+        if (isset($aData['description'])) {
 
-            $tagData->description = $data->description;
+            $aTagData['description'] = $aData['description'];
         }
 
-        if (isset($data->seo_title)) {
+        if (isset($aData['seo_title'])) {
 
-            $data->seo_title = strip_tags($data->seo_title);
+            $aTagData['seo_title'] = strip_tags($aData['seo_title']);
         }
 
-        if (isset($data->seo_description)) {
+        if (isset($aData['seo_description'])) {
 
-            $tagData->seo_description = strip_tags($data->seo_description);
+            $aTagData['seo_description'] = strip_tags($aData['seo_description']);
         }
 
-        if (isset($data->seo_keywords)) {
+        if (isset($aData['seo_keywords'])) {
 
-            $tagData->seo_keywords = strip_tags($data->seo_keywords);
+            $aTagData['seo_keywords'] = strip_tags($aData['seo_keywords']);
         }
 
-        return parent::update($id, $tagData);
+        return parent::update($iId, $aTagData);
     }
 
 

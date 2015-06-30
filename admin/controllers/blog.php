@@ -158,19 +158,19 @@ class Blog extends \AdminController
 
             if ($this->form_validation->run()) {
 
-                $data              = new \stdClass();
-                $data->label       = $this->input->post('label');
-                $data->description = $this->input->post('description');
+                $aInsertData                = array();
+                $aInsertData['label']       = $this->input->post('label');
+                $aInsertData['description'] = $this->input->post('description');
 
-                $id = $this->blog_model->create($data);
+                $iId = $this->blog_model->create($aInsertData);
 
-                if ($id) {
+                if ($iId) {
 
-                    $status   = 'success';
-                    $message  = 'Blog was created successfully, ';
-                    $message .= 'now please confirm blog settings.';
-                    $this->session->set_flashdata($status, $message);
-                    redirect('admin/blog/settings?blog_id=' . $id);
+                    $sStatus   = 'success';
+                    $sMessage  = 'Blog was created successfully, ';
+                    $sMessage .= 'now please confirm blog settings.';
+                    $this->session->set_flashdata($sStatus, $sMessage);
+                    redirect('admin/blog/settings?blog_id=' . $iId);
 
                 } else {
 
@@ -228,11 +228,11 @@ class Blog extends \AdminController
 
             if ($this->form_validation->run()) {
 
-                $data              = new \stdClass();
-                $data->label       = $this->input->post('label');
-                $data->description = $this->input->post('description');
+                $aUpdateData                = array();
+                $aUpdateData['label']       = $this->input->post('label');
+                $aUpdateData['description'] = $this->input->post('description');
 
-                if ($this->blog_model->update($this->uri->Segment(5), $data)) {
+                if ($this->blog_model->update($this->uri->segment(5), $aUpdateData)) {
 
                     $status  = 'success';
                     $message = 'Blog was updated successfully.';

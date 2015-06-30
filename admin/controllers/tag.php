@@ -184,15 +184,15 @@ class Tag extends \AdminController
 
             if ($this->form_validation->run()) {
 
-                $data                  = new \stdClass();
-                $data->blog_id         = $this->blog->id;
-                $data->label           = $this->input->post('label');
-                $data->description     = $this->input->post('description');
-                $data->seo_title       = $this->input->post('seo_title');
-                $data->seo_description = $this->input->post('seo_description');
-                $data->seo_keywords    = $this->input->post('seo_keywords');
+                $aInsertData                    = array();
+                $aInsertData['blog_id']         = $this->blog->id;
+                $aInsertData['label']           = $this->input->post('label');
+                $aInsertData['description']     = $this->input->post('description');
+                $aInsertData['seo_title']       = $this->input->post('seo_title');
+                $aInsertData['seo_description'] = $this->input->post('seo_description');
+                $aInsertData['seo_keywords']    = $this->input->post('seo_keywords');
 
-                if ($this->blog_tag_model->create($data)) {
+                if ($this->blog_tag_model->create($aInsertData)) {
 
                     $status  = 'success';
                     $message = 'Tag created successfully.';
@@ -266,14 +266,14 @@ class Tag extends \AdminController
 
             if ($this->form_validation->run()) {
 
-                $data                  = new \stdClass();
-                $data->label           = $this->input->post('label');
-                $data->description     = $this->input->post('description');
-                $data->seo_title       = $this->input->post('seo_title');
-                $data->seo_description = $this->input->post('seo_description');
-                $data->seo_keywords    = $this->input->post('seo_keywords');
+                $aUpdateData                    = array();
+                $aUpdateData['label']           = $this->input->post('label');
+                $aUpdateData['description']     = $this->input->post('description');
+                $aUpdateData['seo_title']       = $this->input->post('seo_title');
+                $aUpdateData['seo_description'] = $this->input->post('seo_description');
+                $aUpdateData['seo_keywords']    = $this->input->post('seo_keywords');
 
-                if ($this->blog_tag_model->update($this->data['tag']->id, $data)) {
+                if ($this->blog_tag_model->update($this->data['tag']->id, $aUpdateData)) {
 
                     $this->session->set_flashdata('success', 'Tag saved successfully.');
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);

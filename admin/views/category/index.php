@@ -21,7 +21,7 @@
         <?php } ?>
     </ul>
     <section class="tabs pages">
-        <div class="tab page active">
+        <div class="tab-page active">
             <table>
                 <thead>
                     <tr>

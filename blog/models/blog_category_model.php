@@ -64,113 +64,114 @@ class NAILS_Blog_category_model extends NAILS_Model
 
     /**
      * Creates a new category
-     * @param  stdClass $data The data to create the category with
+     * @param  array   $aData         The data to create the category with
+     * @param  boolean $bReturnObject Whether to return the full category object (or just the ID)
      * @return mixed
      */
-    public function create($data, $returnObject = false)
+    public function create($aData, $bReturnObject = false)
     {
-        $categoryData = new stdClass();
+        $aCategoryData = array();
 
         // --------------------------------------------------------------------------
 
         //  Some basic sanity testing
-        if (empty($data->label)) {
+        if (empty($aData['label'])) {
 
             $this->_set_error('"label" is a required field.');
             return false;
 
         } else {
 
-            $categoryData->label = trim($data->label);
+            $aCategoryData['label'] = trim($aData['label']);
         }
 
-        if (empty($data->blog_id)) {
+        if (empty($aData['blog_id'])) {
 
             $this->_set_error('"blog_id" is a required field.');
             return false;
 
         } else {
 
-            $categoryData->blog_id = $data->blog_id;
+            $aCategoryData['blog_id'] = $aData['blog_id'];
         }
 
         // --------------------------------------------------------------------------
 
-        $categoryData->slug = $this->_generate_slug($data->label);
+        $aCategoryData['slug'] = $this->_generate_slug($aData['label']);
 
-        if (isset($data->description)) {
+        if (isset($aData['description'])) {
 
-            $categoryData->description = $data->description;
+            $aCategoryData['description'] = $aData['description'];
         }
 
-        if (isset($data->seo_title)) {
+        if (isset($aData['seo_title'])) {
 
-            $categoryData->seo_title = strip_tags($data->seo_title);
+            $aCategoryData['seo_title'] = strip_tags($aData['seo_title']);
         }
 
-        if (isset($data->seo_description)) {
+        if (isset($aData['seo_description'])) {
 
-            $categoryData->seo_description = strip_tags($data->seo_description);
+            $aCategoryData['seo_description'] = strip_tags($aData['seo_description']);
         }
 
-        if (isset($data->seo_keywords)) {
+        if (isset($aData['seo_keywords'])) {
 
-            $categoryData->seo_keywords = strip_tags($data->seo_keywords);
+            $aCategoryData['seo_keywords'] = strip_tags($aData['seo_keywords']);
         }
 
-        return parent::create($categoryData, $returnObject);
+        return parent::create($aCategoryData, $bReturnObject);
     }
 
     // --------------------------------------------------------------------------
 
     /**
      * Updates an existing category
-     * @param  int      $id   The category's ID
-     * @param  stdClass $data The data to update the category with
+     * @param  integer $iId   The category's ID
+     * @param  array   $aData The data to update the category with
      * @return boolean
      */
-    public function update($id, $data)
+    public function update($iId, $aData)
     {
-        $categoryData = new stdClass();
+        $aCategoryData = array();
 
         // --------------------------------------------------------------------------
 
         //  Some basic sanity testing
-        if (empty($data->label)) {
+        if (empty($aData['label'])) {
 
             $this->_set_error('"label" is a required field.');
             return false;
 
         } else {
 
-            $categoryData->label = trim($data->label);
+            $aCategoryData['label'] = trim($aData['label']);
         }
 
         // --------------------------------------------------------------------------
 
-        $categoryData->slug = $this->_generate_slug($data->label, '', '', null, null, $id);
+        $aCategoryData['slug'] = $this->_generate_slug($aData['label'], '', '', null, null, $iId);
 
-        if (isset($data->description)) {
+        if (isset($aData['description'])) {
 
-            $categoryData->description = $data->description;
+            $aCategoryData['description'] = $aData['description'];
         }
 
-        if (isset($data->seo_title)) {
+        if (isset($aData['seo_title'])) {
 
-            $data->seo_title = strip_tags($data->seo_title);
+            $aCategoryData['seo_title'] = strip_tags($aData['seo_title']);
         }
 
-        if (isset($data->seo_description)) {
+        if (isset($aData['seo_description'])) {
 
-            $categoryData->seo_description = strip_tags($data->seo_description);
+            $aCategoryData['seo_description'] = strip_tags($aData['seo_description']);
         }
 
-        if (isset($data->seo_keywords)) {
+        if (isset($aData['seo_keywords'])) {
 
-            $categoryData->seo_keywords = strip_tags($data->seo_keywords);
+            $aCategoryData['seo_keywords'] = strip_tags($aData['seo_keywords']);
         }
 
-        return parent::update($id, $categoryData);
+        return parent::update($iId, $aCategoryData);
     }
 
 
