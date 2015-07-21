@@ -12,7 +12,7 @@
 
         ?>
         <li class="tab <?=$sActive?>">
-            <a href="#" data-tab="tab-title-body" id="tabber-title-body">Title &amp; Body</a>
+            <a href="#" data-tab="tab-title-body" id="tabber-title-body">Main</a>
         </li>
         <?php
 
@@ -107,6 +107,8 @@
                     $aField['label']       = 'Slug';
                     $aField['default']     = isset($post->slug) ? $post->slug : '';
                     $aField['placeholder'] = 'The post\'s slug, leave blank to auto-generate';
+                    $aField['tip']         = 'The slug is the posts unique identifier which is shown in the URL. Best ';
+                    $aField['tip']        .= 'practice dictates that the slug be "pretty", i.e, human readable.';
 
                     echo form_field($aField);
 
@@ -174,7 +176,21 @@
                             ?>
                             <small>
                                 Copy and paste a URL from YouTube or Vimeo.
+                                <a href="#post-help-video" class="fancybox">
+                                    <b class="fa fa-question-circle fa-lg"></b>
+                                </a>
                             </small>
+                            <div id="post-help-video" style="display:none;width:400px;">
+                                <p>
+                                    <strong>Getting the video's URL</strong>
+                                </p>
+                                <ol>
+                                    <li>Find the video you wish to embed on YouTube or Vimeo</li>
+                                    <li>Copy the page's URL from the address bar</li>
+                                    <li>Paste this link in the box on this page</li>
+                                </ol>
+                                <img src="">
+                            </div>
                         </div>
                         <div class="type-fields" id="post-type-fields-audio">
                             <strong>Audio URL</strong>
@@ -192,7 +208,22 @@
                             ?>
                             <small>
                                 Copy and paste a URL for a track on Spotify.
+                                <a href="#post-help-audio" class="fancybox">
+                                    <b class="fa fa-question-circle fa-lg"></b>
+                                </a>
                             </small>
+                            <div id="post-help-audio" style="display:none;width:400px;">
+                                <p>
+                                    <strong>Getting the track's URL</strong>
+                                </p>
+                                <ol>
+                                    <li>Search for the track you wish to embed</li>
+                                    <li>Right click the track</li>
+                                    <li>click on "Copy Track Link"</li>
+                                    <li>Paste this link in the box on this page</li>
+                                </ol>
+                                <img src="">
+                            </div>
                         </div>
                         <div
                             class="type-fields"
