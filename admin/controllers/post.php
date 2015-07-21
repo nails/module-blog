@@ -16,43 +16,43 @@ class Post extends \AdminController
 {
     /**
      * Announces this controller's navGroups
-     * @return stdClass
+     * @return array
      */
     public static function announce()
     {
         //  Fetch the blogs, each blog should have its own admin nav grouping
-        $ci =& get_instance();
-        $ci->load->model('blog/blog_model');
-        $ci->load->model('blog/blog_post_model');
-        $blogs = $ci->blog_model->get_all();
+        $oCi =& get_instance();
+        $oCi->load->model('blog/blog_model');
+        $oCi->load->model('blog/blog_post_model');
+        $aBlogs = $oCi->blog_model->get_all();
 
-        $out = array();
+        $aOut = array();
 
-        if (!empty($blogs)) {
+        if (!empty($aBlogs)) {
 
-            foreach ($blogs as $blog) {
+            foreach ($aBlogs as $oBlog) {
 
-                if (!userHasPermission('admin:blog:post:' . $blog->id . ':manage')) {
+                if (!userHasPermission('admin:blog:post:' . $oBlog->id . ':manage')) {
 
                     continue;
                 }
 
                 //  Clear group naming
-                $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
+                $sGroupLabel = count($aBlogs) > 1 ? 'Blog: ' . $oBlog->label : $oBlog->label;
 
                 //  Any draft posts?
-                $numDrafts = $ci->blog_post_model->countDrafts($blog->id);
-                $alerts    = array(\Nails\Admin\Nav::alertObject($numDrafts, '', 'Drafts'));
+                $iNumDrafts = $oCi->blog_post_model->countDrafts($oBlog->id);
+                $aAlerts    = array(\Nails\Admin\Nav::alertObject($iNumDrafts, '', 'Drafts'));
 
                 //  Create the navGrouping
-                $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
-                $navGroup->addAction('Manage Posts', 'index/' . $blog->id, $alerts, 0);
+                $oNavGroup = new \Nails\Admin\Nav($sGroupLabel, 'fa-pencil-square-o');
+                $oNavGroup->addAction('Manage Posts', 'index/' . $oBlog->id, $aAlerts, 0);
 
-                $out[] = $navGroup;
+                $aOut[] = $oNavGroup;
             }
         }
 
-        return $out;
+        return $aOut;
     }
 
     // --------------------------------------------------------------------------
@@ -63,29 +63,29 @@ class Post extends \AdminController
      */
     public static function permissions()
     {
-        $permissions = parent::permissions();
+        $aPermissions = parent::permissions();
 
         //  Fetch the blogs, each blog should have its own admin nav grouping
-        $ci =& get_instance();
-        $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $oCi =& get_instance();
+        $oCi->load->model('blog/blog_model');
+        $aBlogs = $oCi->blog_model->get_all();
 
-        $out = array();
+        $aOut = array();
 
-        if (!empty($blogs)) {
+        if (!empty($aBlogs)) {
 
-            foreach ($blogs as $blog) {
+            foreach ($aBlogs as $oBlog) {
 
-                $permissions[$blog->id . ':manage']  = $blog->label . ': Can manage posts';
-                $permissions[$blog->id . ':create']  = $blog->label . ': Can create posts';
-                $permissions[$blog->id . ':edit']    = $blog->label . ': Can edit posts';
-                $permissions[$blog->id . ':delete']  = $blog->label . ': Can delete posts';
-                $permissions[$blog->id . ':restore'] = $blog->label . ': Can restore posts';
+                $aPermissions[$oBlog->id . ':manage']  = $oBlog->label . ': Can manage posts';
+                $aPermissions[$oBlog->id . ':create']  = $oBlog->label . ': Can create posts';
+                $aPermissions[$oBlog->id . ':edit']    = $oBlog->label . ': Can edit posts';
+                $aPermissions[$oBlog->id . ':delete']  = $oBlog->label . ': Can delete posts';
+                $aPermissions[$oBlog->id . ':restore'] = $oBlog->label . ': Can restore posts';
 
             }
         }
 
-        return $permissions;
+        return $aPermissions;
     }
 
     // --------------------------------------------------------------------------
@@ -108,8 +108,8 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Are we working with a valid blog?
-        $blogId = $this->uri->segment(5);
-        $this->blog = $this->blog_model->get_by_id($blogId);
+        $iBlogId = (int) $this->uri->segment(5);
+        $this->blog = $this->blog_model->get_by_id($iBlogId);
 
         if (empty($this->blog)) {
 
@@ -117,6 +117,11 @@ class Post extends \AdminController
         }
 
         $this->data['blog'] = $this->blog;
+
+        // --------------------------------------------------------------------------
+
+        //  Blog post types
+        $this->data['postTypes'] = $this->blog_post_model->getTypes();
     }
 
     // --------------------------------------------------------------------------
@@ -132,32 +137,32 @@ class Post extends \AdminController
 
         // --------------------------------------------------------------------------
 
-        $tablePrefix = $this->blog_post_model->getTablePrefix();
+        $sTablePrefix = $this->blog_post_model->getTablePrefix();
 
         // --------------------------------------------------------------------------
 
         //  Get pagination and search/sort variables
-        $page      = $this->input->get('page')      ? $this->input->get('page')      : 0;
-        $perPage   = $this->input->get('perPage')   ? $this->input->get('perPage')   : 50;
-        $sortOn    = $this->input->get('sortOn')    ? $this->input->get('sortOn')    : $tablePrefix . '.published';
-        $sortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
-        $keywords  = $this->input->get('keywords')  ? $this->input->get('keywords')  : '';
+        $iPage      = (int) $this->input->get('page') ? (int) $this->input->get('page') : 0;
+        $iPerPage   = (int) $this->input->get('perPage') ? (int) $this->input->get('perPage') : 50;
+        $sSortOn    = $this->input->get('sortOn') ? $this->input->get('sortOn') : $sTablePrefix . '.published';
+        $sSortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
+        $sKeywords  = $this->input->get('keywords') ? $this->input->get('keywords') : '';
 
         // --------------------------------------------------------------------------
 
         //  Define the sortable columns
-        $sortColumns = array(
-            $tablePrefix . '.published' => 'Published Date',
-            $tablePrefix . '.modified'  => 'Modified Date',
-            $tablePrefix . '.title'     => 'Title'
+        $aSortColumns = array(
+            $sTablePrefix . '.published' => 'Published Date',
+            $sTablePrefix . '.modified'  => 'Modified Date',
+            $sTablePrefix . '.title'     => 'Title'
         );
 
         // --------------------------------------------------------------------------
 
         //  Checkbox filters
-        $cbFilters   = array();
-        $cbFilters[] = \Nails\Admin\Helper::searchFilterObject(
-            $tablePrefix . '.is_published',
+        $aCbFilters   = array();
+        $aCbFilters[] = \Nails\Admin\Helper::searchFilterObject(
+            $sTablePrefix . '.is_published',
             'State',
             array(
                 array('Published', true, true),
@@ -165,10 +170,22 @@ class Post extends \AdminController
            )
         );
 
+        //  Generate options
+        $filterOpts = array();
+        foreach ($this->data['postTypes'] as $sValue => $sLabel) {
+            $filterOpts[] = array($sLabel, $sValue, true);
+        }
+
+        $aCbFilters[] = \Nails\Admin\Helper::searchFilterObject(
+            $sTablePrefix . '.type',
+            'Type',
+            $filterOpts
+        );
+
         // --------------------------------------------------------------------------
 
-        //  Define the $data variable for the queries
-        $data = array(
+        //  Define the $aData variable for the queries
+        $aData = array(
             'where' => array(
                 array(
                     'column' => 'blog_id',
@@ -176,19 +193,19 @@ class Post extends \AdminController
                 )
             ),
             'sort' => array(
-                array($sortOn, $sortOrder)
+                array($sSortOn, $sSortOrder)
             ),
-            'keywords' => $keywords,
-            'cbFilters' => $cbFilters
+            'keywords' => $sKeywords,
+            'cbFilters' => $aCbFilters
         );
 
         //  Get the items for the page
-        $totalRows           = $this->blog_post_model->count_all($data);
-        $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
+        $iTotalRows          = $this->blog_post_model->count_all($aData);
+        $this->data['posts'] = $this->blog_post_model->get_all($iPage, $iPerPage, $aData);
 
         //  Set Search and Pagination objects for the view
-        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $sortColumns, $sortOn, $sortOrder, $perPage, $keywords, $cbFilters);
-        $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($page, $perPage, $totalRows);
+        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $aSortColumns, $sSortOn, $sSortOrder, $iPerPage, $sKeywords, $aCbFilters);
+        $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($iPage, $iPerPage, $iTotalRows);
 
         //  Add a header button
         if (userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
@@ -229,46 +246,85 @@ class Post extends \AdminController
             $this->form_validation->set_rules('is_published', '', 'xss_clean');
             $this->form_validation->set_rules('published', '', 'xss_clean');
             $this->form_validation->set_rules('title', '', 'xss_clean|required');
+            $this->form_validation->set_rules('type', '', 'xss_clean|required');
             $this->form_validation->set_rules('excerpt', '', 'xss_clean');
             $this->form_validation->set_rules('image_id', '', 'xss_clean');
-            $this->form_validation->set_rules('body', '', 'required');
+            $this->form_validation->set_rules('video_url', '', 'xss_clean');
+            $this->form_validation->set_rules('audio_url', '', 'xss_clean');
             $this->form_validation->set_rules('seo_description', '', 'xss_clean');
             $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
 
-            $this->form_validation->set_message('required', lang('fv_required'));
+            if ($this->input->post('slug')) {
 
-            if ($this->form_validation->run()) {
+                $sTable = $this->blog_post_model->getTableName();
+                $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|is_unique[' . $sTable . '.slug]');
+            }
+
+            if ($this->input->post('type') === 'PHOTO') {
+
+                $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+
+            } else if ($this->input->post('type') === 'VIDEO') {
+
+                $this->form_validation->set_rules('video_url', '', 'xss_clean|required');
+
+            } else if ($this->input->post('type') === 'AUDIO') {
+
+                $this->form_validation->set_rules('audio_url', '', 'xss_clean|required');
+            }
+
+            $this->form_validation->set_message('required', lang('fv_required'));
+            $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
+            $this->form_validation->set_message('is_unique', 'A post using this slug already exists.');
+
+            if ($this->form_validation->run($this)) {
 
                 //  Prepare data
-                $data                    = array();
-                $data['blog_id']         = $this->blog->id;
-                $data['title']           = $this->input->post('title');
-                $data['excerpt']         = $this->input->post('excerpt');
-                $data['image_id']        = $this->input->post('image_id');
-                $data['body']            = $this->input->post('body');
-                $data['seo_description'] = $this->input->post('seo_description');
-                $data['seo_keywords']    = $this->input->post('seo_keywords');
-                $data['is_published']    = (bool) $this->input->post('is_published');
-                $data['published']       = $this->input->post('published');
-                $data['associations']    = $this->input->post('associations');
-                $data['gallery']         = $this->input->post('gallery');
+                $aData                    = array();
+                $aData['blog_id']         = $this->blog->id;
+                $aData['title']           = $this->input->post('title');
+                $aData['type']            = $this->input->post('type');
+                $aData['slug']            = $this->input->post('slug');
+                $aData['excerpt']         = $this->input->post('excerpt');
+                $aData['image_id']        = (int) $this->input->post('image_id');
+                $aData['image_id']        = $aData['image_id'] ? $aData['image_id'] : null;
+                $aData['video_url']       = trim($this->input->post('video_url'));
+                $aData['video_url']       = $aData['video_url'] ? $aData['video_url'] : null;
+                $aData['audio_url']       = trim($this->input->post('audio_url'));
+                $aData['audio_url']       = $aData['audio_url'] ? $aData['audio_url'] : null;
+                $aData['body']            = $this->input->post('body');
+                $aData['seo_description'] = $this->input->post('seo_description');
+                $aData['seo_keywords']    = $this->input->post('seo_keywords');
+                $aData['is_published']    = (bool) $this->input->post('is_published');
+                $aData['published']       = $this->input->post('published');
+                $aData['associations']    = $this->input->post('associations');
+                $aData['gallery']         = $this->input->post('gallery');
+                $aData['commentsEnabled'] = $this->input->post('commentsEnabled');
+                $aData['commentsExpire']  = $this->input->post('commentsExpire');
 
                 if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-                    $data['categories'] = $this->input->post('categories');
+                    $aData['categories'] = $this->input->post('categories');
                 }
 
                 if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-                    $data['tags'] = $this->input->post('tags');
+                    $aData['tags'] = $this->input->post('tags');
                 }
 
-                $post_id = $this->blog_post_model->create($data);
+                $iPostId = $this->blog_post_model->create($aData);
 
-                if ($post_id) {
+                if (!empty($iPostId)) {
 
                     //  Update admin changelog
-                    $this->admin_changelog_model->add('created', 'a', 'blog post', $post_id, $data['title'], 'admin/blog/post/edit/' . $this->blog->id . '/' . $post_id);
+                    $this->admin_changelog_model->add(
+                        'created',
+                        'a',
+                        'blog post',
+                        $iPostId,
+                        $aData['title'],
+                        'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
+                    );
 
                     // --------------------------------------------------------------------------
 
@@ -278,7 +334,8 @@ class Post extends \AdminController
 
                 } else {
 
-                    $this->data['error'] = lang('fv_there_were_errors');
+                    $this->data['error']  = 'An error occurred and the post could not be created. ';
+                    $this->data['error'] .= $this->blog_post_model->last_error();
                 }
 
             } else {
@@ -292,20 +349,20 @@ class Post extends \AdminController
         //  Load Categories and Tags
         if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-            $data            = array();
-            $data['where']   = array();
-            $data['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
+            $aData            = array();
+            $aData['where']   = array();
+            $aData['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $data);
+            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
         }
 
         if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-            $data            = array();
-            $data['where']   = array();
-            $data['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
+            $aData            = array();
+            $aData['where']   = array();
+            $aData['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $data);
+            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $aData);
         }
 
         // --------------------------------------------------------------------------
@@ -318,18 +375,19 @@ class Post extends \AdminController
         //  Load assets
         $this->asset->library('uploadify');
         $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
+        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
         $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
         // --------------------------------------------------------------------------
 
-        $inlineJs  = 'var _EDIT;';
-        $inlineJs .= '$(function()';
-        $inlineJs .= '{';
-        $inlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit();';
-        $inlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
-        $inlineJs .= '});';
+        $sInlineJs  = 'var _EDIT;';
+        $sInlineJs .= '$(function()';
+        $sInlineJs .= '{';
+        $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'CREATE\');';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
+        $sInlineJs .= '});';
 
-        $this->asset->inline($inlineJs, 'JS');
+        $this->asset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 
@@ -352,9 +410,9 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $post_id = $this->uri->segment(6);
+        $iPostId = (int) $this->uri->segment(6);
 
-        $this->data['post'] = $this->blog_post_model->get_by_id($post_id);
+        $this->data['post'] = $this->blog_post_model->get_by_id($iPostId);
 
         if (!$this->data['post']) {
 
@@ -376,43 +434,74 @@ class Post extends \AdminController
             $this->form_validation->set_rules('is_published', '', 'xss_clean');
             $this->form_validation->set_rules('published', '', 'xss_clean');
             $this->form_validation->set_rules('title', '', 'xss_clean|required');
+            $this->form_validation->set_rules('type', '', 'xss_clean|required');
             $this->form_validation->set_rules('excerpt', '', 'xss_clean');
             $this->form_validation->set_rules('image_id', '', 'xss_clean');
-            $this->form_validation->set_rules('body', '', 'required');
-            $this->form_validation->set_rules('seo_description', '', 'xss_clean');
+            $this->form_validation->set_rules('video_url', '', 'xss_clean');
+            $this->form_validation->set_rules('audio_url', '', 'xss_clean');
             $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
 
-            $this->form_validation->set_message('required', lang('fv_required'));
+            if ($this->input->post('slug')) {
 
-            if ($this->form_validation->run()) {
+                $sTable = $this->blog_post_model->getTableName();
+                $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']');
+            }
+
+            if ($this->input->post('type') === 'PHOTO') {
+
+                $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+
+            } else if ($this->input->post('type') === 'VIDEO') {
+
+                $this->form_validation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
+
+            } else if ($this->input->post('type') === 'AUDIO') {
+
+                $this->form_validation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
+            }
+
+            $this->form_validation->set_message('required', lang('fv_required'));
+            $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
+            $this->form_validation->set_message('unique_if_diff', 'A post using this slug already exists.');
+
+            if ($this->form_validation->run($this)) {
 
                 //  Prepare data
-                $data                    = array();
-                $data['title']           = $this->input->post('title');
-                $data['excerpt']         = $this->input->post('excerpt');
-                $data['image_id']        = $this->input->post('image_id');
-                $data['body']            = $this->input->post('body');
-                $data['seo_description'] = $this->input->post('seo_description');
-                $data['seo_keywords']    = $this->input->post('seo_keywords');
-                $data['is_published']    = (bool) $this->input->post('is_published');
-                $data['published']       = $this->input->post('published');
-                $data['associations']    = $this->input->post('associations');
-                $data['gallery']         = $this->input->post('gallery');
+                $aData                    = array();
+                $aData['title']           = $this->input->post('title');
+                $aData['type']            = $this->input->post('type');
+                $aData['slug']            = $this->input->post('slug');
+                $aData['excerpt']         = $this->input->post('excerpt');
+                $aData['image_id']        = (int) $this->input->post('image_id');
+                $aData['image_id']        = $aData['image_id'] ? $aData['image_id'] : null;
+                $aData['video_url']       = trim($this->input->post('video_url'));
+                $aData['video_url']       = $aData['video_url'] ? $aData['video_url'] : null;
+                $aData['audio_url']       = trim($this->input->post('audio_url'));
+                $aData['audio_url']       = $aData['audio_url'] ? $aData['audio_url'] : null;
+                $aData['body']            = $this->input->post('body');
+                $aData['seo_description'] = $this->input->post('seo_description');
+                $aData['seo_keywords']    = $this->input->post('seo_keywords');
+                $aData['is_published']    = (bool) $this->input->post('is_published');
+                $aData['published']       = $this->input->post('published');
+                $aData['associations']    = $this->input->post('associations');
+                $aData['gallery']         = $this->input->post('gallery');
+                $aData['commentsEnabled'] = $this->input->post('commentsEnabled');
+                $aData['commentsExpire']  = $this->input->post('commentsExpire');
 
                 if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-                    $data['categories'] = $this->input->post('categories');
+                    $aData['categories'] = $this->input->post('categories');
                 }
 
                 if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-                    $data['tags'] = $this->input->post('tags');
+                    $aData['tags'] = $this->input->post('tags');
                 }
 
-                if ($this->blog_post_model->update($post_id, $data)) {
+                if ($this->blog_post_model->update($iPostId, $aData)) {
 
                     //  Update admin change log
-                    foreach ($data as $field => $value) {
+                    foreach ($aData as $field => $value) {
 
                         if (isset($this->data['post']->$field)) {
 
@@ -425,12 +514,12 @@ class Post extends \AdminController
 
                                 case 'categories':
 
-                                    $old_categories = array();
-                                    $new_categories = array();
+                                    $aOldCategories = array();
+                                    $aNewCategories = array();
 
                                     foreach ($this->data['post']->$field as $v) {
 
-                                        $old_categories[] = $v->label;
+                                        $aOldCategories[] = $v->label;
                                     }
 
                                     if (is_array($value)) {
@@ -441,28 +530,39 @@ class Post extends \AdminController
 
                                             if ($temp) {
 
-                                                $new_categories[] = $temp->label;
+                                                $aNewCategories[] = $temp->label;
                                             }
                                         }
                                     }
 
-                                    asort($old_categories);
-                                    asort($new_categories);
+                                    asort($aOldCategories);
+                                    asort($aNewCategories);
 
-                                    $old_categories = implode(',', $old_categories);
-                                    $new_categories = implode(',', $new_categories);
+                                    $aOldCategories = implode(',', $aOldCategories);
+                                    $aNewCategories = implode(',', $aNewCategories);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $old_categories, $new_categories, false);
+                                    $this->admin_changelog_model->add(
+                                        'updated',
+                                        'a',
+                                        'blog post',
+                                        $iPostId,
+                                        $aData['title'],
+                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                        $field,
+                                        $aOldCategories,
+                                        $aNewCategories,
+                                        false
+                                    );
                                     break;
 
                                 case 'tags':
 
-                                    $old_tags = array();
-                                    $new_tags = array();
+                                    $aOldTags = array();
+                                    $aNewTags = array();
 
                                     foreach ($this->data['post']->$field as $v) {
 
-                                        $old_tags[] = $v->label;
+                                        $aOldTags[] = $v->label;
                                     }
 
                                     if (is_array($value)) {
@@ -473,23 +573,45 @@ class Post extends \AdminController
 
                                             if ($temp) {
 
-                                                $new_tags[] = $temp->label;
+                                                $aNewTags[] = $temp->label;
                                             }
                                         }
                                     }
 
-                                    asort($old_tags);
-                                    asort($new_tags);
+                                    asort($aOldTags);
+                                    asort($aNewTags);
 
-                                    $old_tags = implode(',', $old_tags);
-                                    $new_tags = implode(',', $new_tags);
+                                    $aOldTags = implode(',', $aOldTags);
+                                    $aNewTags = implode(',', $aNewTags);
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $old_tags, $new_tags, false);
+                                    $this->admin_changelog_model->add(
+                                        'updated',
+                                        'a',
+                                        'blog post',
+                                        $iPostId,
+                                        $aData['title'],
+                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                        $field,
+                                        $aOldTags,
+                                        $aNewTags,
+                                        false
+                                    );
                                     break;
 
                                 default :
 
-                                    $this->admin_changelog_model->add('updated', 'a', 'blog post', $post_id,  $data['title'], 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id, $field, $this->data['post']->$field, $value, false);
+                                    $this->admin_changelog_model->add(
+                                        'updated',
+                                        'a',
+                                        'blog post',
+                                        $iPostId,
+                                        $aData['title'],
+                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                        $field,
+                                        $this->data['post']->$field,
+                                        $value,
+                                        false
+                                    );
                                     break;
                             }
                         }
@@ -502,7 +624,8 @@ class Post extends \AdminController
 
                 } else {
 
-                    $this->data['error'] = lang('fv_there_were_errors');
+                    $this->data['error']  = 'An error occurred and the post could not be updated. ';
+                    $this->data['error'] .= $this->blog_post_model->last_error();
                 }
 
             } else {
@@ -514,22 +637,20 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Load Categories and Tags
+        $aData = array(
+            'where' => array(
+                array('column' => 'blog_id', 'value' => $this->blog->id)
+            )
+        );
+
         if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-            $data            = array();
-            $data['where']   = array();
-            $data['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
-
-            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $data);
+            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
         }
 
         if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-            $data            = array();
-            $data['where']   = array();
-            $data['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
-
-            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $data);
+            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $aData);
         }
 
         // --------------------------------------------------------------------------
@@ -542,16 +663,32 @@ class Post extends \AdminController
         //  Load assets
         $this->asset->library('uploadify');
         $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
+        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
         $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
-        $inlineJs  = 'var _EDIT;';
-        $inlineJs .= '$(function()';
-        $inlineJs .= '{';
-        $inlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit();';
-        $inlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
-        $inlineJs .= '});';
+        if ($this->data['post']->is_published) {
 
-        $this->asset->inline($inlineJs, 'JS');
+            $oNow = new \DateTime();
+            $oPublished = new \DateTime($this->data['post']->published);
+
+            if ($oPublished > $oNow) {
+                $sInitalPublishState = 'SCHEDULED';
+            } else {
+                $sInitalPublishState = 'PUBLISHED';
+            }
+
+        } else {
+            $sInitalPublishState = 'DRAFT';
+        }
+
+        $sInlineJs  = 'var _EDIT;';
+        $sInlineJs .= '$(function()';
+        $sInlineJs .= '{';
+        $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'EDIT\', \'' . $sInitalPublishState . '\');';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
+        $sInlineJs .= '});';
+
+        $this->asset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 
@@ -574,9 +711,10 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $post_id = $this->uri->segment(6);
-        $post    = $this->blog_post_model->get_by_id($post_id);
-        if (!$post || $post->blog->id != $this->blog->id) {
+        $iPostId = (int) $this->uri->segment(6);
+        $oPost   = $this->blog_post_model->get_by_id($iPostId);
+
+        if (!$oPost || $oPost->blog->id != $this->blog->id) {
 
             $this->session->set_flashdata('error', 'I could\'t find a post by that ID.');
             redirect('admin/blog/post/index/' . $this->blog->id);
@@ -584,20 +722,24 @@ class Post extends \AdminController
 
         // --------------------------------------------------------------------------
 
-        if ($this->blog_post_model->delete($post_id)) {
+        if ($this->blog_post_model->delete($iPostId)) {
 
-            $flashdata  = 'Post was deleted successfully.';
-            $flashdata .=  userHasPermission('admin:blog:post:' . $this->blog->id . ':restore') ? ' ' . anchor('admin/blog/post/restore/' . $this->blog->id . '/' . $post_id, 'Undo?') : '';
-
-            $this->session->set_flashdata('success', $flashdata);
+            $sStatus  = 'success';
+            $sMessage = 'Post was deleted successfully. ';
+            if (userHasPermission('admin:blog:post:' . $this->blog->id . ':restore')) {
+                $sMessage .= anchor('admin/blog/post/restore/' . $this->blog->id . '/' . $iPostId, 'Undo?');
+            }
 
             //  Update admin changelog
-            $this->admin_changelog_model->add('deleted', 'a', 'blog post', $post_id, $post->title);
+            $this->admin_changelog_model->add('deleted', 'a', 'blog post', $iPostId, $oPost->title);
 
         } else {
 
-            $this->session->set_flashdata('error', 'I failed to delete that post.');
+            $sStatus  = 'error';
+            $sMessage = 'I failed to delete that post. ' . $this->blog_post_model->last_error();
         }
+
+        $this->session->set_flashdata($sStatus, $sMessage);
 
         redirect('admin/blog/post/index/' . $this->blog->id);
     }
@@ -618,25 +760,32 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $post_id = $this->uri->segment(6);
+        $iPostId = (int) $this->uri->segment(6);
 
         // --------------------------------------------------------------------------
 
-        if ($this->blog_post_model->restore($post_id)) {
+        if ($this->blog_post_model->restore($iPostId)) {
 
-            $post = $this->blog_post_model->get_by_id($post_id);
+            $oPost = $this->blog_post_model->get_by_id($iPostId);
 
             $this->session->set_flashdata('success', 'Post was restored successfully.');
 
             //  Update admin changelog
-            $this->admin_changelog_model->add('restored', 'a', 'blog post', $post_id, $post->title, 'admin/blog/post/create/' . $this->blog->id . '/' . $post_id);
+            $this->admin_changelog_model->add(
+                'restored',
+                'a',
+                'blog post',
+                $iPostId,
+                $oPost->title,
+                'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId
+            );
 
         } else {
 
-            $status   = 'error';
-            $message  = 'I failed to restore that post. ';
-            $message .= $this->blog_post_model->last_error();
-            $this->session->set_flashdata($status, $message);
+            $sStatus   = 'error';
+            $sMessage  = 'I failed to restore that post. ';
+            $sMessage .= $this->blog_post_model->last_error();
+            $this->session->set_flashdata($sStatus, $sMessage);
         }
 
         redirect('admin/blog/post/index/' . $this->blog->id);
@@ -651,5 +800,58 @@ class Post extends \AdminController
     public function preview()
     {
 
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Form Validation callback, checks that a Spotify ID can be extracted from the string
+     * @param  string  $sUrl The URL to check
+     * @return boolean
+     */
+    public function _callbackValidAudioUrl($sUrl)
+    {
+        $sId = $this->blog_post_model->extractSpotifyId($sUrl);
+
+        if (!empty($sId)) {
+
+            return true;
+
+        } else {
+
+            $this->form_validation->set_message('_callbackValidAudioUrl', 'Not a valid Spotify Track URL.');
+            return false;
+        }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Form Validation callback, checks that a YouTube or Vimeo ID can be extracted from the string
+     * @param  string  $sUrl The URL to check
+     * @return boolean
+     */
+    public function _callbackValidVideoUrl($sUrl)
+    {
+        $sId = $this->blog_post_model->extractYoutubeId($sUrl);
+
+        if (!empty($sId)) {
+
+            return true;
+
+        } else {
+
+            $sId = $this->blog_post_model->extractVimeoId($sUrl);
+
+            if (!empty($sId)) {
+
+                return true;
+
+            } else {
+
+                $this->form_validation->set_message('_callbackValidVideoUrl', 'Not a valid YouTube or Vimeo URL.');
+                return false;
+            }
+        }
     }
 }

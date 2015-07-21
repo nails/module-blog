@@ -15,6 +15,7 @@
                     <th class="image">Image</th>
                     <th class="title">Details</th>
                     <th class="status">Published</th>
+                    <th class="type text-center">Type</th>
                     <th class="user">Author</th>
                     <th class="datetime">Modified</th>
                     <th class="actions">Actions</th>
@@ -33,13 +34,22 @@
                         echo '<tr class="post" data-title="' . $post->title . '">';
                             echo '<td class="image">';
 
-                            if ($post->image_id) {
+                            switch (strtoupper($post->type)) {
+                                case 'PHOTO':
 
-                                echo anchor(cdn_serve($post->image_id), img(cdn_scale($post->image_id, 75, 75)), 'class="fancybox"');
+                                    if ($post->photo->id) {
 
-                            } else {
+                                        echo anchor(cdn_serve($post->photo->id), img(cdn_scale($post->photo->id, 75, 75)), 'class="fancybox"');
 
-                                echo img(NAILS_ASSETS_URL . 'img/admin/modules/blog/image-icon.png');
+                                    } else {
+
+                                        echo img(NAILS_ASSETS_URL . 'img/admin/modules/blog/image-icon.png');
+                                    }
+                                    break;
+
+                                default:
+                                    # code...
+                                    break;
                             }
 
                             echo '</td>';
@@ -61,14 +71,14 @@
 
                                 echo '<td class="status success">';
                                     echo '<span class="fa fa-check-circle"></span>';
-                                    echo niceTime($post->published);
+                                    echo '<small>' . niceTime($post->published) . '</small>';
                                 echo '</td>';
 
                             } elseif ($post->is_published && strtotime($post->published) > time()) {
 
                                 echo '<td class="status notice">';
                                     echo '<span class="fa fa-clock-o "></span>';
-                                    echo niceTime($post->published);
+                                    echo '<small>' . niceTime($post->published) . '</small>';
                                 echo '</td>';
 
                             } else {
@@ -77,6 +87,10 @@
                                     echo '<span class="fa fa-times-circle"></span>';
                                 echo '</td>';
                             }
+
+                            echo '<td class="type text-center">';
+                                echo !empty($postTypes[$post->type]) ? $postTypes[$post->type] : 'Unknown';
+                            echo '</td>';
 
                             echo \Nails\Admin\Helper::loadUserCell($post->author);
                             echo \Nails\Admin\Helper::loadDatetimeCell($post->modified);

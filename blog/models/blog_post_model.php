@@ -25,10 +25,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->table               = NAILS_DB_PREFIX . 'blog_post';
-        $this->tablePrefix        = 'bp'; //  Hard-coded throughout model; take care when changing this
+        $this->table             = NAILS_DB_PREFIX . 'blog_post';
+        $this->tablePrefix       = 'bp'; //  Hard-coded throughout model; take care when changing this
         $this->tableLabelColumn  = 'title';
-        $this->destructiveDelete  = false;
+        $this->destructiveDelete = false;
 
         // --------------------------------------------------------------------------
 
@@ -62,15 +62,30 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        //  Generate a slug
-        $prefix = array_search($data['title'], $this->reservedWords) !== false ? 'post-' : '';
-        $this->db->set('slug', $this->_generate_slug($data['title'], $prefix));
+        /**
+         * Validate or generate a slug
+         */
+        $sSlug = !empty($data['slug']) ? $data['slug'] : '';
+        $sTitle = !empty($data['title']) ? $data['title'] : '';
+
+        $data['slug'] = $this->validateSlug($sSlug, $sTitle);
+
+        if (!$data['slug']) {
+
+            return false;
+        }
 
         // --------------------------------------------------------------------------
 
         //  Set data
         $this->db->set('blog_id', $data['blog_id']);
         $this->db->set('title', $data['title']);
+        $this->db->set('slug', $data['slug']);
+
+        if (isset($data['type'])) {
+
+            $this->db->set('type', $data['type']);
+        }
 
         if (isset($data['body'])) {
 
@@ -106,6 +121,16 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->db->set('image_id', $imageId);
         }
 
+        if (isset($data['video_url'])) {
+
+            $this->db->set('video_url', $data['video_url']);
+        }
+
+        if (isset($data['audio_url'])) {
+
+            $this->db->set('audio_url', $data['audio_url']);
+        }
+
         //  Excerpt
         if (!empty($data['excerpt'])) {
 
@@ -137,6 +162,20 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             //  No date set, use NOW()
             $this->db->set('published', 'NOW()', false);
+        }
+
+        if (isset($data['commentsEnabled'])) {
+
+            $this->db->set('commentsEnabled', (bool) $data['commentsEnabled']);
+        }
+
+        if (isset($data['commentsExpire'])) {
+
+            if (empty($data['commentsExpire'])) {
+                $this->db->set('commentsExpire', null);
+            } else {
+                $this->db->set('commentsExpire', $data['commentsExpire']);
+            }
         }
 
         $this->db->set('created', 'NOW()', false);
@@ -245,37 +284,28 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     public function update($id, $data = array())
     {
+        //  If we're deleting a post, skip all the rest
+        if (!empty($data['is_deleted'])) {
+
+            return parent::update($id, $data);
+        }
+
         /**
-         * Prepare slug; the slug is regenrated if the blog post is in a transitioning
-         * state to published. We don't want to be changing slugs of published posts
-         * but while it's a draft we can do whatever (even if it was previously published,
-         * made a draft then republished).
+         * Validate or generate a slug
          */
+        $sSlug = !empty($data['slug']) ? $data['slug'] : '';
+        $sTitle = !empty($data['title']) ? $data['title'] : '';
 
-        $this->db->select('is_published');
-        $this->db->where('id', $id);
-        $current = $this->db->get(NAILS_DB_PREFIX . 'blog_post')->row();
+        $sSlug = $this->validateSlug($sSlug, $sTitle, $id);
 
-        if (!$current->is_published && $data['is_published']) {
+        if (!$sSlug) {
 
-            $counter = 0;
-
-            if (!isset($data['title']) || !$data['title']) {
-
-                $this->_set_error('Title missing');
-                return false;
-            }
-
-            //  Generate a slug
-            $prefix = array_search($data['title'], $this->reservedWords) !== false ? 'post-' : '';
-            $slug   = $this->_generate_slug($data['title'], $prefix);
+            return false;
 
         } else {
 
-            $slug = false;
+            $this->db->set('slug', $sSlug);
         }
-
-        // --------------------------------------------------------------------------
 
         //  Set data
         if (isset($data['blog_id'])) {
@@ -291,6 +321,11 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (isset($data['body'])) {
 
             $this->db->set('body', $data['body']);
+        }
+
+        if (isset($data['type'])) {
+
+            $this->db->set('type', $data['type']);
         }
 
         if (isset($data['seo_title'])) {
@@ -327,6 +362,16 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->db->set('image_id', $imageId);
         }
 
+        if (isset($data['video_url'])) {
+
+            $this->db->set('video_url', $data['video_url']);
+        }
+
+        if (isset($data['audio_url'])) {
+
+            $this->db->set('audio_url', $data['audio_url']);
+        }
+
         //  Excerpt
         if (!empty($data['excerpt'])) {
 
@@ -361,16 +406,25 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->db->set('published', 'NOW()', false);
         }
 
+        if (isset($data['commentsEnabled'])) {
+
+            $this->db->set('commentsEnabled', (bool) $data['commentsEnabled']);
+        }
+
+        if (isset($data['commentsExpire'])) {
+
+            if (empty($data['commentsExpire'])) {
+                $this->db->set('commentsExpire', null);
+            } else {
+                $this->db->set('commentsExpire', $data['commentsExpire']);
+            }
+        }
+
         $this->db->set('modified', 'NOW()', false);
 
         if (activeUser('id')) {
 
             $this->db->set('modified_by', activeUser('id'));
-        }
-
-        if ($slug) {
-
-            $this->db->set('slug', $slug);
         }
 
         $this->db->where('id', $id);
@@ -486,6 +540,50 @@ class NAILS_Blog_post_model extends NAILS_Model
         // --------------------------------------------------------------------------
 
         return true;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Validates a slug, if supplied, generates one from the title, if not
+     * @param  string  $sSlug  The slug to test
+     * @param  string  $sTitle The title to generate a slug from if no slug available
+     * @param  integer $siId   The ID of the post to ignore from a comparison, if any
+     * @return string
+     */
+    private function validateSlug($sSlug, $sTitle, $iId = null)
+    {
+        /**
+         * Handle the slug
+         * If a slug has been provided, check it is unique, if one hasn't then
+         * generate one.
+         */
+
+        if (empty($sSlug)) {
+
+            $prefix = array_search($sSlug, $this->reservedWords) !== false ? 'post-' : '';
+            $sSlug = $this->_generate_slug($sTitle, $prefix);
+
+        } else {
+
+            if (!empty($iId)) {
+                $this->db->where('id !=', $iId);
+            }
+            $this->db->where('slug', $sSlug);
+            if ($this->db->count_all_results($this->table)) {
+                $this->_set_error('Slug "' . $sSlug . '" is already in use by another post.');
+                return false;
+            }
+        }
+
+        //  If a the slug is a reserved word then bail out
+        if (array_search($sSlug, $this->reservedWords) !== false) {
+
+            $this->_set_error('Slug "' . $sSlug . '" is a reserved word and cannot be used.');
+            return false;
+        }
+
+        return $sSlug;
     }
 
     // --------------------------------------------------------------------------
@@ -664,9 +762,11 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     protected function _getcount_common($data = null, $_caller = null)
     {
-        $this->db->select('bp.id, bp.blog_id, b.label blog_label, bp.slug, bp.title, bp.image_id, bp.excerpt, bp.seo_title');
-        $this->db->select('bp.seo_description, bp.seo_keywords, bp.is_published, bp.is_deleted, bp.created, bp.created_by, bp.modified, bp.modified_by, bp.published');
 
+        $this->db->select('bp.id,bp.blog_id,b.label blog_label,bp.slug,bp.title,bp.image_id,bp.excerpt,bp.seo_title');
+        $this->db->select('bp.seo_description,bp.seo_keywords,bp.is_published,bp.is_deleted,bp.created,bp.created_by');
+        $this->db->select('bp.modified,bp.modified_by,bp.published,bp.commentsEnabled,bp.commentsExpire, bp.type');
+        $this->db->select('bp.audio_url,bp.video_url');
         $this->db->select('u.first_name, u.last_name, ue.email, u.profile_img, u.gender');
 
         $this->db->join(NAILS_DB_PREFIX . 'blog b', 'bp.blog_id = b.id', 'LEFT');
@@ -1072,6 +1172,29 @@ class NAILS_Blog_post_model extends NAILS_Model
     // --------------------------------------------------------------------------
 
     /**
+     * Parses the `type` column and returns an array of potential post types
+     * @return array
+     */
+    public function getTypes()
+    {
+        $oResult = $this->db->query('SHOW COLUMNS FROM `' . $this->table. '` LIKE "type"')->row();
+        $sTypes = $oResult->Type;
+        $sTypes = preg_replace('/enum\((.*)\)/', '$1', $sTypes);
+        $sTypes = str_replace("'", '', $sTypes);
+        $aTypes = explode(',', $sTypes);
+
+        $aOut = array();
+
+        foreach ($aTypes as $sType) {
+            $aOut[$sType] = ucwords(strtolower($sType));
+        }
+
+        return $aOut;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Format a posts's URL
      * @param  string $slug   The post's slug
      * @param  int    $blogId The blog's ID
@@ -1094,22 +1217,16 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         parent::_format_object($post);
 
-        // --------------------------------------------------------------------------
-
-        //  Type casting
-        $post->is_published = (bool) $post->is_published;
-        $post->is_deleted   = (bool) $post->is_deleted;
-
         //  Generate URL
         $post->url = $this->format_url($post->slug, $post->blog_id);
 
         //  Blog
-        $post->blog        = new stdClass();
+        $post->blog        = new \stdClass();
         $post->blog->id    = (int) $post->blog_id;
         $post->blog->label = $post->blog_label;
 
         //  Author
-        $post->author              = new stdClass();
+        $post->author              = new \stdClass();
         $post->author->id          = (int) $post->modified_by;
         $post->author->first_name  = $post->first_name;
         $post->author->last_name   = $post->last_name;
@@ -1125,6 +1242,122 @@ class NAILS_Blog_post_model extends NAILS_Model
         unset($post->email);
         unset($post->profile_img);
         unset($post->gender);
+
+        // --------------------------------------------------------------------------
+
+        //  Handle certain post types
+        switch ($post->type) {
+            case 'VIDEO':
+
+                $post->video = new \stdClass();
+                $post->video->id = $this->extractYoutubeId($post->video_url);
+                $post->video->type = null;
+                $post->video->url = null;
+
+                if (!empty($post->video->id)) {
+                    $post->video->type = 'YOUTUBE';
+                    $post->video->url  = 'https://www.youtube.com/watch?v=' . $post->video->id;
+                } else {
+                    $post->video->id = $this->extractVimeoId($post->video_url);
+                    if (!empty($post->video->id)) {
+                        $post->video->type = 'VIMEO';
+                        $post->video->url  = 'https://www.vimeo.com/' . $post->video->id;
+                    }
+                }
+                break;
+
+            case 'AUDIO':
+
+                $post->audio = new \stdClass();
+                $post->audio->id = $this->extractSpotifyId($post->audio_url);
+                $post->audio->type = null;
+                $post->audio->url = null;
+
+                if (!empty($post->audio->id)) {
+                    $post->audio->type = 'SPOTIFY';
+                    $post->audio->url  = 'https://open.spotify.com/track/' . $post->audio->id;
+                }
+                break;
+
+            case 'PHOTO':
+                $post->photo = new \stdClass();
+                $post->photo->id = (int) $post->image_id ? (int) $post->image_id : null;
+                break;
+        }
+
+        unset($post->image_id);
+        unset($post->audio_url);
+        unset($post->video_url);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Extracts the ID from a YouTube URL
+     * @param  string $sUrl The YouTube URL
+     * @return string
+     */
+    public function extractYoutubeId($sUrl)
+    {
+        preg_match('/^https?\:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_\-]+)$/', $sUrl, $aMatches);
+
+        if (!empty($aMatches[1])) {
+
+            return $aMatches[1];
+
+        } else {
+
+            preg_match('/^https?\:\/\/youtu\.be\/([a-zA-Z0-9_\-]+)$/', $sUrl, $aMatches);
+
+            if (!empty($aMatches[1])) {
+
+                return $aMatches[1];
+            }
+        }
+
+        return null;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Extracts the ID from a Vimeo URL
+     * @param  string $sUrl The Vimeo URL
+     * @return string
+     */
+    public function extractVimeoId($sUrl)
+    {
+        preg_match('/^https?\:\/\/(www\.)?vimeo\.com\/(.*\/)?([0-9]+)$/', $sUrl, $aMatches);
+
+        if (!empty($aMatches[3])) {
+
+            return $aMatches[3];
+
+        } else {
+
+            return null;
+        }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Extracts the ID from a Spotify URL
+     * @param  string $sUrl The Spotify URL
+     * @return string
+     */
+    public function extractSpotifyId($sUrl)
+    {
+        preg_match('/^https?\:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]+)$/', $sUrl, $aMatches);
+
+        if (!empty($aMatches[1])) {
+
+            return $aMatches[1];
+
+        } else {
+
+            return null;
+        }
     }
 }
 

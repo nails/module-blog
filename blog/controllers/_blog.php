@@ -16,6 +16,9 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
     // --------------------------------------------------------------------------
 
+    /**
+     * Constructs the controller
+     */
     public function __construct()
     {
         parent::__construct();
@@ -83,7 +86,67 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
+        //  Load skin assets
+        $assets    = !empty($this->_skin->assets)     ? $this->_skin->assets     : array();
+        $cssInline = !empty($this->_skin->css_inline) ? $this->_skin->css_inline : array();
+        $jsInline  = !empty($this->_skin->js_inline)  ? $this->_skin->js_inline  : array();
+
+        $this->loadSkinAssets($assets, $cssInline, $jsInline, $this->_skin->url);
+
+        // --------------------------------------------------------------------------
+
         //  Set view data
         $this->data['blog'] = $this->blog;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Loads any assets required by the skin
+     * @param  array  $assets    An array of skin assets
+     * @param  array  $cssInline An array of inline CSS
+     * @param  array  $jsInline  An array of inline JS
+     * @param  string $url       The URL to the skin's root directory
+     * @return void
+     */
+    protected function loadSkinAssets($assets, $cssInline, $jsInline, $url)
+    {
+        //  CSS and JS
+        if (!empty($assets) && is_array($assets)) {
+
+            foreach ($assets as $asset) {
+
+                if (is_string($asset)) {
+
+                    $this->asset->load($url . 'assets/' . $asset);
+
+                } else {
+
+                    $this->asset->load($asset[0], $asset[1]);
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------
+
+        //  CSS - Inline
+        if (!empty($cssInline) && is_array($cssInline)) {
+
+            foreach ($cssInline as $asset) {
+
+                $this->asset->inline($asset, 'CSS-INLINE');
+            }
+        }
+
+        // --------------------------------------------------------------------------
+
+        //  JS - Inline
+        if (!empty($jsInline) && is_array($jsInline)) {
+
+            foreach ($jsInline as $asset) {
+
+                $this->asset->inline($asset, 'JS-INLINE');
+            }
+        }
     }
 }
