@@ -330,7 +330,7 @@ class Post extends \AdminController
 
                     //  Set flashdata and redirect
                     $this->session->set_flashdata('success', 'Post was created.');
-                    redirect('admin/blog/post/index/' . $this->blog->id);
+                    redirect('admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId);
 
                 } else {
 
@@ -620,7 +620,7 @@ class Post extends \AdminController
                     // --------------------------------------------------------------------------
 
                     $this->session->set_flashdata('success', 'Post was updated.');
-                    redirect('admin/blog/post/index/' . $this->blog->id);
+                    redirect('admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId);
 
                 } else {
 
