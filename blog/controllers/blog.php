@@ -94,11 +94,19 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
     // --------------------------------------------------------------------------
 
+    public function preview()
+    {
+        $this->blog_post_model->usePreviewTables(true);
+        return $this->single($this->uri->rsegment(4), true);
+    }
+
+    // --------------------------------------------------------------------------
+
     /**
      * View a single post
      * @return void
      */
-    public function single($id = null)
+    public function single($id = null, $bIsPreview = false)
     {
         //  Get the single post by its slug
         if ($id) {
@@ -139,7 +147,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Correct URL?
-        if (site_url(uri_string()) !== $this->data['post']->url) {
+        if (!$bIsPreview && site_url(uri_string()) !== $this->data['post']->url) {
 
             redirect($this->data['post']->url, 301);
         }

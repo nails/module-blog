@@ -241,43 +241,51 @@ class Post extends \AdminController
         //  Process POST
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
+            //  Are we running in preview mode?
+            $bIsPreview = (bool) $this->input->post('isPreview');
 
-            $this->form_validation->set_rules('is_published', '', 'xss_clean');
-            $this->form_validation->set_rules('published', '', 'xss_clean');
-            $this->form_validation->set_rules('title', '', 'xss_clean|required');
-            $this->form_validation->set_rules('type', '', 'xss_clean|required');
-            $this->form_validation->set_rules('excerpt', '', 'xss_clean');
-            $this->form_validation->set_rules('image_id', '', 'xss_clean');
-            $this->form_validation->set_rules('video_url', '', 'xss_clean');
-            $this->form_validation->set_rules('audio_url', '', 'xss_clean');
-            $this->form_validation->set_rules('seo_description', '', 'xss_clean');
-            $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+            //  Only validate non-previews
+            if (empty($bIsPreview)) {
 
-            if ($this->input->post('slug')) {
+                $this->load->library('form_validation');
 
-                $sTable = $this->blog_post_model->getTableName();
-                $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|is_unique[' . $sTable . '.slug]');
+                $this->form_validation->set_rules('is_published', '', 'xss_clean');
+                $this->form_validation->set_rules('published', '', 'xss_clean');
+                $this->form_validation->set_rules('title', '', 'xss_clean|required');
+                $this->form_validation->set_rules('type', '', 'xss_clean|required');
+                $this->form_validation->set_rules('excerpt', '', 'xss_clean');
+                $this->form_validation->set_rules('image_id', '', 'xss_clean');
+                $this->form_validation->set_rules('video_url', '', 'xss_clean');
+                $this->form_validation->set_rules('audio_url', '', 'xss_clean');
+                $this->form_validation->set_rules('seo_description', '', 'xss_clean');
+                $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+
+                if ($this->input->post('slug')) {
+
+                    $sTable = $this->blog_post_model->getTableName();
+                    $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|is_unique[' . $sTable . '.slug]');
+                }
+
+                if ($this->input->post('type') === 'PHOTO') {
+
+                    $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+
+                } else if ($this->input->post('type') === 'VIDEO') {
+
+                    $this->form_validation->set_rules('video_url', '', 'xss_clean|required');
+
+                } else if ($this->input->post('type') === 'AUDIO') {
+
+                    $this->form_validation->set_rules('audio_url', '', 'xss_clean|required');
+                }
+
+                $this->form_validation->set_message('required', lang('fv_required'));
+                $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
+                $this->form_validation->set_message('is_unique', 'A post using this slug already exists.');
+
             }
 
-            if ($this->input->post('type') === 'PHOTO') {
-
-                $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
-
-            } else if ($this->input->post('type') === 'VIDEO') {
-
-                $this->form_validation->set_rules('video_url', '', 'xss_clean|required');
-
-            } else if ($this->input->post('type') === 'AUDIO') {
-
-                $this->form_validation->set_rules('audio_url', '', 'xss_clean|required');
-            }
-
-            $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
-            $this->form_validation->set_message('is_unique', 'A post using this slug already exists.');
-
-            if ($this->form_validation->run($this)) {
+            if (!empty($bIsPreview) || $this->form_validation->run($this)) {
 
                 //  Prepare data
                 $aData                    = array();
@@ -312,25 +320,44 @@ class Post extends \AdminController
                     $aData['tags'] = $this->input->post('tags');
                 }
 
-                $iPostId = $this->blog_post_model->create($aData);
+                //  Are we running in preview mode?
+                if (!empty($bIsPreview)) {
+
+                    //  Previewing, set the preview tables and create a new one
+                    $aData['blog_id'] = $this->blog->id;
+                    $this->blog_post_model->usePreviewTables(true);
+                    $iPostId = $this->blog_post_model->create($aData);
+
+                } else {
+
+                    //  Normal behaviour
+                    $iPostId = $this->blog_post_model->create($aData);
+                }
 
                 if (!empty($iPostId)) {
 
-                    //  Update admin changelog
-                    $this->admin_changelog_model->add(
-                        'created',
-                        'a',
-                        'blog post',
-                        $iPostId,
-                        $aData['title'],
-                        'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
-                    );
+                    //  Behave slightly differently depending on whether we're previewing or not
+                    if (empty($bIsPreview)) {
 
-                    // --------------------------------------------------------------------------
+                        //  Update admin changelog
+                        $this->admin_changelog_model->add(
+                            'created',
+                            'a',
+                            'blog post',
+                            $iPostId,
+                            $aData['title'],
+                            'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
+                        );
 
-                    //  Set flashdata and redirect
-                    $this->session->set_flashdata('success', 'Post was created.');
-                    redirect('admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId);
+                        $this->session->set_flashdata('success', 'Post was created.');
+                        $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
+
+                    } else {
+
+                        $sRedirectUrl = $this->blog->url . '/preview/' . $iPostId;
+                    }
+
+                    redirect($sRedirectUrl);
 
                 } else {
 
@@ -429,42 +456,49 @@ class Post extends \AdminController
         //  Process POST
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
+            //  Are we running in preview mode?
+            $bIsPreview = (bool) $this->input->post('isPreview');
 
-            $this->form_validation->set_rules('is_published', '', 'xss_clean');
-            $this->form_validation->set_rules('published', '', 'xss_clean');
-            $this->form_validation->set_rules('title', '', 'xss_clean|required');
-            $this->form_validation->set_rules('type', '', 'xss_clean|required');
-            $this->form_validation->set_rules('excerpt', '', 'xss_clean');
-            $this->form_validation->set_rules('image_id', '', 'xss_clean');
-            $this->form_validation->set_rules('video_url', '', 'xss_clean');
-            $this->form_validation->set_rules('audio_url', '', 'xss_clean');
-            $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+            //  Only validate non-previews
+            if (empty($bIsPreview)) {
 
-            if ($this->input->post('slug')) {
+                $this->load->library('form_validation');
 
-                $sTable = $this->blog_post_model->getTableName();
-                $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']');
+                $this->form_validation->set_rules('is_published', '', 'xss_clean');
+                $this->form_validation->set_rules('published', '', 'xss_clean');
+                $this->form_validation->set_rules('title', '', 'xss_clean|required');
+                $this->form_validation->set_rules('type', '', 'xss_clean|required');
+                $this->form_validation->set_rules('excerpt', '', 'xss_clean');
+                $this->form_validation->set_rules('image_id', '', 'xss_clean');
+                $this->form_validation->set_rules('video_url', '', 'xss_clean');
+                $this->form_validation->set_rules('audio_url', '', 'xss_clean');
+                $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+
+                if ($this->input->post('slug')) {
+
+                    $sTable = $this->blog_post_model->getTableName();
+                    $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']');
+                }
+
+                if ($this->input->post('type') === 'PHOTO') {
+
+                    $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+
+                } else if ($this->input->post('type') === 'VIDEO') {
+
+                    $this->form_validation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
+
+                } else if ($this->input->post('type') === 'AUDIO') {
+
+                    $this->form_validation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
+                }
+
+                $this->form_validation->set_message('required', lang('fv_required'));
+                $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
+                $this->form_validation->set_message('unique_if_diff', 'A post using this slug already exists.');
             }
 
-            if ($this->input->post('type') === 'PHOTO') {
-
-                $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
-
-            } else if ($this->input->post('type') === 'VIDEO') {
-
-                $this->form_validation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
-
-            } else if ($this->input->post('type') === 'AUDIO') {
-
-                $this->form_validation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
-            }
-
-            $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
-            $this->form_validation->set_message('unique_if_diff', 'A post using this slug already exists.');
-
-            if ($this->form_validation->run($this)) {
+            if (!empty($bIsPreview) || $this->form_validation->run($this)) {
 
                 //  Prepare data
                 $aData                    = array();
@@ -498,129 +532,151 @@ class Post extends \AdminController
                     $aData['tags'] = $this->input->post('tags');
                 }
 
-                if ($this->blog_post_model->update($iPostId, $aData)) {
+                //  Are we running in preview mode?
+                if (!empty($bIsPreview)) {
 
-                    //  Update admin change log
-                    foreach ($aData as $field => $value) {
+                    //  Previewing, set the preview tables and create a new one
+                    $aData['blog_id'] = $this->blog->id;
+                    $this->blog_post_model->usePreviewTables(true);
+                    $mResult = $this->blog_post_model->create($aData);
 
-                        if (isset($this->data['post']->$field)) {
+                } else {
 
-                            switch ($field) {
+                    //  Normal behaviour
+                    $mResult = $this->blog_post_model->update($iPostId, $aData);
+                }
 
-                                case 'associations':
+                if (!empty($mResult)) {
 
-                                    //  @TODO: changelog associations
-                                    break;
+                    //  Behave slightly differently depending on whether we're previewing or not
+                    if (empty($bIsPreview)) {
 
-                                case 'categories':
+                        //  Update admin change log
+                        foreach ($aData as $field => $value) {
 
-                                    $aOldCategories = array();
-                                    $aNewCategories = array();
+                            if (isset($this->data['post']->$field)) {
 
-                                    foreach ($this->data['post']->$field as $v) {
+                                switch ($field) {
 
-                                        $aOldCategories[] = $v->label;
-                                    }
+                                    case 'associations':
 
-                                    if (is_array($value)) {
+                                        //  @TODO: changelog associations
+                                        break;
 
-                                        foreach ($value as $v) {
+                                    case 'categories':
 
-                                            $temp = $this->blog_category_model->get_by_id($v);
+                                        $aOldCategories = array();
+                                        $aNewCategories = array();
 
-                                            if ($temp) {
+                                        foreach ($this->data['post']->$field as $v) {
 
-                                                $aNewCategories[] = $temp->label;
+                                            $aOldCategories[] = $v->label;
+                                        }
+
+                                        if (is_array($value)) {
+
+                                            foreach ($value as $v) {
+
+                                                $temp = $this->blog_category_model->get_by_id($v);
+
+                                                if ($temp) {
+
+                                                    $aNewCategories[] = $temp->label;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    asort($aOldCategories);
-                                    asort($aNewCategories);
+                                        asort($aOldCategories);
+                                        asort($aNewCategories);
 
-                                    $aOldCategories = implode(',', $aOldCategories);
-                                    $aNewCategories = implode(',', $aNewCategories);
+                                        $aOldCategories = implode(',', $aOldCategories);
+                                        $aNewCategories = implode(',', $aNewCategories);
 
-                                    $this->admin_changelog_model->add(
-                                        'updated',
-                                        'a',
-                                        'blog post',
-                                        $iPostId,
-                                        $aData['title'],
-                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
-                                        $field,
-                                        $aOldCategories,
-                                        $aNewCategories,
-                                        false
-                                    );
-                                    break;
+                                        $this->admin_changelog_model->add(
+                                            'updated',
+                                            'a',
+                                            'blog post',
+                                            $iPostId,
+                                            $aData['title'],
+                                            'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                            $field,
+                                            $aOldCategories,
+                                            $aNewCategories,
+                                            false
+                                        );
+                                        break;
 
-                                case 'tags':
+                                    case 'tags':
 
-                                    $aOldTags = array();
-                                    $aNewTags = array();
+                                        $aOldTags = array();
+                                        $aNewTags = array();
 
-                                    foreach ($this->data['post']->$field as $v) {
+                                        foreach ($this->data['post']->$field as $v) {
 
-                                        $aOldTags[] = $v->label;
-                                    }
+                                            $aOldTags[] = $v->label;
+                                        }
 
-                                    if (is_array($value)) {
+                                        if (is_array($value)) {
 
-                                        foreach ($value as $v) {
+                                            foreach ($value as $v) {
 
-                                            $temp = $this->blog_tag_model->get_by_id($v);
+                                                $temp = $this->blog_tag_model->get_by_id($v);
 
-                                            if ($temp) {
+                                                if ($temp) {
 
-                                                $aNewTags[] = $temp->label;
+                                                    $aNewTags[] = $temp->label;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    asort($aOldTags);
-                                    asort($aNewTags);
+                                        asort($aOldTags);
+                                        asort($aNewTags);
 
-                                    $aOldTags = implode(',', $aOldTags);
-                                    $aNewTags = implode(',', $aNewTags);
+                                        $aOldTags = implode(',', $aOldTags);
+                                        $aNewTags = implode(',', $aNewTags);
 
-                                    $this->admin_changelog_model->add(
-                                        'updated',
-                                        'a',
-                                        'blog post',
-                                        $iPostId,
-                                        $aData['title'],
-                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
-                                        $field,
-                                        $aOldTags,
-                                        $aNewTags,
-                                        false
-                                    );
-                                    break;
+                                        $this->admin_changelog_model->add(
+                                            'updated',
+                                            'a',
+                                            'blog post',
+                                            $iPostId,
+                                            $aData['title'],
+                                            'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                            $field,
+                                            $aOldTags,
+                                            $aNewTags,
+                                            false
+                                        );
+                                        break;
 
-                                default :
+                                    default :
 
-                                    $this->admin_changelog_model->add(
-                                        'updated',
-                                        'a',
-                                        'blog post',
-                                        $iPostId,
-                                        $aData['title'],
-                                        'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
-                                        $field,
-                                        $this->data['post']->$field,
-                                        $value,
-                                        false
-                                    );
-                                    break;
+                                        $this->admin_changelog_model->add(
+                                            'updated',
+                                            'a',
+                                            'blog post',
+                                            $iPostId,
+                                            $aData['title'],
+                                            'admin/blog/post/create/' . $this->blog->id . '/' . $iPostId,
+                                            $field,
+                                            $this->data['post']->$field,
+                                            $value,
+                                            false
+                                        );
+                                        break;
+                                }
                             }
                         }
+
+                        $this->session->set_flashdata('success', 'Post was updated.');
+                        $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
+
+                    } else {
+
+                        $sRedirectUrl = $this->blog->url . '/preview/' . $mResult;
                     }
 
-                    // --------------------------------------------------------------------------
-
-                    $this->session->set_flashdata('success', 'Post was updated.');
-                    redirect('admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId);
+                    redirect($sRedirectUrl);
 
                 } else {
 
@@ -799,7 +855,7 @@ class Post extends \AdminController
      */
     public function preview()
     {
-
+        dumpanddie($_POST);
     }
 
     // --------------------------------------------------------------------------

@@ -2,6 +2,7 @@
     <?php
 
         echo form_open(null, 'id="post-form"');
+        echo '<input type="hidden" name="isPreview" value="0" id="isPreview" />';
         echo '<input type="hidden" name="activeTab" value="' . set_value('activeTab') . '" id="activeTab" />';
 
     ?>
