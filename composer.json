@@ -1,12 +1,6 @@
 {
     "name": "nailsapp/module-blog",
-    "keywords":
-    [
-        "Nails",
-        "Shed Collective",
-        "CodeIgniter",
-        "Blog Module"
-    ],
+    "keywords": ["Nails", "Shed Collective", "CodeIgniter", "Blog Module"],
     "homepage": "http://nailsapp.co.uk/modules/blog",
     "description": "This is the \"Blog\" module for Nails.",
     "license": "MIT",
