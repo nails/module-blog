@@ -312,8 +312,6 @@
             $aField             = array();
             $aField['key']      = 'commentsEnabled';
             $aField['label']    = 'Comments';
-            $aField['text_on']  = ucfirst(lang('on'));
-            $aField['text_off'] = ucfirst(lang('off'));
             $aField['default']  = isset($post->commentsEnabled) ? $post->commentsEnabled : true;
             $aField['id']       = 'comments-enabled';
 
@@ -458,16 +456,20 @@
 
                         if ($this->input->post()) {
 
-                            $sSelected = $this->input->post('associations');
-                            $sSelected = $sSelected[$index];
+                            $aSelected = $this->input->post('associations');
+                            if (!empty($aSelected)) {
+                                $aSelected = $aSelected[$index];
+                            } else {
+                                $aSelected = array();
+                            }
 
                         } else {
 
-                            $sSelected = array();
+                            $aSelected = array();
 
                             foreach ($assoc->current as $current) {
 
-                                $sSelected[] = $current->associated_id;
+                                $aSelected[] = $current->associated_id;
                             }
                         }
 
@@ -475,7 +477,7 @@
 
                             foreach ($assoc->data as $data) {
 
-                                $_checked = array_search($data->id, $sSelected) !== false ? 'selected="selected"' : '';
+                                $_checked = array_search($data->id, $aSelected) !== false ? 'selected="selected"' : '';
                                 echo '<option value="' . $data->id . '" ' . $_checked . '>' . $data->label . '</option>';
                             }
 
