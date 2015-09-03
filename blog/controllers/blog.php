@@ -1,19 +1,14 @@
 <?php
 
 /**
- * Name:        Blog
+ * This class renders all the blog pages
  *
- * Description: This controller handles the front page of the blog
- *
- **/
-
-/**
- * OVERLOADING NAILS' BLOG MODULE
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Controller
+ * @author      Nails Dev Team
+ * @link
+ */
 
 //  Include _blog.php; executes common functionality
 require_once '_blog.php';
@@ -29,6 +24,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
         $this->data['isCategory'] = false;
         $this->data['isTag']      = false;
         $this->data['isRss']      = false;
+
+        // --------------------------------------------------------------------------
+
+        $this->data['skinLoadView'] = function ($sSkin, $aData = array()) {
+
+            $this->loadView($sSkin, $aData);
+        };
     }
 
     // --------------------------------------------------------------------------
@@ -48,7 +50,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page      = $this->uri->rsegment(3);
-        $perPage  = app_setting('home_per_page', 'blog-' . $this->blog->id);
+        $perPage  = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage  = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -59,13 +61,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'blog_id',      'value' => $this->blog->id);
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->oBlog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -88,7 +90,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Load views
         $this->load->view('structure/header', $this->data);
-        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->loadView('browse', $this->data);
         $this->load->view('structure/footer', $this->data);
     }
 
@@ -138,7 +140,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
              * This post hasn't been published, or is scheduled. However, check to see
              * if the user has post management permissions.
              */
-            if (!userHasPermission('admin:blog:post:' . $this->blog->id . ':manage')) {
+            if (!userHasPermission('admin:blog:post:' . $this->oBlog->id . ':manage')) {
 
                 show_404();
             }
@@ -160,19 +162,19 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->blog->label . ': ';
-        $this->data['page']->title           .= $this->data['post']->seo_title ? $this->data['post']->seo_title : $this->data['post']->title;
+        $this->data['page']->title  = $this->oBlog->label . ': ';
+        $this->data['page']->title .= $this->data['post']->seo_title ? $this->data['post']->seo_title : $this->data['post']->title;
         $this->data['page']->seo->description = $this->data['post']->seo_description;
         $this->data['page']->seo->keywords    = $this->data['post']->seo_keywords;
 
         // --------------------------------------------------------------------------
 
         //  Assets
-        if (app_setting('social_enabled', 'blog-' . $this->blog->id)) {
+        if (app_setting('social_enabled', 'blog-' . $this->oBlog->id)) {
 
             $this->asset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
 
-            switch (app_setting('social_skin', 'blog-' . $this->blog->id)) {
+            switch (app_setting('social_skin', 'blog-' . $this->oBlog->id)) {
 
                 case 'FLAT':
 
@@ -200,7 +202,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Load views
         $this->load->view('structure/header', $this->data);
-        $this->load->view($this->_skin->path . 'views/single', $this->data);
+        $this->loadView('single', $this->data);
         $this->load->view('structure/footer', $this->data);
 
         // --------------------------------------------------------------------------
@@ -221,7 +223,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function category()
     {
-        if (!app_setting('categories_enabled', 'blog-' . $this->blog->id) || !$this->uri->rsegment(4)) {
+        if (!app_setting('categories_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -244,7 +246,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->blog->label . ': Posts in category "' . $this->data['category']->label . '"';
+        $this->data['page']->title = $this->oBlog->label . ': Posts in category "' . $this->data['category']->label . '"';
         $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' posted in the  ' . $this->data['category']->label . ' category ';
         $this->data['page']->seo->keywords    = '';
 
@@ -252,7 +254,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->blog->id);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -263,21 +265,29 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->blog->id);
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->oBlog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
         // --------------------------------------------------------------------------
 
         //  Load posts and count
-        $this->data['posts'] = $this->blog_post_model->get_with_category($this->data['category']->id, $page, $perPage, $data);
-        $this->data['pagination']->total = $this->blog_post_model->count_with_category($this->data['category']->id, $data);
+        $this->data['posts'] = $this->blog_post_model->get_with_category(
+            $this->data['category']->id,
+            $page,
+            $perPage,
+            $data
+        );
+        $this->data['pagination']->total = $this->blog_post_model->count_with_category(
+            $this->data['category']->id,
+            $data
+        );
 
         // --------------------------------------------------------------------------
 
@@ -307,7 +317,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         $this->load->view('structure/header', $this->data);
-        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->loadView('browse', $this->data);
         $this->load->view('structure/footer', $this->data);
     }
 
@@ -319,7 +329,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function tag()
     {
-        if (!app_setting('tags_enabled', 'blog-' . $this->blog->id) || !$this->uri->rsegment(4)) {
+        if (!app_setting('tags_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -342,7 +352,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title            = $this->blog->label . ': Posts tagged with "' . $this->data['tag']->label . '"';
+        $this->data['page']->title = $this->oBlog->label . ': Posts tagged with "' . $this->data['tag']->label . '"';
         $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' tagged with  ' . $this->data['tag']->label . ' ';
         $this->data['page']->seo->keywords    = '';
 
@@ -350,7 +360,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->blog->id);
+        $perPage = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -361,13 +371,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->blog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
+        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->blog->id);
+        $data['where'][] = array('column' => 'bp.blog_id',   'value' => $this->oBlog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -405,7 +415,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         $this->load->view('structure/header', $this->data);
-        $this->load->view($this->_skin->path . 'views/browse', $this->data);
+        $this->loadView('browse', $this->data);
         $this->load->view('structure/footer', $this->data);
     }
 
@@ -417,7 +427,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function rss()
     {
-        if (!app_setting('rss_enabled', 'blog-' . $this->blog->id)) {
+        if (!app_setting('rss_enabled', 'blog-' . $this->oBlog->id)) {
 
             show_404();
         }
@@ -427,12 +437,12 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Get posts
         $data                    = array();
         $data['include_body']    = true;
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->blog->id);
+        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
         $data['where']   = array();
-        $data['where'][] = array('column' => 'blog_id',      'value' => $this->blog->id);
+        $data['where'][] = array('column' => 'blog_id',      'value' => $this->oBlog->id);
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
@@ -441,7 +451,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Set Output
         $this->output->set_content_type('text/xml; charset=UTF-8');
-        $this->load->view($this->_skin->path . 'views/rss', $this->data);
+        $this->loadView('rss', $this->data);
     }
 
     // --------------------------------------------------------------------------
@@ -477,24 +487,64 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         $this->data['widget'] = new stdClass();
 
-        if (app_setting('sidebar_latest_posts', 'blog-' . $this->blog->id)) {
+        if (app_setting('sidebar_latest_posts', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->blog->id);
+            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_categories', 'blog-' . $this->blog->id)) {
+        if (app_setting('sidebar_categories', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->categories = $this->blog_widget_model->categories($this->blog->id);
+            $this->data['widget']->categories = $this->blog_widget_model->categories($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_tags', 'blog-' . $this->blog->id)) {
+        if (app_setting('sidebar_tags', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->tags = $this->blog_widget_model->tags($this->blog->id);
+            $this->data['widget']->tags = $this->blog_widget_model->tags($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_popular_posts', 'blog-' . $this->blog->id)) {
+        if (app_setting('sidebar_popular_posts', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->blog->id);
+            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->oBlog->id);
+        }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Loads a view from the skin, falls back tot he parent view if there is one.
+     * @param  string $sView The view to load
+     * @return void
+     */
+    private function loadView($sView, $aData = array())
+    {
+        $sFile = $this->oSkin->path . 'views/' . $sView;
+
+        if (is_file($sFile . '.php')) {
+
+            $this->load->view($sFile, $aData);
+
+        } elseif (!empty($this->oSkinParent)) {
+
+            $sFile = $this->oSkinParent->path . 'views/' . $sView;
+
+            if (is_file($sFile . '.php')) {
+
+                $this->load->view($sFile, $aData);
+
+            } else {
+
+                $sSubject = 'Failed to load blog view "' . $sView . '"';
+                $sMessage = 'Failed to load blog view "' . $sView . '" (parent skin) at ' . APP_NAME;
+
+                showFatalError($sSubject, $sMessage);
+            }
+
+        } else {
+
+            $sSubject = 'Failed to load blog view "' . $sView . '"';
+            $sMessage = 'Failed to load blog view "' . $sView . '" at ' . APP_NAME;
+
+            showFatalError($sSubject, $sMessage);
         }
     }
 

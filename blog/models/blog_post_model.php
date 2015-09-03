@@ -1051,7 +1051,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Join the $this->tableCat table so we can WHERE on it.
         $this->db->join(
             $this->tableCat . ' ' . $this->tableCatPrefix,
-            $this->tableCatPrefix . '.post_id = ' . $this->tablePrefix . 'id'
+            $this->tableCatPrefix . '.post_id = ' . $this->tablePrefix . '.id'
         );
         $this->db->join(
             NAILS_DB_PREFIX . 'blog_category bc',

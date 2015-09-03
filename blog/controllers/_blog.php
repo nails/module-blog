@@ -13,6 +13,8 @@
 class NAILS_Blog_Controller extends NAILS_Controller
 {
     protected $blog;
+    protected $oSkin;
+    protected $oSkinParent;
 
     // --------------------------------------------------------------------------
 
@@ -28,10 +30,10 @@ class NAILS_Blog_Controller extends NAILS_Controller
         //  Check the blog is valid
         $this->load->model('blog/blog_model');
 
-        $blogId     = $this->uri->rsegment(2);
-        $this->blog = $this->blog_model->get_by_id($blogId);
+        $iBlogId = (int) $this->uri->rsegment(2);
+        $this->oBlog = $this->blog_model->get_by_id($iBlogId);
 
-        if (empty($this->blog)) {
+        if (empty($this->oBlog)) {
 
             show_404();
         }
@@ -50,15 +52,15 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
-        $settingStr = 'blog-' . $this->blog->id;
+        $sSettingBlogName = 'blog-' . $this->oBlog->id;
 
-        if (app_setting('categories_enabled', $settingStr)) {
+        if (app_setting('categories_enabled', $sSettingBlogName)) {
 
             $this->load->model('blog/blog_category_model');
         }
 
 
-        if (app_setting('tags_enabled', $settingStr)) {
+        if (app_setting('tags_enabled', $sSettingBlogName)) {
 
             $this->load->model('blog/blog_tag_model');
         }
@@ -66,59 +68,107 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Load up the blog's skin
-        $skin = app_setting('skin', $settingStr) ? app_setting('skin', $settingStr) : 'blog-skin-classic';
+        $sSkinSlug = app_setting('skin', $sSettingBlogName) ? app_setting('skin', $sSettingBlogName) : 'blog-skin-classic';
 
-        $this->_skin = $this->blog_skin_model->get($skin);
+        $this->oSkin = $this->blog_skin_model->get($sSkinSlug);
 
-        if (!$this->_skin) {
+        if (!$this->oSkin) {
 
-            $subject  = 'Failed to load blog skin "' . $skin . '"';
-            $message  = 'Blog skin "' . $skin . '" failed to load at ' . APP_NAME;
-            $message .= ', the following reason was given: ' . $this->blog_skin_model->last_error();
+            $sSubject  = 'Failed to load blog skin "' . $sSkinSlug . '"';
+            $sMessage  = 'Blog skin "' . $sSkinSlug . '" failed to load at ' . APP_NAME;
+            $sMessage .= ', the following reason was given: ' . $this->blog_skin_model->last_error();
 
-            showFatalError($subject, $message);
+            showFatalError($sSubject, $sMessage);
+        }
+
+        //  Load the skin's parent, if it has one
+        if (!empty($this->oSkin->parent)) {
+
+            $this->oSkinParent = $this->blog_skin_model->get($this->oSkin->parent);
+
+            if (!$this->oSkinParent) {
+
+                $sSubject  = 'Failed to load blog skin "' . $this->oSkin->parent . '"';
+                $sMessage  = 'Blog skin "' . $sSkinSlug . '" has defined a parent ("' . $this->oSkin->parent . '")" ';
+                $sMessage .= 'but the parent skin could not be loaded at ' . APP_NAME . ', ';
+                $sMessage .= 'the following reason was given: ' . $this->blog_skin_model->last_error();
+
+                showFatalError($sSubject, $sMessage);
+            }
         }
 
         // --------------------------------------------------------------------------
 
         //  Pass to $this->data, for the views
-        $this->data['skin'] = $this->_skin;
+        $this->data['skin'] = $this->oSkin;
+        $this->data['skinParent'] = $this->oSkinParent;
 
         // --------------------------------------------------------------------------
 
         //  Load skin assets
-        $assets    = !empty($this->_skin->assets)     ? $this->_skin->assets     : array();
-        $cssInline = !empty($this->_skin->css_inline) ? $this->_skin->css_inline : array();
-        $jsInline  = !empty($this->_skin->js_inline)  ? $this->_skin->js_inline  : array();
+        $aAssets = array();
+        $aCssInline = array();
+        $aJsInline = array();
 
-        $this->loadSkinAssets($assets, $cssInline, $jsInline, $this->_skin->url);
+        if (!empty($this->oSkinParent)) {
+
+            if (!empty($this->oSkinParent->assets)) {
+
+                $aAssetsWalked = array_map(array($this, 'prependUrlParent'), $this->oSkinParent->assets);
+                $aAssets = array_merge($aAssets, $aAssetsWalked);
+            }
+
+            if (!empty($this->oSkinParent->css_inline)) {
+                $aCssInline = array_merge($aCssInline, $this->oSkinParent->css_inline);
+            }
+
+            if (!empty($this->oSkinParent->js_inline)) {
+                $aJsInline = array_merge($aJsInline, $this->oSkinParent->js_inline);
+            }
+        }
+
+        if (!empty($this->oSkin->assets)) {
+
+            $aAssetsWalked = array_map(array($this, 'prependUrl'), $this->oSkin->assets);
+            $aAssets = array_merge($aAssets, $aAssetsWalked);
+        }
+
+        if (!empty($this->oSkin->css_inline)) {
+            $aCssInline = array_merge($aCssInline, $this->oSkin->css_inline);
+        }
+
+        if (!empty($this->oSkin->js_inline)) {
+            $aJsInline = array_merge($aJsInline, $this->oSkin->js_inline);
+        }
+
+        $this->loadSkinAssets($aAssets, $aCssInline, $aJsInline, $this->oSkin->url);
 
         // --------------------------------------------------------------------------
 
         //  Set view data
-        $this->data['blog'] = $this->blog;
+        $this->data['blog'] = $this->oBlog;
     }
 
     // --------------------------------------------------------------------------
 
     /**
      * Loads any assets required by the skin
-     * @param  array  $assets    An array of skin assets
-     * @param  array  $cssInline An array of inline CSS
-     * @param  array  $jsInline  An array of inline JS
-     * @param  string $url       The URL to the skin's root directory
+     * @param  array  $aAssets    An array of skin assets
+     * @param  array  $aCssInline An array of inline CSS
+     * @param  array  $aJsInline  An array of inline JS
+     * @param  string $sUrl       The URL to the skin's root directory
      * @return void
      */
-    protected function loadSkinAssets($assets, $cssInline, $jsInline, $url)
+    protected function loadSkinAssets($aAssets, $aCssInline, $aJsInline, $sUrl)
     {
         //  CSS and JS
-        if (!empty($assets) && is_array($assets)) {
+        if (!empty($aAssets) && is_array($aAssets)) {
 
-            foreach ($assets as $asset) {
+            foreach ($aAssets as $asset) {
 
                 if (is_string($asset)) {
 
-                    $this->asset->load($url . 'assets/' . $asset);
+                    $this->asset->load($asset);
 
                 } else {
 
@@ -130,9 +180,9 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  CSS - Inline
-        if (!empty($cssInline) && is_array($cssInline)) {
+        if (!empty($aCssInline) && is_array($aCssInline)) {
 
-            foreach ($cssInline as $asset) {
+            foreach ($aCssInline as $asset) {
 
                 $this->asset->inline($asset, 'CSS-INLINE');
             }
@@ -141,12 +191,34 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  JS - Inline
-        if (!empty($jsInline) && is_array($jsInline)) {
+        if (!empty($aJsInline) && is_array($aJsInline)) {
 
-            foreach ($jsInline as $asset) {
+            foreach ($aJsInline as $asset) {
 
                 $this->asset->inline($asset, 'JS-INLINE');
             }
         }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Adds the skin url to the input string
+     * @param String $sInput the input string
+     */
+    private function prependUrl($sInput)
+    {
+        return $this->oSkin->url . 'assets/' . $sInput;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Adds the parent skin url to the input string
+     * @param String $sInput the input string
+     */
+    private function prependUrlParent($sInput)
+    {
+        return $this->oSkinParent->url . 'assets/' . $sInput;
     }
 }

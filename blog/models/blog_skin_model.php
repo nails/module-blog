@@ -1,236 +1,250 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
- * Name:			blog_skin_model.php
+ * This model handles everything to do with blog skins.
  *
- * Description:		This model finds and loads blog skins
- *
- **/
-
-/**
- * OVERLOADING NAILS' MODELS
- *
- * Note the name of this class; done like this to allow apps to extend this class.
- * Read full explanation at the bottom of this file.
- *
- **/
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Model
+ * @author      Nails Dev Team
+ * @link
+ */
 
 class NAILS_Blog_skin_model extends NAILS_Model
 {
-	protected $_available;
-	protected $_skins;
-	protected $_skin_locations;
+    protected $aAvailable;
+    protected $aSkinLocations;
 
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
+    /**
+     * Construct the model.
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
+        // --------------------------------------------------------------------------
 
-	/**
-	 * Construct the model.
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+        $this->aAvailable = null;
 
-		// --------------------------------------------------------------------------
+        /**
+         * Skin locations
+         * The model will search these directories for skins; to add more directories extend this
+         * This must be an array with 2 indexes:
+         * `path` => The absolute path to the directory containing the skins (required)
+         * `url` => The URL to access the skin (required
+         * `regex` => If the directory doesn't only contain skin then specify a regex to filter by
+         */
 
-		$this->_available = NULL;
+        if (empty($this->aSkinLocations)) {
 
-		/**
-		 * Skin locations
-		 * The model will search these directories for skins; to add more directories extend this
-		 * This must be an array with 2 indexes:
-		 * `path`	=> The absolute path to the directory containing the skins (required)
-		 * `url`	=> The URL to access the skin (required)
-		 * `regex`	=> If the directory doesn't only contain skin then specify a regex to filter by
-		 */
+            $this->aSkinLocations = array();
+        }
 
-		if ( empty( $this->_skin_locations ) ) :
+        //  'Official' skins
+        $this->aSkinLocations[] = array(
+            'path' => NAILS_PATH,
+            'url' => NAILS_URL,
+            'regex' => '/^blog-skin-(.*)$/'
+        );
 
-			$this->_skin_locations = array();
+        //  App Skins
+        $this->aSkinLocations[] = array(
+            'path' => FCPATH . APPPATH . 'modules/blog/skins',
+            'url' => site_url(APPPATH . 'modules/blog/skins', isPageSecure())
+        );
+    }
 
-		endif;
+    // --------------------------------------------------------------------------
 
-		//	'Official' skins
-		$this->_skin_locations[]	= array(
-										'path'	=> NAILS_PATH,
-										'url'	=> NAILS_URL,
-										'regex'	=> '/^blog-skin-(.*)$/'
-									);
+    /**
+     * Fetches all available skins
+     * @param  boolean $refresh Fetchf rom refresh - skip the cache
+     * @return array
+     */
+    public function get_available($refresh = false)
+    {
+        if (!is_null($this->aAvailable) && !$refresh) {
 
-		//	App Skins
-		$this->_skin_locations[]	= array(
-										'path' => FCPATH . APPPATH . 'modules/blog/skins',
-										'url' => site_url( APPPATH . 'modules/blog/skins', isPageSecure() )
-									);
-	}
+            return $this->aAvailable;
+        }
 
+        //  Reset
+        $this->aAvailable = array();
 
-	// --------------------------------------------------------------------------
+        // --------------------------------------------------------------------------
 
+        /**
+         * Look for skins, where a skin has the same name, the last one found is the
+         * one which is used.
+         */
 
-	/**
-	 * Fetches all available shipping drivers
-	 * @param  boolean $refresh Fetchf rom refresh - skip the cache
-	 * @return array
-	 */
-	public function get_available( $refresh = FALSE )
-	{
-		if ( ! is_null( $this->_available ) && ! $refresh ) :
+        $this->load->helper('directory');
 
-			return $this->_available;
+        //  Take a fresh copy
+        $aSkinLocations = $this->aSkinLocations;
 
-		endif;
+        //  Sanitise
+        for ($i = 0; $i < count($aSkinLocations); $i++) {
 
-		//	Reset
-		$this->_available = array();
+            //  Ensure path is present and has a trailing slash
+            if (isset($aSkinLocations[$i]['path'])) {
 
-		// --------------------------------------------------------------------------
+                if (substr($aSkinLocations[$i]['path'], -1, 1) !== '/') {
 
-		//	Look for skins, where a skin has the same name, the last one found is the
-		//	one which is used
+                    $aSkinLocations[$i]['path'] .= '/';
+                }
 
-		$this->load->helper( 'directory' );
+            } else {
 
-		//	Take a fresh copy
-		$_skin_locations = $this->_skin_locations;
+                unset($aSkinLocations[$i]);
+            }
 
-		//	Sanitise
-		for ( $i = 0; $i < count( $_skin_locations ); $i++ ) :
+            //  Ensure URL is present and has a trailing slash
+            if (isset($aSkinLocations[$i]['url'])) {
 
-			//	Ensure path is present and has a trailing slash
-			if ( isset( $_skin_locations[$i]['path'] ) ) :
+                if (substr($aSkinLocations[$i]['url'], -1, 1) !== '/') {
 
-				$_skin_locations[$i]['path'] = substr( $_skin_locations[$i]['path'], -1, 1 ) == '/' ? $_skin_locations[$i]['path'] : $_skin_locations[$i]['path'] . '/';
+                    $aSkinLocations[$i]['url'] .= '/';
+                }
 
-			else :
+            } else {
 
-				unset( $_skin_locations[$i] );
+                unset($aSkinLocations[$i]);
+            }
+        }
 
-			endif;
+        //  Reset array keys, possible that some may have been removed
+        $aSkinLocations = array_values($aSkinLocations);
+        $aChildSkins = array();
 
-			//	Ensure URL is present and has a trailing slash
-			if ( isset( $_skin_locations[$i]['url'] ) ) :
+        foreach ($aSkinLocations as $aSkinLocation) {
 
-				$_skin_locations[$i]['url'] = substr( $_skin_locations[$i]['url'], -1, 1 ) == '/' ? $_skin_locations[$i]['url'] : $_skin_locations[$i]['url'] . '/';
+            $sPath = $aSkinLocation['path'];
+            $aSkins = is_dir($sPath) ? directory_map($sPath, 1) : array();
 
-			else :
+            if (is_array($aSkins)) {
 
-				unset( $_skin_locations[$i] );
+                foreach ($aSkins as $skin) {
 
-			endif;
+                    //  do we need to filter out non skins?
+                    if (!empty($aSkinLocation['regex'])) {
 
-		endfor;
+                        if (!preg_match($aSkinLocation['regex'], $skin)) {
 
-		//	Reset array keys, possible that some may have been removed
-		$_skin_locations = array_values( $_skin_locations );
+                            log_message('debug', '"' . $skin . '" is not a blog skin.');
+                            continue;
+                        }
+                    }
 
-		foreach ( $_skin_locations as $skin_location ) :
+                    // --------------------------------------------------------------------------
 
-			$_path	= $skin_location['path'];
-			$_skins	= is_dir($_path) ? directory_map( $_path, 1 ) : array();
+                    //  Exists?
+                    if (file_exists($sPath . $skin . '/config.json')) {
 
-			if ( is_array( $_skins ) ) :
+                        $oConfig = @json_decode(file_get_contents($sPath . $skin . '/config.json'));
 
-				foreach ( $_skins as $skin ) :
+                    } else {
 
-					//	do we need to filter out non skins?
-					if ( ! empty( $skin_location['regex'] ) ) :
+                        log_message('error', 'Could not find configuration file for skin "' . $sPath . $skin. '".');
+                        continue;
+                    }
 
-						if ( ! preg_match( $skin_location['regex'], $skin ) ) :
+                    //  Valid?
+                    if (empty($oConfig)) {
 
-							log_message( 'debug', '"' . $skin . '" is not a blog skin.' );
-							continue;
+                        log_message(
+                            'error',
+                            'Configuration file for skin "' . $sPath . $skin. '" contains invalid JSON.'
+                        );
+                        continue;
 
-						endif;
+                    } elseif (!is_object($oConfig)) {
 
-					endif;
+                        log_message(
+                            'error',
+                            'Configuration file for skin "' . $sPath . $skin. '" contains invalid data.'
+                        );
+                        continue;
+                    }
 
-					// --------------------------------------------------------------------------
+                    // --------------------------------------------------------------------------
 
-					//	Exists?
-					if ( file_exists( $_path . $skin . '/config.json' ) ) :
+                    //  All good!
+                    //  Set the slug
+                    $oConfig->slug = $skin;
 
-						$_config = @json_decode( file_get_contents( $_path . $skin . '/config.json' ) );
+                    //  Set the path
+                    $oConfig->path = $sPath . $skin . '/';
 
-					else :
+                    //  Set the URL
+                    $oConfig->url = $aSkinLocation['url'] . $skin . '/';
 
-						log_message( 'error', 'Could not find configuration file for skin "' . $_path . $skin. '".' );
-						continue;
+                    $this->aAvailable[$skin] = $oConfig;
 
-					endif;
+                    // --------------------------------------------------------------------------
 
-					//	Valid?
-					if ( empty( $_config ) ) :
+                    /**
+                     * If the skin is a child, make a note to test its parent exists. We do this
+                     * once all skins have been loaded.
+                     */
 
-						log_message( 'error', 'Configuration file for skin "' . $_path . $skin. '" contains invalid JSON.' );
-						continue;
+                    if (!empty($oConfig->parent)) {
+                        $aChildSkins[$oConfig->slug] = $oConfig->parent;
+                    }
+                }
+            }
+        }
 
-					elseif ( ! is_object( $_config ) ) :
+        //  Test any child skins to ensure their parent is available
+        $aRemoveSkins = array();
+        if (!empty($aChildSkins)) {
+            foreach ($aChildSkins as $sSkinSlug => $sSkinParentSlug) {
+                if (empty($this->aAvailable[$sSkinParentSlug])) {
+                    $aRemoveSkins[] = $sSkinSlug;
+                }
+            }
+        }
 
-						log_message( 'error', 'Configuration file for skin "' . $_path . $skin. '" contains invalid data.' );
-						continue;
+        if (!empty($aRemoveSkins)) {
+            foreach ($aRemoveSkins as $sSkin) {
+                $this->aAvailable[$sSkin] = null;
+            }
+            $this->aAvailable = array_filter($this->aAvailable);
+        }
 
-					endif;
+        $this->aAvailable = array_values($this->aAvailable);
 
-					// --------------------------------------------------------------------------
+        return $this->aAvailable;
+    }
 
-					//	All good!
+    // --------------------------------------------------------------------------
 
-					//	Set the slug
-					$_config->slug = $skin;
+    /**
+     * Gets a single skin
+     * @param  string  $sSlug    The skin's slug
+     * @param  boolean $bRefresh Skip the cache
+     * @return stdClass
+     */
+    public function get($sSlug, $bRefresh = false)
+    {
+        $aSkins = $this->get_available($bRefresh);
 
-					//	Set the path
-					$_config->path = $_path . $skin . '/';
+        foreach ($aSkins as $oSkin) {
 
-					//	Set the URL
-					$_config->url = $skin_location['url'] . $skin . '/';
+            if ($oSkin->slug == $sSlug) {
 
-					$this->_available[$skin] = $_config;
+                return $oSkin;
+            }
+        }
 
-				endforeach;
-
-			endif;
-
-		endforeach;
-
-		$this->_available = array_values( $this->_available );
-
-		return $this->_available;
-	}
-
-
-	// --------------------------------------------------------------------------
-
-
-	/**
-	 * Gets a single driver
-	 * @param  string  $slug    the driver's slug
-	 * @param  boolean $refresh Skip the cache
-	 * @return stdClass
-	 */
-	public function get( $slug, $refresh = FALSE )
-	{
-		$_skins = $this->get_available( $refresh );
-
-		foreach ( $_skins as $skin ) :
-
-			if ( $skin->slug == $slug ) :
-
-				return $skin;
-
-			endif;
-
-		endforeach;
-
-		$this->_set_error( '"' . $slug . '" was not found.' );
-		return FALSE;
-	}
+        $this->_set_error('"' . $sSlug . '" was not found.');
+        return false;
+    }
 }
 
-
 // --------------------------------------------------------------------------
-
 
 /**
  * OVERLOADING NAILS' MODELS
@@ -256,13 +270,9 @@ class NAILS_Blog_skin_model extends NAILS_Model
  *
  **/
 
-if ( ! defined( 'NAILS_ALLOW_EXTENSION_BLOG_SKIN_MODEL' ) ) :
+if (!defined('NAILS_ALLOW_EXTENSION_BLOG_SKIN_MODEL')) {
 
-	class Blog_skin_model extends NAILS_Blog_skin_model
-	{
-	}
-
-endif;
-
-/* End of file blog_skin_model.php */
-/* Location: ./modules/blog/models/blog_skin_model.php */
+    class Blog_skin_model extends NAILS_Blog_skin_model
+    {
+    }
+}
