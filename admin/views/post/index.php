@@ -131,7 +131,7 @@
                 } else {
 
                     echo '<tr>';
-                        echo '<td colspan="6" class="no-data">';
+                        echo '<td colspan="7" class="no-data">';
                             echo 'No Posts found';
                         echo '</td>';
                     echo '</tr>';
