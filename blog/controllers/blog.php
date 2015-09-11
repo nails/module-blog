@@ -246,8 +246,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title = $this->oBlog->label . ': Posts in category "' . $this->data['category']->label . '"';
-        $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' posted in the  ' . $this->data['category']->label . ' category ';
+        $this->data['page']->title = $this->oBlog->label . ': ' . ucfirst($this->data['postNamePlural']) . ' in category "' . $this->data['category']->label . '"';
+        $this->data['page']->seo->description = 'All ' . $this->data['postNamePlural'] . ' posted in the  ' . $this->data['category']->label . ' category ';
         $this->data['page']->seo->keywords    = '';
 
         // --------------------------------------------------------------------------
@@ -310,7 +310,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Finally, let the views know this is an 'archive' type page
-        $this->data['archive_title']       = 'Posts in category "' . $this->data['category']->label . '"';
+        $this->data['archive_title']       = ucfirst($this->data['postNamePlural']) . ' in category "' . $this->data['category']->label . '"';
         $this->data['archive_description'] = $this->data['category']->description;
         $this->data['isCategory']          = true;
 
@@ -352,8 +352,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Meta
-        $this->data['page']->title = $this->oBlog->label . ': Posts tagged with "' . $this->data['tag']->label . '"';
-        $this->data['page']->seo->description = 'All posts on ' . APP_NAME . ' tagged with  ' . $this->data['tag']->label . ' ';
+        $this->data['page']->title = $this->oBlog->label . ': ' . ucfirst($this->data['postNamePlural']) . ' tagged with "' . $this->data['tag']->label . '"';
+        $this->data['page']->seo->description = 'All ' . $this->data['postNamePlural'] . ' tagged with  ' . $this->data['tag']->label . ' ';
         $this->data['page']->seo->keywords    = '';
 
         // --------------------------------------------------------------------------
@@ -408,7 +408,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Finally, let the views know this is an 'archive' type page
-        $this->data['archive_title']       = 'Posts in tag "' . $this->data['tag']->label . '"';
+        $this->data['archive_title']       = ucfirst($this->data['postNamePlural']) . ' in tag "' . $this->data['tag']->label . '"';
         $this->data['archive_description'] = $this->data['tag']->description;
         $this->data['isTag']               = true;
 

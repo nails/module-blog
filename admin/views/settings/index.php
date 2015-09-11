@@ -75,40 +75,54 @@
                         Generic blog settings. Use these to control some blog behaviours.
                     </p>
                     <hr />
-                    <fieldset id="blog-settings-name">
-                        <legend>Name</legend>
-                        <p>
-                            Is this a blog? Or is it news? Or something else altogether...
-                        </p>
+                    <fieldset>
+                        <legend>General</legend>
                         <?php
 
-                            //  Blog Name
-                            $field                = array();
-                            $field['key']         = 'name';
-                            $field['label']       = 'Blog Name';
-                            $field['default']     = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'Blog';
-                            $field['placeholder'] = 'Customise the Blog\'s Name';
+                        //  Blog Name
+                        $aField                = array();
+                        $aField['key']         = 'name';
+                        $aField['label']       = 'Blog Name';
+                        $aField['default']     = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'Blog';
+                        $aField['placeholder'] = 'Customise the Blog\'s Name';
+                        $aField['tip']         = 'This is used in the page titles as wella s for the RSS Feed.';
 
-                            echo form_field($field);
+                        echo form_field($aField);
 
-                        ?>
-                    </fieldset>
+                        // --------------------------------------------------------------------------
 
-                    <fieldset id="blog-settings-url">
-                        <legend>URL</legend>
-                        <p>
-                            Customise the blog's URL by specifying it here.
-                        </p>
-                        <?php
+                        //  Blog URL
+                        $aField                = array();
+                        $aField['key']         = 'url';
+                        $aField['label']       = 'Blog URL';
+                        $aField['default']     = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'blog/';
+                        $aField['placeholder'] = 'Customise the Blog\'s URL (include trialing slash)';
 
-                            //  Blog URL
-                            $field                = array();
-                            $field['key']         = 'url';
-                            $field['label']       = 'Blog URL';
-                            $field['default']     = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'blog/';
-                            $field['placeholder'] = 'Customise the Blog\'s URL (include trialing slash)';
+                        echo form_field($aField);
 
-                            echo form_field($field);
+                        // --------------------------------------------------------------------------
+
+                        //  Post name
+                        $aField                = array();
+                        $aField['key']         = 'postName';
+                        $aField['label']       = 'Post Name';
+                        $aField['default']     = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'post';
+                        $aField['placeholder'] = 'What should individual posts be referred to as?';
+                        $aField['tip']         = 'Define how an individual post should be referred to.';
+
+                        echo form_field($aField);
+
+                        // --------------------------------------------------------------------------
+
+                        //  Post name
+                        $aField                = array();
+                        $aField['key']         = 'postNamePlural';
+                        $aField['label']       = 'Post Name (plural)';
+                        $aField['default']     = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'posts';
+                        $aField['placeholder'] = 'What should a group of posts be referred to as?';
+                        $aField['tip']         = 'Define how a group of posts should be referred to.';
+
+                        echo form_field($aField);
 
                         ?>
                     </fieldset>
@@ -122,13 +136,14 @@
                         </p>
                         <?php
 
-                            //  Enable/disable post excerpts
-                            $field            = array();
-                            $field['key']     = 'use_excerpts';
-                            $field['label']   = 'Use excerpts';
-                            $field['default'] = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
+                        //  Enable/disable post excerpts
+                        $aField            = array();
+                        $aField['key']     = 'use_excerpts';
+                        $aField['label']   = 'Use excerpts';
+                        $aField['default'] = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
 
-                            echo form_field_boolean($field);
+                        echo form_field_boolean($aField);
+
                         ?>
                     </fieldset>
 
@@ -137,32 +152,32 @@
                         <?php
 
                             //  Enable/disable Gallery
-                            $field            = array();
-                            $field['key']     = 'gallery_enabled';
-                            $field['label']   = 'Post Gallery';
-                            $field['default'] = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
+                            $aField            = array();
+                            $aField['key']     = 'gallery_enabled';
+                            $aField['label']   = 'Post Gallery';
+                            $aField['default'] = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             // --------------------------------------------------------------------------
 
                             //  Enable/disable categories
-                            $field            = array();
-                            $field['key']     = 'categories_enabled';
-                            $field['label']   = 'Categories';
-                            $field['default'] = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
+                            $aField            = array();
+                            $aField['key']     = 'categories_enabled';
+                            $aField['label']   = 'Categories';
+                            $aField['default'] = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             // --------------------------------------------------------------------------
 
                             //  Enable/disable tags
-                            $field            = array();
-                            $field['key']     = 'tags_enabled';
-                            $field['label']   = 'Tags';
-                            $field['default'] = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
+                            $aField            = array();
+                            $aField['key']     = 'tags_enabled';
+                            $aField['label']   = 'Tags';
+                            $aField['default'] = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                         ?>
                     </fieldset>
@@ -171,12 +186,12 @@
                         <legend>RSS</legend>
                         <?php
 
-                            $field            = array();
-                            $field['key']     = 'rss_enabled';
-                            $field['label']   = 'RSS Enabled';
-                            $field['default'] = !empty($settings[$field['key']]) ? true : false;
+                            $aField            = array();
+                            $aField['key']     = 'rss_enabled';
+                            $aField['label']   = 'RSS Enabled';
+                            $aField['default'] = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
                         ?>
                     </fieldset>
                     <p style="margin-top:1em;margin-bottom:0;">
@@ -265,12 +280,12 @@
                         <legend>Post comments enabled</legend>
                         <?php
 
-                            $field             = array();
-                            $field['key']      = 'comments_enabled';
-                            $field['label']    = 'Comments Enabled';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'comments_enabled';
+                            $aField['label']    = 'Comments Enabled';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
                         ?>
                     </fieldset>
 
@@ -283,23 +298,23 @@
                         </p>
                         <?php
 
-                            $field             = array();
-                            $field['key']      = 'comments_engine';
-                            $field['label']    = 'Comment Engine';
-                            $field['default']  = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'NATIVE';
-                            $field['class']    = 'select2';
-                            $field['id']       = 'comment-engine';
+                            $aField             = array();
+                            $aField['key']      = 'comments_engine';
+                            $aField['label']    = 'Comment Engine';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'NATIVE';
+                            $aField['class']    = 'select2';
+                            $aField['id']       = 'comment-engine';
 
                             $options           = array();
                             $options['NATIVE'] = 'Native';
                             $options['DISQUS'] = 'Disqus';
 
-                            echo form_field_dropdown($field, $options);
+                            echo form_field_dropdown($aField, $options);
                         ?>
 
                         <hr />
 
-                        <div id="native-settings" style="display:<?=empty($settings[$field['key']]) || $settings[$field['key']] == 'NATIVE' ? 'block' : 'none'?>">
+                        <div id="native-settings" style="display:<?=empty($settings[$aField['key']]) || $settings[$aField['key']] == 'NATIVE' ? 'block' : 'none'?>">
                             <p class="system-alert message">
                                 <strong>Coming Soon!</strong> Native commenting is in the works and will be available soon.
                                 <?php
@@ -313,17 +328,17 @@
                             </p>
                         </div>
 
-                        <div id="disqus-settings" style="display:<?=!empty($settings[$field['key']]) && $settings[$field['key']] == 'DISQUS' ? 'block' : 'none'?>">
+                        <div id="disqus-settings" style="display:<?=!empty($settings[$aField['key']]) && $settings[$aField['key']] == 'DISQUS' ? 'block' : 'none'?>">
                         <?php
 
                             //  Blog URL
-                            $field                 = array();
-                            $field['key']          = 'comments_disqus_shortname';
-                            $field['label']        = 'Disqus Shortname';
-                            $field['default']      = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
-                            $field['placeholder']  = 'The Disqus shortname for this website.';
+                            $aField                 = array();
+                            $aField['key']          = 'comments_disqus_shortname';
+                            $aField['label']        = 'Disqus Shortname';
+                            $aField['default']      = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
+                            $aField['placeholder']  = 'The Disqus shortname for this website.';
 
-                            echo form_field($field, 'Create a shortname at disqus.com.');
+                            echo form_field($aField, 'Create a shortname at disqus.com.');
 
                         ?>
                         </div>
@@ -346,117 +361,117 @@
                         <legend>Enable Services</legend>
                         <?php
 
-                            $field             = array();
-                            $field['key']      = 'social_facebook_enabled';
-                            $field['label']    = 'Facebook';
-                            $field['id']       = 'social-service-facebook';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'social_facebook_enabled';
+                            $aField['label']    = 'Facebook';
+                            $aField['id']       = 'social-service-facebook';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
-
-                            // --------------------------------------------------------------------------
-
-                            $field             = array();
-                            $field['key']      = 'social_twitter_enabled';
-                            $field['label']    = 'Twitter';
-                            $field['id']       = 'social-service-twitter';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
-
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             // --------------------------------------------------------------------------
 
-                            $field             = array();
-                            $field['key']      = 'social_googleplus_enabled';
-                            $field['label']    = 'Google+';
-                            $field['id']       = 'social-service-googleplus';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'social_twitter_enabled';
+                            $aField['label']    = 'Twitter';
+                            $aField['id']       = 'social-service-twitter';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             // --------------------------------------------------------------------------
 
-                            $field             = array();
-                            $field['key']      = 'social_pinterest_enabled';
-                            $field['label']    = 'Pinterest';
-                            $field['id']       = 'social-service-pinterest';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'social_googleplus_enabled';
+                            $aField['label']    = 'Google+';
+                            $aField['id']       = 'social-service-googleplus';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
+
+                            // --------------------------------------------------------------------------
+
+                            $aField             = array();
+                            $aField['key']      = 'social_pinterest_enabled';
+                            $aField['label']    = 'Pinterest';
+                            $aField['id']       = 'social-service-pinterest';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+
+                            echo form_field_boolean($aField);
                         ?>
                     </fieldset>
                     <fieldset id="blog-settings-social-twitter" style="display:<?=!empty($settings['social_twitter_enabled']) ? 'block' : 'none' ?>">
                         <legend>Twitter Settings</legend>
                         <?php
 
-                            $field                 = array();
-                            $field['key']          = 'social_twitter_via';
-                            $field['label']        = 'Via';
-                            $field['default']      = !empty($settings[$field['key']]) ? $settings[$field['key']] : '';
-                            $field['placeholder']  = 'Put your @username here to add it to the tweet';
+                            $aField                 = array();
+                            $aField['key']          = 'social_twitter_via';
+                            $aField['label']        = 'Via';
+                            $aField['default']      = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : '';
+                            $aField['placeholder']  = 'Put your @username here to add it to the tweet';
 
-                            echo form_field($field);
+                            echo form_field($aField);
                         ?>
                     </fieldset>
                     <fieldset id="blog-settings-social-config" style="display:<?=!empty($settings['social_enabled']) ? 'block' : 'none' ?>">
                         <legend>Customisation</legend>
                         <?php
 
-                            $field                 = array();
-                            $field['key']          = 'social_skin';
-                            $field['label']        = 'Skin';
-                            $field['class']        = 'select2';
-                            $field['default']      = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'CLASSIC';
+                            $aField                 = array();
+                            $aField['key']          = 'social_skin';
+                            $aField['label']        = 'Skin';
+                            $aField['class']        = 'select2';
+                            $aField['default']      = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'CLASSIC';
 
                             $options               = array();
                             $options['CLASSIC']    = 'Classic';
                             $options['FLAT']       = 'Flat';
                             $options['BIRMAN']     = 'Birman';
 
-                            echo form_field_dropdown($field, $options);
+                            echo form_field_dropdown($aField, $options);
 
                             // --------------------------------------------------------------------------
 
-                            $field                 = array();
-                            $field['key']          = 'social_layout';
-                            $field['label']        = 'Layout';
-                            $field['class']        = 'select2';
-                            $field['id']           = 'blog-settings-social-layout';
-                            $field['default']      = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'HORIZONTAL';
+                            $aField                 = array();
+                            $aField['key']          = 'social_layout';
+                            $aField['label']        = 'Layout';
+                            $aField['class']        = 'select2';
+                            $aField['id']           = 'blog-settings-social-layout';
+                            $aField['default']      = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'HORIZONTAL';
 
                             $options               = array();
                             $options['HORIZONTAL'] = 'Horizontal';
                             $options['VERTICAL']   = 'Vertical';
                             $options['SINGLE']     = 'Single Button';
 
-                            echo form_field_dropdown($field, $options);
+                            echo form_field_dropdown($aField, $options);
 
                             // --------------------------------------------------------------------------
 
-                            $display = !empty($settings[$field['key']]) && $settings[$field['key']] == 'SINGLE' ? 'block' : 'none';
+                            $display = !empty($settings[$aField['key']]) && $settings[$aField['key']] == 'SINGLE' ? 'block' : 'none';
 
                             echo '<div id="blog-settings-social-layout-single-text" style="display:' . $display . '">';
 
-                                $field                 = array();
-                                $field['key']          = 'social_layout_single_text';
-                                $field['label']        = 'Button Text';
-                                $field['default']      = !empty($settings[$field['key']]) ? $settings[$field['key']] : 'Share';
-                                $field['placeholder']  = 'Specify what text should be rendered on the button';
+                                $aField                 = array();
+                                $aField['key']          = 'social_layout_single_text';
+                                $aField['label']        = 'Button Text';
+                                $aField['default']      = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'Share';
+                                $aField['placeholder']  = 'Specify what text should be rendered on the button';
 
-                                echo form_field($field);
+                                echo form_field($aField);
 
                             echo '</div>';
 
 
                             // --------------------------------------------------------------------------
 
-                            $field             = array();
-                            $field['key']      = 'social_counters';
-                            $field['label']    = 'Show Counters';
-                            $field['id']       = 'social-counters';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'social_counters';
+                            $aField['label']    = 'Show Counters';
+                            $aField['id']       = 'social-counters';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
                         ?>
                     </fieldset>
                     <p style="margin-top:1em;margin-bottom:0;">
@@ -477,23 +492,23 @@
                         <legend>Enable Widgets</legend>
                         <?php
 
-                            $field             = array();
-                            $field['key']      = 'sidebar_latest_posts';
-                            $field['label']    = 'Latest Posts';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'sidebar_latest_posts';
+                            $aField['label']    = !empty($settings['postNamePlural']) ? 'Latest ' . ucfirst($settings['postNamePlural']) : 'Latest Posts';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             // --------------------------------------------------------------------------
 
                             if (!empty($settings['categories_enabled'])) :
 
-                                $field             = array();
-                                $field['key']      = 'sidebar_categories';
-                                $field['label']    = 'Categories';
-                                $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                                $aField             = array();
+                                $aField['key']      = 'sidebar_categories';
+                                $aField['label']    = 'Categories';
+                                $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                                echo form_field_boolean($field);
+                                echo form_field_boolean($aField);
 
                             endif;
 
@@ -501,23 +516,23 @@
 
                             if (!empty($settings['tags_enabled'])) :
 
-                                $field             = array();
-                                $field['key']      = 'sidebar_tags';
-                                $field['label']    = 'Tags';
-                                $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                                $aField             = array();
+                                $aField['key']      = 'sidebar_tags';
+                                $aField['label']    = 'Tags';
+                                $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                                echo form_field_boolean($field);
+                                echo form_field_boolean($aField);
 
                             endif;
 
                             // --------------------------------------------------------------------------
 
-                            $field             = array();
-                            $field['key']      = 'sidebar_popular_posts';
-                            $field['label']    = 'Popular Posts';
-                            $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                            $aField             = array();
+                            $aField['key']      = 'sidebar_popular_posts';
+                            $aField['label']    = !empty($settings['postNamePlural']) ? 'Popular ' . ucfirst($settings['postNamePlural']) : 'Popular Posts';
+                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($field);
+                            echo form_field_boolean($aField);
 
                             $associations = $this->blog_model->get_associations();
 
@@ -525,12 +540,12 @@
 
                                 foreach ($associations as $assoc) :
 
-                                    $field             = array();
-                                    $field['key']      = 'sidebar_association_' . $assoc->slug;
-                                    $field['label']    = $assoc->widget->label;
-                                    $field['default']  = !empty($settings[$field['key']]) ? true : false;
+                                    $aField             = array();
+                                    $aField['key']      = 'sidebar_association_' . $assoc->slug;
+                                    $aField['label']    = $assoc->widget->label;
+                                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
 
-                                    echo form_field_boolean($field);
+                                    echo form_field_boolean($aField);
 
                                 endforeach;
 

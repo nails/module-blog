@@ -1,6 +1,6 @@
 <div class="group-blog manage tags overview">
     <p>
-        Use tags to group specific post topics together. For example, a tag might be 'New Year <?=date('Y')?>', or 'Coursework'.
+        Use tags to group specific <?=$postName?> topics together. For example, a tag might be 'New Year <?=date('Y')?>', or 'Coursework'.
         <?php
 
             if (app_setting('categories_enabled', 'blog-' . $blog->id)) {

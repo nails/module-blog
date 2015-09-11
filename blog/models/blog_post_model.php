@@ -648,7 +648,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param int    $page           The page number of the results, if null then no pagination
      * @param int    $perPage        How many items per page of paginated results
      * @param mixed  $data           Any data to pass to _getcount_common()
-     * @param bool   $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @param bool   $includeDeleted If non-destructive delete is enabled then include deleted items
      * @param string $_caller        Internal flag to pass to _getcount_common(), contains the calling method
      * @return array
      **/
@@ -668,12 +668,17 @@ class NAILS_Blog_post_model extends NAILS_Model
         foreach ($posts as $post) {
 
             //  Fetch associated categories
+            $post->categories = array();
+
             if (!empty($data['include_categories'])) {
 
                 $this->load->model('blog/blog_category_model');
 
                 $this->db->select('c.id,c.blog_id,c.slug,c.label');
-                $this->db->join(NAILS_DB_PREFIX . 'blog_category c', 'c.id = ' . $this->tableCatPrefix . '.category_id');
+                $this->db->join(
+                    NAILS_DB_PREFIX . 'blog_category c',
+                    'c.id = ' . $this->tableCatPrefix . '.category_id'
+                );
                 $this->db->where($this->tableCatPrefix . '.post_id', $post->id);
                 $this->db->group_by('c.id');
                 $this->db->order_by('c.label');
@@ -683,15 +688,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                     $c->url = $this->blog_category_model->format_url($c->slug, $c->blog_id);
                 }
-
-            } else {
-
-                $post->categories = array();
             }
 
             // --------------------------------------------------------------------------
 
             //  Fetch associated tags
+            $post->tags = array();
+
             if (!empty($data['include_tags'])) {
 
                 $this->load->model('blog/blog_tag_model');
@@ -708,45 +711,77 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                     $t->url = $this->blog_tag_model->format_url($t->slug, $t->blog_id);
                 }
-
-            } else {
-
-                $post->tags = array();
             }
 
             // --------------------------------------------------------------------------
 
             //  Fetch other associations
+            $post->associations = array();
+
             if (!empty($data['include_associations']) && $associations) {
 
                 foreach ($associations as $index => $assoc) {
 
                     $post->associations[$index] = $assoc;
 
-                    //  Fetch the association data from the source, fail ungracefully - the dev should have this configured correctly.
+                    /**
+                     * Fetch the association data from the source, fail ungracefully - the
+                     * dev should have this configured correctly.
+                     */
+
                     $this->db->select('src.' . $assoc->source->id . ' id, src.' . $assoc->source->label . ' label');
-                    $this->db->join($assoc->source->table . ' src', 'src.' . $assoc->source->id . '=target.associated_id', 'LEFT');
+                    $this->db->join(
+                        $assoc->source->table . ' src',
+                        'src.' . $assoc->source->id . '=target.associated_id',
+                        'LEFT'
+                    );
                     $this->db->where('target.post_id', $post->id);
                     $post->associations[$index]->current = $this->db->get($assoc->target . ' target')->result();
                 }
-
-            } else {
-
-                $post->associations = array();
             }
 
             // --------------------------------------------------------------------------
 
             //  Fetch associated images
-            if (!empty($data['include_gallery']) ) {
+            $post->gallery = array();
+            if (!empty($data['include_gallery'])) {
 
                 $this->db->where('post_id', $post->id);
                 $this->db->order_by('order');
                 $post->gallery = $this->db->get($this->tableImg)->result();
 
-            } else {
+            }
 
-                $post->gallery = array();
+            // --------------------------------------------------------------------------
+
+            //  Fetch siblings
+            $post->siblings = new \stdClass();
+            $post->siblings->next = null;
+            $post->siblings->prev = null;
+
+            if (!empty($data['include_siblings'])) {
+
+                $aSiblingData = array(
+                    'sort' => array($this->tablePrefix . '.published', 'desc'),
+                    'where' => array(
+                        array('column' => $this->tablePrefix . '.published >', 'value' => $post->published),
+                        array('column' => $this->tablePrefix . '.blog_id', 'value' => $post->blog->id),
+                        array('column' => $this->tablePrefix . '.is_published', 'value' => true),
+                        array('column' => $this->tablePrefix . '.published <=', 'value' => 'NOW()', 'escape' => false)
+                    )
+                );
+                $aResult = $this->get_all(0, 1, $aSiblingData);
+
+                if (!empty($aResult)) {
+                    $post->siblings->next = $aResult[0];
+                }
+
+                $aSiblingData['where'][0]['column'] = $this->tablePrefix . '.published <';
+                $aResult = $this->get_all(0, 1, $aSiblingData);
+
+                if (!empty($aResult)) {
+                    $post->siblings->prev = $aResult[0];
+                }
             }
         }
 
@@ -939,6 +974,11 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['include_gallery'] = true;
         }
 
+        if (!isset($data['include_siblings'])) {
+
+            $data['include_siblings'] = true;
+        }
+
         // --------------------------------------------------------------------------
 
         return $data;
@@ -950,7 +990,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * Fetches latest posts
      * @param  int   $limit The number of posts to return
      * @param  mixed $data Any data to pass to _getcount_common()
-     * @param  bool  $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @param  bool  $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
     public function get_latest($limit = 9, $data = null, $includeDeleted = false)
@@ -967,7 +1007,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  int $year The year to restrict the search to
      * @param  int $month The month to restrict the search to
      * @param  mixed $data Any data to pass to _getcount_common()
-     * @param  bool $includeDeleted If non-destructive delete is enabled then this flag allows you to include deleted items
+     * @param  bool $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
     public function get_archive($year = null, $month = null, $data = null, $includeDeleted = false)
@@ -1160,8 +1200,8 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
-    public function countDrafts($blogId, $data = array(), $includeDeleted = false) {
-
+    public function countDrafts($blogId, $data = array(), $includeDeleted = false)
+    {
         $data['where'] = array(
             array('blog_id', $blogId),
             array('is_published', false)
@@ -1462,6 +1502,19 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             return null;
         }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the siblings of a post (i.e the posts before and after it)
+     * @param  integer $iPostId The post's ID
+     * @param  array   $aData   Any data to pass to get_all()
+     * @return stdClass
+     */
+    public function getSiblings($iPostId, $aData = array())
+    {
+        $oOut = new \stdClass();
     }
 }
 

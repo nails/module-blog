@@ -1,6 +1,6 @@
 <div class="group-blog manage">
     <p>
-        This page shows all the posts on site and allows you to manage them.
+        This page shows all the <?=$postNamePlural?> on site and allows you to manage them.
     </p>
     <?php
 
@@ -120,7 +120,7 @@
                                     echo anchor(
                                         'admin/blog/post/delete/' . $blog->id . '/' . $post->id,
                                         lang('action_delete'),
-                                        'class="awesome small red confirm" data-title="Confirm Delete" data-body="Are you sure you want to delete this post?"'
+                                        'class="awesome small red confirm" data-title="Confirm Delete" data-body="Are you sure you want to delete this ' . $postName . '?"'
                                     );
                                 }
 

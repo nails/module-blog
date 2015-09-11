@@ -194,6 +194,8 @@ class Settings extends \AdminController
         $settings                       = array();
         $settings['name']               = $this->input->post('name');
         $settings['url']                = $this->input->post('url');
+        $settings['postName']           = strtolower($this->input->post('postName'));
+        $settings['postNamePlural']     = strtolower($this->input->post('postNamePlural'));
         $settings['use_excerpts']       = (bool) $this->input->post('use_excerpts');
         $settings['gallery_enabled']    = (bool) $this->input->post('gallery_enabled');
         $settings['categories_enabled'] = (bool) $this->input->post('categories_enabled');

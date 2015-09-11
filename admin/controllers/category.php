@@ -127,6 +127,18 @@ class Category extends \AdminController
 
         $this->isModal = $this->input->get('isModal') ? '?isModal=1' : '';
         $this->data['isModal'] = $this->isModal;
+
+        // --------------------------------------------------------------------------
+
+        //  Customisations
+        $this->data['postName'] = app_setting('postName', 'blog-' . $this->blog->id);
+        if (empty($this->data['postName'])) {
+            $this->data['postName'] = 'post';
+        }
+        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->blog->id);
+        if (empty($this->data['postNamePlural'])) {
+            $this->data['postNamePlural'] = 'posts';
+        }
     }
 
     // --------------------------------------------------------------------------

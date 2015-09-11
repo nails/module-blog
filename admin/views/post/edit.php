@@ -97,7 +97,7 @@
                     $aField['label']       = 'Title';
                     $aField['required']    = true;
                     $aField['default']     = isset($post->title) ? $post->title : '';
-                    $aField['placeholder'] = 'The title of the post';
+                    $aField['placeholder'] = 'The title of the ' . $postName;
 
                     echo form_field($aField);
 
@@ -107,7 +107,7 @@
                     $aField['key']         = 'slug';
                     $aField['label']       = 'Slug';
                     $aField['default']     = isset($post->slug) ? $post->slug : '';
-                    $aField['placeholder'] = 'The post\'s slug, leave blank to auto-generate';
+                    $aField['placeholder'] = 'The slug, leave blank to auto-generate';
                     $aField['tip']         = 'The slug is the posts unique identifier which is shown in the URL. Best ';
                     $aField['tip']        .= 'practice dictates that the slug be "pretty", i.e, human readable.';
 
@@ -119,7 +119,7 @@
                     $aField['key']         = 'body';
                     $aField['label']       = 'Body';
                     $aField['default']     = isset($post->body) ? $post->body : '';
-                    $aField['placeholder'] = 'The body of the post';
+                    $aField['placeholder'] = 'The body of the ' . $postName;
 
                     echo form_field_wysiwyg($aField);
 
@@ -134,9 +134,9 @@
                         $aField['class']        = 'wysiwyg-basic';
                         $aField['label']        = 'Excerpt';
                         $aField['default']      = isset($post->excerpt) ? $post->excerpt : '';
-                        $aField['placeholder']  = 'A short excerpt of the post, this will be shown in locations where a ';
-                        $aField['placeholder'] .= 'summary is required. If not specified the a truncated version of the main ';
-                        $aField['placeholder'] .= 'body will be used instead.';
+                        $aField['placeholder']  = 'A short excerpt of the ' . $postName . ', this will be shown in ';
+                        $aField['placeholder'] .= 'locations where a summary is required. If not specified the a ';
+                        $aField['placeholder'] .= 'truncated version of the main body will be used instead.';
 
                         echo form_field_wysiwyg($aField);
                     }
@@ -302,7 +302,7 @@
             $aField['id']          = 'publish-date';
             $aField['required']    = true;
             $aField['default']     = isset($post->published) ? toUserDate($post->published, 'Y-m-d H:i') : '';
-            $aField['placeholder'] = 'The publish date for this blog post';
+            $aField['placeholder'] = 'The publish date for this ' . $postName;
             $aField['data']        = array('datepicker-timeformat' => 'HH:mm');
 
             echo form_field_datetime($aField);
@@ -344,9 +344,9 @@
             ?>
             <div class="tab-page tab-categories <?=$sActive?> fieldset">
                 <p>
-                    Organise your posts and help user's find them by assigning <u rel="tipsy" title="Categories allow
-                    for a broad grouping of post topics and should be considered top-level 'containers' for posts of
-                    similar content.">categories</u>.
+                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
+                    title="Categories allow for a broad grouping of post topics and should be considered top-level
+                    'containers' for posts of similar content.">categories</u>.
                 </p>
                 <p>
                     <select name="categories[]" multiple="multiple" class="select2 categories">
@@ -394,8 +394,8 @@
             ?>
             <div class="tab-page tab-tags <?=$sActive?> fieldset">
                 <p>
-                    Organise your posts and help user's find them by assigning <u rel="tipsy" title="Tags are generally
-                    used to describe your post in more detail.">tags</u>.
+                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
+                    title="Tags are generally used to describe your post in more detail.">tags</u>.
                 </p>
                 <p>
                     <select name="tags[]" multiple="multiple" class="tags select2">
@@ -441,7 +441,7 @@
             ?>
             <div class="tab-page tab-associations <?=$sActive?> fieldset">
                 <p>
-                    It's possible for you to associate this blog post with other bits of related content.
+                    It's possible for you to associate this <?=$postName?> with other bits of related content.
                     The following associations can be defined.
                 </p>
                 <?php
@@ -496,7 +496,7 @@
             ?>
             <div class="tab-page tab-gallery <?=$sActive?> fieldset">
                 <p>
-                    Upload images to the post gallery.
+                    Upload images to the <?=$postName?> gallery.
                     <small>
                     <?php
 
@@ -552,13 +552,13 @@
                     </li>
                     <?php
 
-                        foreach ($aGalleryItems as $image) {
+                    foreach ($aGalleryItems as $image) {
 
-                            echo \Nails\Admin\Helper::loadInlineView(
-                                '_utilities/template-mustache-gallery-item',
-                                array('objectId' => $image)
-                            );
-                        }
+                        echo \Nails\Admin\Helper::loadInlineView(
+                            '_utilities/template-mustache-gallery-item',
+                            array('objectId' => $image)
+                        );
+                    }
 
                     ?>
                 </ul>
@@ -577,7 +577,7 @@
             $aField['key']         = 'seo_title';
             $aField['label']       = 'Title';
             $aField['default']     = isset($post->seo_title) ? $post->seo_title : '';
-            $aField['placeholder'] = 'The SEO optimised title of the post.';
+            $aField['placeholder'] = 'The SEO optimised title of the ' . $postName . '.';
             $aField['tip']         = 'Should you want or need to specify a different title for the page for SEO ';
             $aField['tip']        .= 'purposes do so here.';
 
@@ -591,7 +591,7 @@
             $aField['type']        = 'textarea';
             $aField['label']       = 'Description';
             $aField['default']     = isset($post->seo_description) ? $post->seo_description : '';
-            $aField['placeholder'] = 'The post\'s SEO description';
+            $aField['placeholder'] = 'The ' . $postName . ' SEO description';
             $aField['tip']         = 'This should be kept short (< 160 characters) and concise. It\'ll be shown in ';
             $aField['tip']        .= 'search result listings and search engines will use it to help determine the ';
             $aField['tip']        .= 'post\'s content.';
@@ -605,7 +605,7 @@
             $aField['key']         = 'seo_keywords';
             $aField['label']       = 'Keywords';
             $aField['default']     = isset($post->seo_keywords) ? $post->seo_keywords : '';
-            $aField['placeholder'] = 'Comma separated keywords relating to the content of the post.';
+            $aField['placeholder'] = 'Comma separated keywords relating to the content of the ' . $postName . '.';
             $aField['tip']         = 'SEO good practice recommend keeping the number of keyword phrases below 10 and ';
             $aField['tip']        .= 'less than 160 characters in total.';
 

@@ -1,6 +1,6 @@
 <div class="group-blog manage categories overview">
     <p>
-        Use categories to group broad post topics together. For example, a category might be 'Music', or 'Travel'.
+        Use categories to group broad <?=$postName?> topics together. For example, a category might be 'Music', or 'Travel'.
         <?php
 
             if (app_setting('tags_enabled', 'blog-' . $blog->id)) {

@@ -44,9 +44,15 @@ class Post extends \AdminController
                 $iNumDrafts = $oCi->blog_post_model->countDrafts($oBlog->id);
                 $aAlerts    = array(\Nails\Admin\Nav::alertObject($iNumDrafts, '', 'Drafts'));
 
+                //  Post name
+                $postNamePlural = app_setting('postNamePlural', 'blog-' . $oBlog->id);
+                if (empty($postNamePlural)) {
+                    $postNamePlural = 'posts';
+                }
+
                 //  Create the navGrouping
                 $oNavGroup = new \Nails\Admin\Nav($sGroupLabel, 'fa-pencil-square-o');
-                $oNavGroup->addAction('Manage Posts', 'index/' . $oBlog->id, $aAlerts, 0);
+                $oNavGroup->addAction('Manage ' . ucFirst($postNamePlural), 'index/' . $oBlog->id, $aAlerts, 0);
 
                 $aOut[] = $oNavGroup;
             }
@@ -122,6 +128,18 @@ class Post extends \AdminController
 
         //  Blog post types
         $this->data['postTypes'] = $this->blog_post_model->getTypes();
+
+        // --------------------------------------------------------------------------
+
+        //  Customisations
+        $this->data['postName'] = app_setting('postName', 'blog-' . $this->blog->id);
+        if (empty($this->data['postName'])) {
+            $this->data['postName'] = 'post';
+        }
+        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->blog->id);
+        if (empty($this->data['postNamePlural'])) {
+            $this->data['postNamePlural'] = 'posts';
+        }
     }
 
     // --------------------------------------------------------------------------
@@ -133,7 +151,7 @@ class Post extends \AdminController
     public function index()
     {
         //  Set method info
-        $this->data['page']->title = 'Manage Posts';
+        $this->data['page']->title = 'Manage ' . ucfirst($this->data['postNamePlural']);
 
         // --------------------------------------------------------------------------
 
@@ -167,7 +185,7 @@ class Post extends \AdminController
             array(
                 array('Published', true, true),
                 array('Unpublished', false, true)
-           )
+            )
         );
 
         //  Generate options
@@ -210,7 +228,10 @@ class Post extends \AdminController
         //  Add a header button
         if (userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
 
-             \Nails\Admin\Helper::addHeaderButton('admin/blog/post/create/' . $this->blog->id, 'New Blog Post');
+             \Nails\Admin\Helper::addHeaderButton(
+                'admin/blog/post/create/' . $this->blog->id,
+                'New ' . ucfirst($this->data['postName'])
+            );
         }
 
         // --------------------------------------------------------------------------
@@ -234,7 +255,7 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Set method info
-        $this->data['page']->title = 'Create New Post';
+        $this->data['page']->title = 'Create New ' . ucfirst($this->data['postName']);
 
         // --------------------------------------------------------------------------
 
@@ -270,11 +291,11 @@ class Post extends \AdminController
 
                     $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
 
-                } else if ($this->input->post('type') === 'VIDEO') {
+                } elseif ($this->input->post('type') === 'VIDEO') {
 
                     $this->form_validation->set_rules('video_url', '', 'xss_clean|required');
 
-                } else if ($this->input->post('type') === 'AUDIO') {
+                } elseif ($this->input->post('type') === 'AUDIO') {
 
                     $this->form_validation->set_rules('audio_url', '', 'xss_clean|required');
                 }
@@ -349,7 +370,7 @@ class Post extends \AdminController
                             'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
                         );
 
-                        $this->session->set_flashdata('success', 'Post was created.');
+                        $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was created.');
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
                     } else {
@@ -449,7 +470,7 @@ class Post extends \AdminController
         // --------------------------------------------------------------------------
 
         //  Set method info
-        $this->data['page']->title = 'Edit Post &rsaquo; ' . $this->data['post']->title;
+        $this->data['page']->title = 'Edit ' . $this->data['postName'] . ' &rsaquo; ' . $this->data['post']->title;
 
         // --------------------------------------------------------------------------
 
@@ -484,11 +505,11 @@ class Post extends \AdminController
 
                     $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
 
-                } else if ($this->input->post('type') === 'VIDEO') {
+                } elseif ($this->input->post('type') === 'VIDEO') {
 
                     $this->form_validation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
 
-                } else if ($this->input->post('type') === 'AUDIO') {
+                } elseif ($this->input->post('type') === 'AUDIO') {
 
                     $this->form_validation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
                 }
@@ -668,7 +689,7 @@ class Post extends \AdminController
                             }
                         }
 
-                        $this->session->set_flashdata('success', 'Post was updated.');
+                        $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was updated.');
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
                     } else {
@@ -781,7 +802,7 @@ class Post extends \AdminController
         if ($this->blog_post_model->delete($iPostId)) {
 
             $sStatus  = 'success';
-            $sMessage = 'Post was deleted successfully. ';
+            $sMessage = ucfirst($this->data['postName']) . ' was deleted successfully. ';
             if (userHasPermission('admin:blog:post:' . $this->blog->id . ':restore')) {
                 $sMessage .= anchor('admin/blog/post/restore/' . $this->blog->id . '/' . $iPostId, 'Undo?');
             }
@@ -824,7 +845,7 @@ class Post extends \AdminController
 
             $oPost = $this->blog_post_model->get_by_id($iPostId);
 
-            $this->session->set_flashdata('success', 'Post was restored successfully.');
+            $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was restored successfully.');
 
             //  Update admin changelog
             $this->admin_changelog_model->add(
@@ -839,7 +860,7 @@ class Post extends \AdminController
         } else {
 
             $sStatus   = 'error';
-            $sMessage  = 'I failed to restore that post. ';
+            $sMessage  = 'I failed to restore that ' . $this->data['postName'] . '. ';
             $sMessage .= $this->blog_post_model->last_error();
             $this->session->set_flashdata($sStatus, $sMessage);
         }

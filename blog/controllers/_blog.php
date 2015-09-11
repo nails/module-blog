@@ -145,6 +145,17 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
+        $this->data['postName'] = app_setting('postName', 'blog-' . $this->oBlog->id);
+        if (empty($this->data['postName'])) {
+            $this->data['postName'] = 'post';
+        }
+        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->oBlog->id);
+        if (empty($this->data['postNamePlural'])) {
+            $this->data['postNamePlural'] = 'posts';
+        }
+
+        // --------------------------------------------------------------------------
+
         //  Set view data
         $this->data['blog'] = $this->oBlog;
     }
