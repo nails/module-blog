@@ -239,7 +239,7 @@
 
                                 if ($this->input->post('image_id')) {
 
-                                    $sSrc = cdn_scale($this->input->post('image_id'), 500, 500);
+                                    $sSrc = cdnScale($this->input->post('image_id'), 500, 500);
 
                                 } else {
 
@@ -248,7 +248,7 @@
 
                             } elseif (!empty($post->photo->id)) {
 
-                                $sSrc = cdn_scale($post->photo->id, 500, 500);
+                                $sSrc = cdnScale($post->photo->id, 500, 500);
 
                             } else {
 

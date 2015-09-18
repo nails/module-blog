@@ -39,7 +39,7 @@
 
                                     if ($post->photo->id) {
 
-                                        echo anchor(cdn_serve($post->photo->id), img(cdn_scale($post->photo->id, 75, 75)), 'class="fancybox"');
+                                        echo anchor(cdnServe($post->photo->id), img(cdnScale($post->photo->id, 75, 75)), 'class="fancybox"');
 
                                     } else {
 
