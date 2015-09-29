@@ -210,17 +210,17 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->db->set('published', 'NOW()', false);
         }
 
-        if (isset($data['commentsEnabled'])) {
+        if (isset($data['comments_enabled'])) {
 
-            $this->db->set('commentsEnabled', (bool) $data['commentsEnabled']);
+            $this->db->set('comments_enabled', (bool) $data['comments_enabled']);
         }
 
-        if (isset($data['commentsExpire'])) {
+        if (isset($data['comments_expire'])) {
 
-            if (empty($data['commentsExpire'])) {
-                $this->db->set('commentsExpire', null);
+            if (empty($data['comments_expire'])) {
+                $this->db->set('comments_expire', null);
             } else {
-                $this->db->set('commentsExpire', $data['commentsExpire']);
+                $this->db->set('comments_expire', $data['comments_expire']);
             }
         }
 
@@ -452,17 +452,17 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->db->set('published', 'NOW()', false);
         }
 
-        if (isset($data['commentsEnabled'])) {
+        if (isset($data['comments_enabled'])) {
 
-            $this->db->set('commentsEnabled', (bool) $data['commentsEnabled']);
+            $this->db->set('comments_enabled', (bool) $data['comments_enabled']);
         }
 
-        if (isset($data['commentsExpire'])) {
+        if (isset($data['comments_expire'])) {
 
-            if (empty($data['commentsExpire'])) {
-                $this->db->set('commentsExpire', null);
+            if (empty($data['comments_expire'])) {
+                $this->db->set('comments_expire', null);
             } else {
-                $this->db->set('commentsExpire', $data['commentsExpire']);
+                $this->db->set('comments_expire', $data['comments_expire']);
             }
         }
 
@@ -871,8 +871,8 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $this->tablePrefix . '.modified',
                 $this->tablePrefix . '.modified_by',
                 $this->tablePrefix . '.published',
-                $this->tablePrefix . '.commentsEnabled',
-                $this->tablePrefix . '.commentsExpire',
+                $this->tablePrefix . '.comments_enabled',
+                $this->tablePrefix . '.comments_expire',
                 $this->tablePrefix . '.type',
                 $this->tablePrefix . '.audio_url',
                 $this->tablePrefix . '.video_url',

@@ -310,9 +310,9 @@
             // --------------------------------------------------------------------------
 
             $aField             = array();
-            $aField['key']      = 'commentsEnabled';
+            $aField['key']      = 'comments_enabled';
             $aField['label']    = 'Comments';
-            $aField['default']  = isset($post->commentsEnabled) ? $post->commentsEnabled : true;
+            $aField['default']  = isset($post->comments_enabled) ? $post->comments_enabled : true;
             $aField['id']       = 'comments-enabled';
 
             echo form_field_boolean($aField);
@@ -322,10 +322,10 @@
             if (app_setting('comments_engine', 'blog-' . $blog->id) === 'NATIVE') {
 
                 $aField                = array();
-                $aField['key']         = 'commentsExpire';
+                $aField['key']         = 'comments_expire';
                 $aField['label']       = 'Auto-Close Comments';
                 $aField['id']          = 'comments-expire';
-                $aField['default']     = isset($post->commentsExpire) ? toUserDate($post->commentsExpire, 'Y-m-d H:i') : '';
+                $aField['default']     = isset($post->comments_expire) ? toUserDate($post->comments_expire, 'Y-m-d H:i') : '';
                 $aField['placeholder'] = 'When comments should auto-close, leave blank to never auto-close';
                 $aField['data']        = array('datepicker-timeformat' => 'HH:mm');
                 $aField['info']        = 'Comments can be automatically closed on a certain date. Leave blank to prevent ';

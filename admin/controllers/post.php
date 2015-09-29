@@ -309,27 +309,27 @@ class Post extends \AdminController
             if (!empty($bIsPreview) || $this->form_validation->run($this)) {
 
                 //  Prepare data
-                $aData                    = array();
-                $aData['blog_id']         = $this->blog->id;
-                $aData['title']           = $this->input->post('title');
-                $aData['type']            = $this->input->post('type');
-                $aData['slug']            = $this->input->post('slug');
-                $aData['excerpt']         = $this->input->post('excerpt');
-                $aData['image_id']        = (int) $this->input->post('image_id');
-                $aData['image_id']        = $aData['image_id'] ? $aData['image_id'] : null;
-                $aData['video_url']       = trim($this->input->post('video_url'));
-                $aData['video_url']       = $aData['video_url'] ? $aData['video_url'] : null;
-                $aData['audio_url']       = trim($this->input->post('audio_url'));
-                $aData['audio_url']       = $aData['audio_url'] ? $aData['audio_url'] : null;
-                $aData['body']            = $this->input->post('body');
-                $aData['seo_description'] = $this->input->post('seo_description');
-                $aData['seo_keywords']    = $this->input->post('seo_keywords');
-                $aData['is_published']    = (bool) $this->input->post('is_published');
-                $aData['published']       = $this->input->post('published');
-                $aData['associations']    = $this->input->post('associations');
-                $aData['gallery']         = $this->input->post('gallery');
-                $aData['commentsEnabled'] = $this->input->post('commentsEnabled');
-                $aData['commentsExpire']  = $this->input->post('commentsExpire');
+                $aData                     = array();
+                $aData['blog_id']          = $this->blog->id;
+                $aData['title']            = $this->input->post('title');
+                $aData['type']             = $this->input->post('type');
+                $aData['slug']             = $this->input->post('slug');
+                $aData['excerpt']          = $this->input->post('excerpt');
+                $aData['image_id']         = (int) $this->input->post('image_id');
+                $aData['image_id']         = $aData['image_id'] ? $aData['image_id'] : null;
+                $aData['video_url']        = trim($this->input->post('video_url'));
+                $aData['video_url']        = $aData['video_url'] ? $aData['video_url'] : null;
+                $aData['audio_url']        = trim($this->input->post('audio_url'));
+                $aData['audio_url']        = $aData['audio_url'] ? $aData['audio_url'] : null;
+                $aData['body']             = $this->input->post('body');
+                $aData['seo_description']  = $this->input->post('seo_description');
+                $aData['seo_keywords']     = $this->input->post('seo_keywords');
+                $aData['is_published']     = (bool) $this->input->post('is_published');
+                $aData['published']        = $this->input->post('published');
+                $aData['associations']     = $this->input->post('associations');
+                $aData['gallery']          = $this->input->post('gallery');
+                $aData['comments_enabled'] = $this->input->post('comments_enabled');
+                $aData['comments_expire']  = $this->input->post('comments_expire');
 
                 if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
@@ -522,26 +522,26 @@ class Post extends \AdminController
             if (!empty($bIsPreview) || $this->form_validation->run($this)) {
 
                 //  Prepare data
-                $aData                    = array();
-                $aData['title']           = $this->input->post('title');
-                $aData['type']            = $this->input->post('type');
-                $aData['slug']            = $this->input->post('slug');
-                $aData['excerpt']         = $this->input->post('excerpt');
-                $aData['image_id']        = (int) $this->input->post('image_id');
-                $aData['image_id']        = $aData['image_id'] ? $aData['image_id'] : null;
-                $aData['video_url']       = trim($this->input->post('video_url'));
-                $aData['video_url']       = $aData['video_url'] ? $aData['video_url'] : null;
-                $aData['audio_url']       = trim($this->input->post('audio_url'));
-                $aData['audio_url']       = $aData['audio_url'] ? $aData['audio_url'] : null;
-                $aData['body']            = $this->input->post('body');
-                $aData['seo_description'] = $this->input->post('seo_description');
-                $aData['seo_keywords']    = $this->input->post('seo_keywords');
-                $aData['is_published']    = (bool) $this->input->post('is_published');
-                $aData['published']       = $this->input->post('published');
-                $aData['associations']    = $this->input->post('associations');
-                $aData['gallery']         = $this->input->post('gallery');
-                $aData['commentsEnabled'] = $this->input->post('commentsEnabled');
-                $aData['commentsExpire']  = $this->input->post('commentsExpire');
+                $aData                     = array();
+                $aData['title']            = $this->input->post('title');
+                $aData['type']             = $this->input->post('type');
+                $aData['slug']             = $this->input->post('slug');
+                $aData['excerpt']          = $this->input->post('excerpt');
+                $aData['image_id']         = (int) $this->input->post('image_id');
+                $aData['image_id']         = $aData['image_id'] ? $aData['image_id'] : null;
+                $aData['video_url']        = trim($this->input->post('video_url'));
+                $aData['video_url']        = $aData['video_url'] ? $aData['video_url'] : null;
+                $aData['audio_url']        = trim($this->input->post('audio_url'));
+                $aData['audio_url']        = $aData['audio_url'] ? $aData['audio_url'] : null;
+                $aData['body']             = $this->input->post('body');
+                $aData['seo_description']  = $this->input->post('seo_description');
+                $aData['seo_keywords']     = $this->input->post('seo_keywords');
+                $aData['is_published']     = (bool) $this->input->post('is_published');
+                $aData['published']        = $this->input->post('published');
+                $aData['associations']     = $this->input->post('associations');
+                $aData['gallery']          = $this->input->post('gallery');
+                $aData['comments_enabled'] = $this->input->post('comments_enabled');
+                $aData['comments_expire']  = $this->input->post('comments_expire');
 
                 if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
 
