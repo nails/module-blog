@@ -35,7 +35,10 @@
         "nails" :
         {
             "moduleName": "blog",
-            "type": "module"
+            "type": "module",
+            "autoload": {
+                "helpers": ["blog"]
+            }
         }
     }
 }

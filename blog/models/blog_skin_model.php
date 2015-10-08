@@ -80,7 +80,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
          * one which is used.
          */
 
-        $this->load->helper('directory');
+        \Nails\Factory::helper('directory');
 
         //  Take a fresh copy
         $aSkinLocations = $this->aSkinLocations;
