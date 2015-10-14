@@ -5,14 +5,16 @@
  *
  * @package     Nails
  * @subpackage  module-blog
- * @tag    AdminController
+ * @category    Controller
  * @author      Nails Dev Team
  * @link
  */
 
 namespace Nails\Admin\Blog;
 
-class Tag extends \AdminController
+use Nails\Auth\Controller\BaseAdmin;
+
+class Tag extends BaseAdmin
 {
     /**
      * Announces this controller's navGroups
