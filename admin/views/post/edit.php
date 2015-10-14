@@ -230,7 +230,7 @@
                             class="type-fields"
                             id="post-type-fields-photo"
                             data-manager-url="<?=cdnManageUrl('blog', array('_EDIT', 'typePhotoCdnManagerCallback'))?>"
-                            data-url-scheme="<?=$this->cdn->url_scale_scheme()?>"
+                            data-url-scheme="<?=$cdnUrlScaleScheme?>"
                         >
                             <strong>Featured Image</strong>
                             <?php

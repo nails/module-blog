@@ -12,7 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth\Controller\BaseAdmin;
+use Nails\Blog\Controller\BaseAdmin;
 
 class Post extends BaseAdmin
 {
@@ -417,8 +417,9 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        //  Load associations
-        $this->data['associations'] = $this->blog_model->get_associations();
+        //  Load other data
+        $this->data['associations']      = $this->blog_model->get_associations();
+        $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
 
         // --------------------------------------------------------------------------
 
@@ -734,8 +735,9 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        //  Load associations
-        $this->data['associations'] = $this->blog_model->get_associations($this->data['post']->id);
+        //  Load other data
+        $this->data['associations']      = $this->blog_model->get_associations($this->data['post']->id);
+        $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
 
         // --------------------------------------------------------------------------
 

@@ -12,7 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth\Controller\BaseAdmin;
+use Nails\Blog\Controller\BaseAdmin;
 
 class Category extends BaseAdmin
 {

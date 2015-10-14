@@ -12,7 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth\Controller\BaseAdmin;
+use Nails\Blog\Controller\BaseAdmin;
 
 class Tag extends BaseAdmin
 {
@@ -193,8 +193,8 @@ class Tag extends BaseAdmin
             $this->form_validation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
             $this->form_validation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
 
-            $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('max_length', lang('fv_max_length'));
+            // $this->form_validation->set_message('required', lang('fv_required'));
+            // $this->form_validation->set_message('max_length', lang('fv_max_length'));
 
             if ($this->form_validation->run()) {
 
