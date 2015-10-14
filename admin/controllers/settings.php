@@ -216,8 +216,6 @@ class Settings extends BaseAdmin
 
             $this->data['success'] = 'Blog settings have been saved.';
 
-            $this->load->model('routes_model');
-
             if (!$this->routes_model->update()) {
 
                 $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the routes ';

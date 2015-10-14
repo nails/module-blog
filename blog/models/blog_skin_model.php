@@ -10,6 +10,8 @@
  * @link
  */
 
+use Nails\Factory;
+
 class NAILS_Blog_skin_model extends NAILS_Model
 {
     protected $aAvailable;
@@ -80,7 +82,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
          * one which is used.
          */
 
-        \Nails\Factory::helper('directory');
+        Factory::helper('directory');
 
         //  Take a fresh copy
         $aSkinLocations = $this->aSkinLocations;

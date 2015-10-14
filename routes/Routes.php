@@ -1,7 +1,5 @@
 <?php
 
-namespace Nails\Routes\Blog;
-
 /**
  * Generates blog routes
  *
@@ -11,6 +9,8 @@ namespace Nails\Routes\Blog;
  * @author      Nails Dev Team
  * @link
  */
+
+namespace Nails\Routes\Blog;
 
 class Routes
 {
