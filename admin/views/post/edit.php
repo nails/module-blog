@@ -342,7 +342,7 @@
             $sActive = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
 
             ?>
-            <div class="tab-page tab-categories <?=$sActive?> fieldset">
+            <div class="tab-page tab-categories <?=$sActive?>">
                 <p>
                     Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
                     title="Categories allow for a broad grouping of post topics and should be considered top-level
@@ -392,7 +392,7 @@
             $sActive = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
 
             ?>
-            <div class="tab-page tab-tags <?=$sActive?> fieldset">
+            <div class="tab-page tab-tags <?=$sActive?>">
                 <p>
                     Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
                     title="Tags are generally used to describe your post in more detail.">tags</u>.
@@ -494,7 +494,7 @@
             $sActive = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
 
             ?>
-            <div class="tab-page tab-gallery <?=$sActive?> fieldset">
+            <div class="tab-page tab-gallery <?=$sActive?>">
                 <p>
                     Upload images to the <?=$postName?> gallery.
                     <small>
