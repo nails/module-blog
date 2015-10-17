@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
 class Category extends BaseAdmin
@@ -165,7 +166,7 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        \Nails\Admin\Helper::loadView('index');
+        Helper::loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -238,7 +239,7 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load views
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -318,7 +319,7 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load views
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------

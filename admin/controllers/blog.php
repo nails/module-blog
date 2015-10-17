@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
 class Blog extends BaseAdmin
@@ -122,13 +123,13 @@ class Blog extends BaseAdmin
         //  Add a header button
         if (userHasPermission('admin:blog:blog:create')) {
 
-             \Nails\Admin\Helper::addHeaderButton('admin/blog/blog/create', 'Create Blog');
+             Helper::addHeaderButton('admin/blog/blog/create', 'Create Blog');
         }
 
         // --------------------------------------------------------------------------
 
         //  Load views
-        \Nails\Admin\Helper::loadView('index');
+        Helper::loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -189,7 +190,7 @@ class Blog extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load views
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -256,7 +257,7 @@ class Blog extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load views
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------

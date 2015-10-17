@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
 class Post extends BaseAdmin
@@ -181,7 +182,7 @@ class Post extends BaseAdmin
 
         //  Checkbox filters
         $aCbFilters   = array();
-        $aCbFilters[] = \Nails\Admin\Helper::searchFilterObject(
+        $aCbFilters[] = Helper::searchFilterObject(
             $sTablePrefix . '.is_published',
             'State',
             array(
@@ -196,7 +197,7 @@ class Post extends BaseAdmin
             $filterOpts[] = array($sLabel, $sValue, true);
         }
 
-        $aCbFilters[] = \Nails\Admin\Helper::searchFilterObject(
+        $aCbFilters[] = Helper::searchFilterObject(
             $sTablePrefix . '.type',
             'Type',
             $filterOpts
@@ -224,13 +225,13 @@ class Post extends BaseAdmin
         $this->data['posts'] = $this->blog_post_model->get_all($iPage, $iPerPage, $aData);
 
         //  Set Search and Pagination objects for the view
-        $this->data['search']     = \Nails\Admin\Helper::searchObject(true, $aSortColumns, $sSortOn, $sSortOrder, $iPerPage, $sKeywords, $aCbFilters);
-        $this->data['pagination'] = \Nails\Admin\Helper::paginationObject($iPage, $iPerPage, $iTotalRows);
+        $this->data['search']     = Helper::searchObject(true, $aSortColumns, $sSortOn, $sSortOrder, $iPerPage, $sKeywords, $aCbFilters);
+        $this->data['pagination'] = Helper::paginationObject($iPage, $iPerPage, $iTotalRows);
 
         //  Add a header button
         if (userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
 
-             \Nails\Admin\Helper::addHeaderButton(
+             Helper::addHeaderButton(
                 'admin/blog/post/create/' . $this->blog->id,
                 'New ' . ucfirst($this->data['postName'])
             );
@@ -238,7 +239,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        \Nails\Admin\Helper::loadView('index');
+        Helper::loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -442,7 +443,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -773,7 +774,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        \Nails\Admin\Helper::loadView('edit');
+        Helper::loadView('edit');
     }
 
     // --------------------------------------------------------------------------
