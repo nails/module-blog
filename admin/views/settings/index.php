@@ -194,7 +194,7 @@
                             echo form_field_boolean($aField);
                         ?>
                     </fieldset>
-                    <p style="margin-top:1em;margin-bottom:0;">
+                    <p>
                         <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
@@ -343,7 +343,7 @@
                         ?>
                         </div>
                     </fieldset>
-                    <p style="margin-top:1em;margin-bottom:0;">
+                    <p>
                         <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
@@ -474,7 +474,7 @@
                             echo form_field_boolean($aField);
                         ?>
                     </fieldset>
-                    <p style="margin-top:1em;margin-bottom:0;">
+                    <p>
                         <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
@@ -553,7 +553,7 @@
 
                         ?>
                     </fieldset>
-                    <p style="margin-top:1em;margin-bottom:0;">
+                    <p>
                         <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>

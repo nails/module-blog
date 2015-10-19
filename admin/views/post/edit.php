@@ -88,7 +88,7 @@
         ?>
         <div class="tab-page tab-title-body <?=$sActive?> fieldset">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-10" id="post-editor">
                 <?php
 
                     //  Title

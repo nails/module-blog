@@ -86,7 +86,7 @@
             </fieldset>
             <p style="margin-top:1em;">
                 <?=form_submit('submit', 'Save', 'class="awesome"')?>
-                <?=anchor('admin/blog/' . $blog->id . '/manage/tag' . $isModal, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."')?>
+                <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."')?>
             </p>
         </div>
     </section>
