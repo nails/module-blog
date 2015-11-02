@@ -277,6 +277,7 @@ class Post extends BaseAdmin
                 $this->form_validation->set_rules('published', '', 'xss_clean');
                 $this->form_validation->set_rules('title', '', 'xss_clean|required');
                 $this->form_validation->set_rules('type', '', 'xss_clean|required');
+                $this->form_validation->set_rules('body', '', 'xss_clean|required');
                 $this->form_validation->set_rules('excerpt', '', 'xss_clean');
                 $this->form_validation->set_rules('image_id', '', 'xss_clean');
                 $this->form_validation->set_rules('video_url', '', 'xss_clean');
@@ -493,6 +494,7 @@ class Post extends BaseAdmin
                 $this->form_validation->set_rules('published', '', 'xss_clean');
                 $this->form_validation->set_rules('title', '', 'xss_clean|required');
                 $this->form_validation->set_rules('type', '', 'xss_clean|required');
+                $this->form_validation->set_rules('body', '', 'xss_clean|required');
                 $this->form_validation->set_rules('excerpt', '', 'xss_clean');
                 $this->form_validation->set_rules('image_id', '', 'xss_clean');
                 $this->form_validation->set_rules('video_url', '', 'xss_clean');

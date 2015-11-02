@@ -149,15 +149,22 @@
                         <select name="type" class="select2" id="post-type">
                         <?php
 
+                        if (!empty($_POST['type'])) {
+
+                            $sDefault = $_POST['type'];
+
+                        } else {
+
                             $sDefault = !empty($post->type) ? $post->type : 'PHOTO';
+                        }
 
-                            foreach ($postTypes as $sValue => $sLabel) {
+                        foreach ($postTypes as $sValue => $sLabel) {
 
-                                $sSelected = $sDefault == $sValue ? 'selected="selected"' : '';
-                                echo '<option value="' . $sValue . '" ' . $sSelected . '>';
-                                    echo $sLabel;
-                                echo '</option>';
-                            }
+                            $sSelected = $sDefault == $sValue ? 'selected="selected"' : '';
+                            echo '<option value="' . $sValue . '" ' . $sSelected . '>';
+                                echo $sLabel;
+                            echo '</option>';
+                        }
 
                         ?>
                         </select>
