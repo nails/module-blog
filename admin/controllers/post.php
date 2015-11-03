@@ -288,7 +288,11 @@ class Post extends BaseAdmin
                 if ($this->input->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
-                    $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|is_unique[' . $sTable . '.slug]');
+                    $this->form_validation->set_rules(
+                        'slug',
+                        '',
+                        'xss_clean|trim|alpha_dash|is_unique[' . $sTable . '.slug]'
+                    );
                 }
 
                 if ($this->input->post('type') === 'PHOTO') {
@@ -504,7 +508,11 @@ class Post extends BaseAdmin
                 if ($this->input->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
-                    $this->form_validation->set_rules('slug', '', 'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']');
+                    $this->form_validation->set_rules(
+                        'slug',
+                        '',
+                        'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']'
+                    );
                 }
 
                 if ($this->input->post('type') === 'PHOTO') {
