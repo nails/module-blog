@@ -32,7 +32,11 @@
 
                                 if (userHasPermission('admin:blog:blog:delete')) {
 
-                                    echo anchor('admin/blog/blog/delete/' . $blog->id, lang('action_delete'), 'class="awesome small red confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone." data-title="Are you sure?"');
+                                    echo anchor(
+                                        'admin/blog/blog/delete/' . $blog->id,
+                                        lang('action_delete'),
+                                        'class="awesome small red confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone."'
+                                    );
                                 }
 
                             echo '</td>';

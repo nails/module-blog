@@ -10,6 +10,8 @@
  * @link
  */
 
+use Nails\Factory;
+
 class NAILS_Blog_post_model extends NAILS_Model
 {
     protected $reservedWords;
@@ -1267,11 +1269,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
+        $oDate                 = Factory::factory('DateTime');
         $hitData               = array();
         $hitData['post_id']    = $id;
         $hitData['user_id']    = empty($data['user_id']) ? null : $data['user_id'];
         $hitData['ip_address'] = $this->input->ip_address();
-        $hitData['created']    = date('Y-m-d H:i:s');
+        $hitData['created']    = $oDate->format('Y-m-d H:i:s');
         $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 
         if ($hitData['user_id'] && $this->user_model->isAdmin($hitData['user_id'])) {
@@ -1290,7 +1293,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         $this->db->where('post_id', $hitData['post_id']);
         $this->db->where('user_id', $hitData['user_id']);
         $this->db->where('ip_address', $hitData['ip_address']);
-        $this->db->where('created > "' . date('Y-m-d H:i:s', strtotime('-5 MINS')) . '"');
+        $this->db->where('created > "' . $oDate->sub(new \DateInterval('PT5M'))->format('Y-m-d H:i:s') . '"');
 
         if ($this->db->count_all_results($this->tableHit)) {
 

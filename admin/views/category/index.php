@@ -56,7 +56,7 @@
 
                                     if (userHasPermission('admin:blog:category:' . $blog->id . ':delete')) {
 
-                                        echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-title="Are you sure?" data-body="This action cannot be undone."');
+                                        echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-body="This action cannot be undone."');
                                     }
 
                                 echo '</td>';

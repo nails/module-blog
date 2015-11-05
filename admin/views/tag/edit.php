@@ -12,7 +12,7 @@
     </p>
     <ul class="tabs disabled">
         <li class="tab">
-            <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Overview', 'class="confirm" data-title="Are you sure?" data-body="Any unsaved changes will be lost."')?>
+            <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Overview', 'class="confirm" data-body="Any unsaved changes will be lost."')?>
         </li>
         <li class="tab active">
             <?=anchor('admin/blog/tag/create/' . $blog->id . $isModal, 'Create Tag')?>
@@ -86,7 +86,7 @@
             </fieldset>
             <p style="margin-top:1em;">
                 <?=form_submit('submit', 'Save', 'class="awesome"')?>
-                <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Cancel', 'class="awesome red confirm" data-title="Are you sure?" data-body="All unsaved changes will be lost."')?>
+                <?=anchor('admin/blog/tag/index/' . $blog->id . $isModal, 'Cancel', 'class="awesome red confirm" data-body="All unsaved changes will be lost."')?>
             </p>
         </div>
     </section>
