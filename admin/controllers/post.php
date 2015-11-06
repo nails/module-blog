@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
@@ -113,6 +114,10 @@ class Post extends BaseAdmin
         $this->load->model('blog/blog_post_model');
         $this->load->model('blog/blog_category_model');
         $this->load->model('blog/blog_tag_model');
+
+        // --------------------------------------------------------------------------
+
+        $this->oChangeLogModel = Factory::model('ChangeLog', 'nailsapp/module-admin');
 
         // --------------------------------------------------------------------------
 
@@ -369,7 +374,7 @@ class Post extends BaseAdmin
                     if (empty($bIsPreview)) {
 
                         //  Update admin changelog
-                        $this->admin_changelog_model->add(
+                        $this->oChangeLogModel->add(
                             'created',
                             'a',
                             'blog post',
@@ -627,7 +632,7 @@ class Post extends BaseAdmin
                                         $aOldCategories = implode(',', $aOldCategories);
                                         $aNewCategories = implode(',', $aNewCategories);
 
-                                        $this->admin_changelog_model->add(
+                                        $this->oChangeLogModel->add(
                                             'updated',
                                             'a',
                                             'blog post',
@@ -670,7 +675,7 @@ class Post extends BaseAdmin
                                         $aOldTags = implode(',', $aOldTags);
                                         $aNewTags = implode(',', $aNewTags);
 
-                                        $this->admin_changelog_model->add(
+                                        $this->oChangeLogModel->add(
                                             'updated',
                                             'a',
                                             'blog post',
@@ -686,7 +691,7 @@ class Post extends BaseAdmin
 
                                     default :
 
-                                        $this->admin_changelog_model->add(
+                                        $this->oChangeLogModel->add(
                                             'updated',
                                             'a',
                                             'blog post',
@@ -823,7 +828,7 @@ class Post extends BaseAdmin
             }
 
             //  Update admin changelog
-            $this->admin_changelog_model->add('deleted', 'a', 'blog post', $iPostId, $oPost->title);
+            $this->oChangeLogModel->add('deleted', 'a', 'blog post', $iPostId, $oPost->title);
 
         } else {
 
@@ -863,7 +868,7 @@ class Post extends BaseAdmin
             $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was restored successfully.');
 
             //  Update admin changelog
-            $this->admin_changelog_model->add(
+            $this->oChangeLogModel->add(
                 'restored',
                 'a',
                 'blog post',
