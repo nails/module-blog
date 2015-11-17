@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
@@ -186,18 +187,17 @@ class Category extends BaseAdmin
 
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
+            $oFormValidation = Factory::service('FormValidation');
+            $oFormValidation->set_rules('label', '', 'xss_clean|required');
+            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
+            $oFormValidation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
 
-            $this->form_validation->set_rules('label', '', 'xss_clean|required');
-            $this->form_validation->set_rules('description', '', 'xss_clean');
-            $this->form_validation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
-            $this->form_validation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
-            $this->form_validation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_message('required', lang('fv_required'));
+            $oFormValidation->set_message('max_length', lang('fv_max_length'));
 
-            $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('max_length', lang('fv_max_length'));
-
-            if ($this->form_validation->run()) {
+            if ($oFormValidation->run()) {
 
                 $aInsertData                    = array();
                 $aInsertData['blog_id']         = $this->blog->id;
@@ -268,18 +268,17 @@ class Category extends BaseAdmin
 
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
+            $oFormValidation = Factory::service('FormValidation');;
+            $oFormValidation->set_rules('label', '', 'xss_clean|required');
+            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
+            $oFormValidation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
 
-            $this->form_validation->set_rules('label', '', 'xss_clean|required');
-            $this->form_validation->set_rules('description', '', 'xss_clean');
-            $this->form_validation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
-            $this->form_validation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
-            $this->form_validation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_message('required', lang('fv_required'));
+            $oFormValidation->set_message('max_length', lang('fv_max_length'));
 
-            $this->form_validation->set_message('required', lang('fv_required'));
-            $this->form_validation->set_message('max_length', lang('fv_max_length'));
-
-            if ($this->form_validation->run()) {
+            if ($oFormValidation->run()) {
 
                 $aUpdateData                    = array();
                 $aUpdateData['label']           = $this->input->post('label');

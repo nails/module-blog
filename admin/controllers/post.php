@@ -276,24 +276,24 @@ class Post extends BaseAdmin
             //  Only validate non-previews
             if (empty($bIsPreview)) {
 
-                $this->load->library('form_validation');
+                $oFormValidation = Factory::service('FormValidation');
 
-                $this->form_validation->set_rules('is_published', '', 'xss_clean');
-                $this->form_validation->set_rules('published', '', 'xss_clean');
-                $this->form_validation->set_rules('title', '', 'xss_clean|required');
-                $this->form_validation->set_rules('type', '', 'xss_clean|required');
-                $this->form_validation->set_rules('body', '', 'xss_clean|required');
-                $this->form_validation->set_rules('excerpt', '', 'xss_clean');
-                $this->form_validation->set_rules('image_id', '', 'xss_clean');
-                $this->form_validation->set_rules('video_url', '', 'xss_clean');
-                $this->form_validation->set_rules('audio_url', '', 'xss_clean');
-                $this->form_validation->set_rules('seo_description', '', 'xss_clean');
-                $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+                $oFormValidation->set_rules('is_published', '', 'xss_clean');
+                $oFormValidation->set_rules('published', '', 'xss_clean');
+                $oFormValidation->set_rules('title', '', 'xss_clean|required');
+                $oFormValidation->set_rules('type', '', 'xss_clean|required');
+                $oFormValidation->set_rules('body', '', 'xss_clean|required');
+                $oFormValidation->set_rules('excerpt', '', 'xss_clean');
+                $oFormValidation->set_rules('image_id', '', 'xss_clean');
+                $oFormValidation->set_rules('video_url', '', 'xss_clean');
+                $oFormValidation->set_rules('audio_url', '', 'xss_clean');
+                $oFormValidation->set_rules('seo_description', '', 'xss_clean');
+                $oFormValidation->set_rules('seo_keywords', '', 'xss_clean');
 
                 if ($this->input->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
-                    $this->form_validation->set_rules(
+                    $oFormValidation->set_rules(
                         'slug',
                         '',
                         'xss_clean|trim|alpha_dash|is_unique[' . $sTable . '.slug]'
@@ -302,24 +302,24 @@ class Post extends BaseAdmin
 
                 if ($this->input->post('type') === 'PHOTO') {
 
-                    $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('image_id', '', 'xss_clean|required');
 
                 } elseif ($this->input->post('type') === 'VIDEO') {
 
-                    $this->form_validation->set_rules('video_url', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required');
 
                 } elseif ($this->input->post('type') === 'AUDIO') {
 
-                    $this->form_validation->set_rules('audio_url', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required');
                 }
 
-                $this->form_validation->set_message('required', lang('fv_required'));
-                $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
-                $this->form_validation->set_message('is_unique', 'A post using this slug already exists.');
+                $oFormValidation->set_message('required', lang('fv_required'));
+                $oFormValidation->set_message('alpha_dash', lang('fv_alpha_dash'));
+                $oFormValidation->set_message('is_unique', 'A post using this slug already exists.');
 
             }
 
-            if (!empty($bIsPreview) || $this->form_validation->run($this)) {
+            if (!empty($bIsPreview) || $oFormValidation->run($this)) {
 
                 //  Prepare data
                 $aData                     = array();
@@ -497,23 +497,23 @@ class Post extends BaseAdmin
             //  Only validate non-previews
             if (empty($bIsPreview)) {
 
-                $this->load->library('form_validation');
+                $oFormValidation = Factory::service('FormValidation');
 
-                $this->form_validation->set_rules('is_published', '', 'xss_clean');
-                $this->form_validation->set_rules('published', '', 'xss_clean');
-                $this->form_validation->set_rules('title', '', 'xss_clean|required');
-                $this->form_validation->set_rules('type', '', 'xss_clean|required');
-                $this->form_validation->set_rules('body', '', 'xss_clean|required');
-                $this->form_validation->set_rules('excerpt', '', 'xss_clean');
-                $this->form_validation->set_rules('image_id', '', 'xss_clean');
-                $this->form_validation->set_rules('video_url', '', 'xss_clean');
-                $this->form_validation->set_rules('audio_url', '', 'xss_clean');
-                $this->form_validation->set_rules('seo_keywords', '', 'xss_clean');
+                $oFormValidation->set_rules('is_published', '', 'xss_clean');
+                $oFormValidation->set_rules('published', '', 'xss_clean');
+                $oFormValidation->set_rules('title', '', 'xss_clean|required');
+                $oFormValidation->set_rules('type', '', 'xss_clean|required');
+                $oFormValidation->set_rules('body', '', 'xss_clean|required');
+                $oFormValidation->set_rules('excerpt', '', 'xss_clean');
+                $oFormValidation->set_rules('image_id', '', 'xss_clean');
+                $oFormValidation->set_rules('video_url', '', 'xss_clean');
+                $oFormValidation->set_rules('audio_url', '', 'xss_clean');
+                $oFormValidation->set_rules('seo_keywords', '', 'xss_clean');
 
                 if ($this->input->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
-                    $this->form_validation->set_rules(
+                    $oFormValidation->set_rules(
                         'slug',
                         '',
                         'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']'
@@ -522,23 +522,23 @@ class Post extends BaseAdmin
 
                 if ($this->input->post('type') === 'PHOTO') {
 
-                    $this->form_validation->set_rules('image_id', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('image_id', '', 'xss_clean|required');
 
                 } elseif ($this->input->post('type') === 'VIDEO') {
 
-                    $this->form_validation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
+                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
 
                 } elseif ($this->input->post('type') === 'AUDIO') {
 
-                    $this->form_validation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
+                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
                 }
 
-                $this->form_validation->set_message('required', lang('fv_required'));
-                $this->form_validation->set_message('alpha_dash', lang('fv_alpha_dash'));
-                $this->form_validation->set_message('unique_if_diff', 'A post using this slug already exists.');
+                $oFormValidation->set_message('required', lang('fv_required'));
+                $oFormValidation->set_message('alpha_dash', lang('fv_alpha_dash'));
+                $oFormValidation->set_message('unique_if_diff', 'A post using this slug already exists.');
             }
 
-            if (!empty($bIsPreview) || $this->form_validation->run($this)) {
+            if (!empty($bIsPreview) || $oFormValidation->run($this)) {
 
                 //  Prepare data
                 $aData                     = array();
@@ -916,7 +916,8 @@ class Post extends BaseAdmin
 
         } else {
 
-            $this->form_validation->set_message('_callbackValidAudioUrl', 'Not a valid Spotify Track URL.');
+            $oFormValidation = Factory::service('FormValidation');
+            $oFormValidation->set_message('_callbackValidAudioUrl', 'Not a valid Spotify Track URL.');
             return false;
         }
     }
@@ -946,7 +947,8 @@ class Post extends BaseAdmin
 
             } else {
 
-                $this->form_validation->set_message('_callbackValidVideoUrl', 'Not a valid YouTube or Vimeo URL.');
+                $oFormValidation = Factory::service('FormValidation');
+                $oFormValidation->set_message('_callbackValidVideoUrl', 'Not a valid YouTube or Vimeo URL.');
                 return false;
             }
         }

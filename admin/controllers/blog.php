@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
@@ -154,12 +155,12 @@ class Blog extends BaseAdmin
         //  Handle POST
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('label', '', 'xss_clean|required');
-            $this->form_validation->set_rules('description', '', 'xss_clean');
-            $this->form_validation->set_message('required', lang('fv_required'));
+            $oFormValidation = Factory::service('FormValidation');
+            $oFormValidation->set_rules('label', '', 'xss_clean|required');
+            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_message('required', lang('fv_required'));
 
-            if ($this->form_validation->run()) {
+            if ($oFormValidation->run()) {
 
                 $aInsertData                = array();
                 $aInsertData['label']       = $this->input->post('label');
@@ -224,12 +225,12 @@ class Blog extends BaseAdmin
         //  Handle POST
         if ($this->input->post()) {
 
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('label', '', 'xss_clean|required');
-            $this->form_validation->set_rules('description', '', 'xss_clean');
-            $this->form_validation->set_message('required', lang('fv_required'));
+            $oFormValidation = Factory::service('FormValidation');
+            $oFormValidation->set_rules('label', '', 'xss_clean|required');
+            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_message('required', lang('fv_required'));
 
-            if ($this->form_validation->run()) {
+            if ($oFormValidation->run()) {
 
                 $aUpdateData                = array();
                 $aUpdateData['label']       = $this->input->post('label');
