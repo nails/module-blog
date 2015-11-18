@@ -46,7 +46,9 @@ class Post extends BaseAdmin
 
                 //  Any draft posts?
                 $iNumDrafts = $oCi->blog_post_model->countDrafts($oBlog->id);
-                $aAlerts    = array(\Nails\Admin\Nav::alertObject($iNumDrafts, '', 'Drafts'));
+                $oAlert = Factory::factory('NavAlert', 'nailsapp/module-admin');
+                $oAlert->setValue($iNumDrafts);
+                $oAlert->setLabel('Drafts');
 
                 //  Post name
                 $postNamePlural = app_setting('postNamePlural', 'blog-' . $oBlog->id);
@@ -55,8 +57,15 @@ class Post extends BaseAdmin
                 }
 
                 //  Create the navGrouping
-                $oNavGroup = new \Nails\Admin\Nav($sGroupLabel, 'fa-pencil-square-o');
-                $oNavGroup->addAction('Manage ' . ucFirst($postNamePlural), 'index/' . $oBlog->id, $aAlerts, 0);
+                $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+                $navGroup->setLabel($sGroupLabel);
+                $navGroup->setIcon('fa-pencil-square-o');
+                $oNavGroup->addAction(
+                    'Manage ' . ucFirst($postNamePlural),
+                    'index/' . $oBlog->id,
+                    array($oAlert),
+                    0
+                );
 
                 $aOut[] = $oNavGroup;
             }

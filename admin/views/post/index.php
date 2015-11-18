@@ -4,8 +4,8 @@
     </p>
     <?php
 
-        echo \Nails\Admin\Helper::loadSearch($search);
-        echo \Nails\Admin\Helper::loadPagination($pagination);
+        echo adminHelper('loadSearch', $search);
+        echo adminHelper('loadPagination', $pagination);
 
     ?>
     <div class="table-responsive">
@@ -92,8 +92,8 @@
                                 echo !empty($postTypes[$post->type]) ? $postTypes[$post->type] : 'Unknown';
                             echo '</td>';
 
-                            echo \Nails\Admin\Helper::loadUserCell($post->author);
-                            echo \Nails\Admin\Helper::loadDatetimeCell($post->modified);
+                            echo adminHelper('loadUserCell', $post->author);
+                            echo adminHelper('loadDatetimeCell', $post->modified);
 
                             echo '<td class="actions">';
 
@@ -143,7 +143,7 @@
     </div>
     <?php
 
-        echo \Nails\Admin\Helper::loadPagination($pagination);
+        echo adminHelper('loadPagination', $pagination);
 
     ?>
 </div>

@@ -50,7 +50,9 @@ class Category extends BaseAdmin
                 $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
 
                 //  Create the navGrouping
-                $navGroup = new \Nails\Admin\Nav($groupLabel, 'fa-pencil-square-o');
+                $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+                $navGroup->setLabel($groupLabel);
+                $navGroup->setIcon('fa-pencil-square-o');
                 $navGroup->addAction('Manage Categories', 'index/' . $blog->id);
 
                 $out[] = $navGroup;

@@ -46,7 +46,7 @@
                                 echo '<td class="count">';
                                     echo isset($tag->post_count) ? $tag->post_count : '&mdash;';
                                 echo '</td>';
-                                echo \Nails\Admin\Helper::loadDatetimeCell($tag->modified);
+                                echo adminHelper('loadDatetimeCell', $tag->modified);
                                 echo '<td class="actions">';
 
                                     if (userHasPermission('admin:blog:tag:' . $blog->id . ':edit')) {

@@ -46,7 +46,7 @@
                                 echo '<td class="count">';
                                     echo isset($category->post_count) ? $category->post_count : '&mdash;';
                                 echo '</td>';
-                                echo \Nails\Admin\Helper::loadDatetimeCell($category->modified);
+                                echo adminHelper('loadDatetimeCell', $category->modified);
                                 echo '<td class="actions">';
 
                                     if (userHasPermission('admin:blog:category:' . $blog->id . ':edit')) {

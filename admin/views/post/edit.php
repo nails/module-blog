@@ -561,7 +561,8 @@
 
                     foreach ($aGalleryItems as $image) {
 
-                        echo \Nails\Admin\Helper::loadInlineView(
+                        echo adminHelper(
+                            'loadInlineView',
                             '_utilities/template-mustache-gallery-item',
                             array('objectId' => $image)
                         );
@@ -632,7 +633,8 @@
 <script type="text/template" id="template-gallery-item">
 <?php
 
-    echo \Nails\Admin\Helper::loadInlineView(
+    echo adminHelper(
+        'loadInlineView',
         '_utilities/template-mustache-gallery-item',
         array('objectId' => null)
     );
