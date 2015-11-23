@@ -25,7 +25,7 @@
         </li>
         <?php
 
-        if (app_setting('categories_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('categories_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
 
@@ -37,7 +37,7 @@
 
         }
 
-        if (app_setting('tags_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('tags_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
 
@@ -61,7 +61,7 @@
 
         }
 
-        if (app_setting('gallery_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('gallery_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
 
@@ -126,7 +126,7 @@
                     // --------------------------------------------------------------------------
 
                     //  Excerpt
-                    if (app_setting('use_excerpts', 'blog-' . $blog->id)) {
+                    if (appSetting('use_excerpts', 'blog-' . $blog->id)) {
 
                         $aField                 = array();
                         $aField['id']           = 'post_excerpt';
@@ -326,7 +326,7 @@
 
             // --------------------------------------------------------------------------
 
-            if (app_setting('comments_engine', 'blog-' . $blog->id) === 'NATIVE') {
+            if (appSetting('comments_engine', 'blog-' . $blog->id) === 'NATIVE') {
 
                 $aField                = array();
                 $aField['key']         = 'comments_expire';
@@ -344,7 +344,7 @@
         </div>
         <?php
 
-        if (app_setting('categories_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('categories_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
 
@@ -394,7 +394,7 @@
 
         }
 
-        if (app_setting('tags_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('tags_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
 
@@ -496,7 +496,7 @@
             <?php
         }
 
-        if (app_setting('gallery_enabled', 'blog-' . $blog->id)) {
+        if (appSetting('gallery_enabled', 'blog-' . $blog->id)) {
 
             $sActive = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
 

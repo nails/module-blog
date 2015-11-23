@@ -353,12 +353,12 @@ class Post extends BaseAdmin
                 $aData['comments_enabled'] = $this->input->post('comments_enabled');
                 $aData['comments_expire']  = $this->input->post('comments_expire');
 
-                if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
+                if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
                     $aData['categories'] = $this->input->post('categories');
                 }
 
-                if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+                if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
                     $aData['tags'] = $this->input->post('tags');
                 }
@@ -417,7 +417,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load Categories and Tags
-        if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
+        if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
             $aData            = array();
             $aData['where']   = array();
@@ -426,7 +426,7 @@ class Post extends BaseAdmin
             $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
         }
 
-        if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+        if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
             $aData            = array();
             $aData['where']   = array();
@@ -571,12 +571,12 @@ class Post extends BaseAdmin
                 $aData['comments_enabled'] = $this->input->post('comments_enabled');
                 $aData['comments_expire']  = $this->input->post('comments_expire');
 
-                if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
+                if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
                     $aData['categories'] = $this->input->post('categories');
                 }
 
-                if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+                if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
                     $aData['tags'] = $this->input->post('tags');
                 }
@@ -748,12 +748,12 @@ class Post extends BaseAdmin
             )
         );
 
-        if (app_setting('categories_enabled', 'blog-' . $this->blog->id)) {
+        if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
             $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
         }
 
-        if (app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+        if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
             $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $aData);
         }

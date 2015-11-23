@@ -54,13 +54,13 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         $sSettingBlogName = 'blog-' . $this->oBlog->id;
 
-        if (app_setting('categories_enabled', $sSettingBlogName)) {
+        if (appSetting('categories_enabled', $sSettingBlogName)) {
 
             $this->load->model('blog/blog_category_model');
         }
 
 
-        if (app_setting('tags_enabled', $sSettingBlogName)) {
+        if (appSetting('tags_enabled', $sSettingBlogName)) {
 
             $this->load->model('blog/blog_tag_model');
         }

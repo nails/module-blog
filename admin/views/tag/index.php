@@ -3,7 +3,7 @@
         Use tags to group specific <?=$postName?> topics together. For example, a tag might be 'New Year <?=date('Y')?>', or 'Coursework'.
         <?php
 
-            if (app_setting('categories_enabled', 'blog-' . $blog->id)) {
+            if (appSetting('categories_enabled', 'blog-' . $blog->id)) {
 
                 echo 'For broader subjects (e.g "Music" or "Travel") consider using a ' . anchor('admin/blog/category/index/' . $blog->id . $isModal, 'category') . '.';
             }

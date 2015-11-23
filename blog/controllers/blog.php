@@ -61,7 +61,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_body']    = !appSetting('use_excerpts', 'blog-' . $this->oBlog->id);
         $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
@@ -170,11 +170,11 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Assets
-        if (app_setting('social_enabled', 'blog-' . $this->oBlog->id)) {
+        if (appSetting('social_enabled', 'blog-' . $this->oBlog->id)) {
 
             $this->asset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
 
-            switch (app_setting('social_skin', 'blog-' . $this->oBlog->id)) {
+            switch (appSetting('social_skin', 'blog-' . $this->oBlog->id)) {
 
                 case 'FLAT':
 
@@ -223,7 +223,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function category()
     {
-        if (!app_setting('categories_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
+        if (!appSetting('categories_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -265,7 +265,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_body']    = !appSetting('use_excerpts', 'blog-' . $this->oBlog->id);
         $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
@@ -329,7 +329,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function tag()
     {
-        if (!app_setting('tags_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
+        if (!appSetting('tags_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
             show_404();
         }
@@ -371,7 +371,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Send any additional data
         $data                    = array();
-        $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
+        $data['include_body']    = !appSetting('use_excerpts', 'blog-' . $this->oBlog->id);
         $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
@@ -427,7 +427,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function rss()
     {
-        if (!app_setting('rss_enabled', 'blog-' . $this->oBlog->id)) {
+        if (!appSetting('rss_enabled', 'blog-' . $this->oBlog->id)) {
 
             show_404();
         }
@@ -487,22 +487,22 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         $this->data['widget'] = new stdClass();
 
-        if (app_setting('sidebar_latest_posts', 'blog-' . $this->oBlog->id)) {
+        if (appSetting('sidebar_latest_posts', 'blog-' . $this->oBlog->id)) {
 
             $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_categories', 'blog-' . $this->oBlog->id)) {
+        if (appSetting('sidebar_categories', 'blog-' . $this->oBlog->id)) {
 
             $this->data['widget']->categories = $this->blog_widget_model->categories($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_tags', 'blog-' . $this->oBlog->id)) {
+        if (appSetting('sidebar_tags', 'blog-' . $this->oBlog->id)) {
 
             $this->data['widget']->tags = $this->blog_widget_model->tags($this->oBlog->id);
         }
 
-        if (app_setting('sidebar_popular_posts', 'blog-' . $this->oBlog->id)) {
+        if (appSetting('sidebar_popular_posts', 'blog-' . $this->oBlog->id)) {
 
             $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->oBlog->id);
         }

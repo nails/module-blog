@@ -60,7 +60,7 @@
                                 echo $post->title;
 
                                 //  Exceprt
-                                if (app_setting('use_excerpt', 'blog-' . $blog->id)) {
+                                if (appSetting('use_excerpt', 'blog-' . $blog->id)) {
 
                                     echo '<small>' . strip_tags($post->excerpt) . '</small>';
                                 }

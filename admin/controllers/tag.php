@@ -36,7 +36,7 @@ class Tag extends BaseAdmin
             foreach ($blogs as $blog) {
 
                 //  Categories enabled for this blog?
-                if (!app_setting('tags_enabled', 'blog-' . $blog->id)) {
+                if (!appSetting('tags_enabled', 'blog-' . $blog->id)) {
 
                     continue;
                 }
@@ -124,7 +124,7 @@ class Tag extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Tags enabled?
-        if (!app_setting('tags_enabled', 'blog-' . $this->blog->id)) {
+        if (!appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
             show_404();
         }
