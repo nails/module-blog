@@ -50,7 +50,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page      = $this->uri->rsegment(3);
-        $perPage  = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
+        $perPage  = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage  = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -62,7 +62,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Send any additional data
         $data                    = array();
         $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
@@ -254,7 +254,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
+        $perPage = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -266,7 +266,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Send any additional data
         $data                    = array();
         $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
@@ -360,7 +360,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Handle pagination
         $page     = $this->uri->rsegment(5);
-        $perPage = app_setting('home_per_page', 'blog-' . $this->oBlog->id);
+        $perPage = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
         $this->data['pagination']           = new stdClass();
@@ -372,7 +372,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Send any additional data
         $data                    = array();
         $data['include_body']    = !app_setting('use_excerpts', 'blog-' . $this->oBlog->id);
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future
@@ -437,7 +437,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Get posts
         $data                    = array();
         $data['include_body']    = true;
-        $data['include_gallery'] = app_setting('home_show_gallery', 'blog-' . $this->oBlog->id);
+        $data['include_gallery'] = appSetting('home_show_gallery', 'blog-' . $this->oBlog->id);
         $data['sort']            = array('bp.published', 'desc');
 
         //  Only published items which are not schduled for the future

@@ -68,7 +68,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Load up the blog's skin
-        $sSkinSlug = app_setting('skin', $sSettingBlogName) ? app_setting('skin', $sSettingBlogName) : 'blog-skin-classic';
+        $sSkinSlug = appSetting('skin', $sSettingBlogName) ? appSetting('skin', $sSettingBlogName) : 'blog-skin-classic';
 
         $this->oSkin = $this->blog_skin_model->get($sSkinSlug);
 
@@ -145,11 +145,11 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
         // --------------------------------------------------------------------------
 
-        $this->data['postName'] = app_setting('postName', 'blog-' . $this->oBlog->id);
+        $this->data['postName'] = appSetting('postName', 'blog-' . $this->oBlog->id);
         if (empty($this->data['postName'])) {
             $this->data['postName'] = 'post';
         }
-        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->oBlog->id);
+        $this->data['postNamePlural'] = appSetting('postNamePlural', 'blog-' . $this->oBlog->id);
         if (empty($this->data['postNamePlural'])) {
             $this->data['postNamePlural'] = 'posts';
         }

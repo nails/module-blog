@@ -113,7 +113,7 @@ class NAILS_Blog_model extends NAILS_Model
 
         } else {
 
-            $url = app_setting('url', 'blog-' . $blogId);
+            $url = appSetting('url', 'blog-' . $blogId);
             $url = $url ? $url : 'blog/';
             $url = site_url($url);
 

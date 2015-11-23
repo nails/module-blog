@@ -137,11 +137,11 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Customisations
-        $this->data['postName'] = app_setting('postName', 'blog-' . $this->blog->id);
+        $this->data['postName'] = appSetting('postName', 'blog-' . $this->blog->id);
         if (empty($this->data['postName'])) {
             $this->data['postName'] = 'post';
         }
-        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->blog->id);
+        $this->data['postNamePlural'] = appSetting('postNamePlural', 'blog-' . $this->blog->id);
         if (empty($this->data['postNamePlural'])) {
             $this->data['postNamePlural'] = 'posts';
         }

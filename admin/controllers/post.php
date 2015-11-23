@@ -51,7 +51,7 @@ class Post extends BaseAdmin
                 $oAlert->setLabel('Drafts');
 
                 //  Post name
-                $postNamePlural = app_setting('postNamePlural', 'blog-' . $oBlog->id);
+                $postNamePlural = appSetting('postNamePlural', 'blog-' . $oBlog->id);
                 if (empty($postNamePlural)) {
                     $postNamePlural = 'posts';
                 }
@@ -149,11 +149,11 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Customisations
-        $this->data['postName'] = app_setting('postName', 'blog-' . $this->blog->id);
+        $this->data['postName'] = appSetting('postName', 'blog-' . $this->blog->id);
         if (empty($this->data['postName'])) {
             $this->data['postName'] = 'post';
         }
-        $this->data['postNamePlural'] = app_setting('postNamePlural', 'blog-' . $this->blog->id);
+        $this->data['postNamePlural'] = appSetting('postNamePlural', 'blog-' . $this->blog->id);
         if (empty($this->data['postNamePlural'])) {
             $this->data['postNamePlural'] = 'posts';
         }
