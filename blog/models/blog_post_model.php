@@ -651,12 +651,11 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param int    $perPage        How many items per page of paginated results
      * @param mixed  $data           Any data to pass to _getcount_common()
      * @param bool   $includeDeleted If non-destructive delete is enabled then include deleted items
-     * @param string $_caller        Internal flag to pass to _getcount_common(), contains the calling method
      * @return array
      **/
-    public function get_all($page = null, $perPage = null, $data = null, $includeDeleted = false, $_caller = 'GET_ALL')
+    public function get_all($page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
-        $posts = parent::get_all($page, $perPage, $data, $includeDeleted, $_caller);
+        $posts = parent::get_all($page, $perPage, $data, $includeDeleted);
 
         //  Handle requests for the raw query object
         if (!empty($data['RETURN_QUERY_OBJECT'])) {
@@ -849,10 +848,9 @@ class NAILS_Blog_post_model extends NAILS_Model
      * methods and the count() method.
      *
      * @param string $data Data passed from the calling method
-     * @param string $_caller The name of the calling method
      * @return void
      **/
-    protected function _getcount_common($data = null, $_caller = null)
+    protected function _getcount_common($data = null)
     {
         $this->db->select(
             array(
@@ -930,7 +928,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        parent::_getcount_common($data, $_caller);
+        parent::_getcount_common($data);
     }
 
     // --------------------------------------------------------------------------
