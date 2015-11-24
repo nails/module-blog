@@ -619,7 +619,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (empty($sSlug)) {
 
             $prefix = array_search($sSlug, $this->reservedWords) !== false ? 'post-' : '';
-            $sSlug = $this->_generate_slug($sTitle, $prefix);
+            $sSlug = $this->generateSlug($sTitle, $prefix);
 
         } else {
 
@@ -649,13 +649,13 @@ class NAILS_Blog_post_model extends NAILS_Model
      * Fetches all posts
      * @param int    $page           The page number of the results, if null then no pagination
      * @param int    $perPage        How many items per page of paginated results
-     * @param mixed  $data           Any data to pass to _getcount_common()
+     * @param mixed  $data           Any data to pass to getCountCommon()
      * @param bool   $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
-    public function get_all($page = null, $perPage = null, $data = null, $includeDeleted = false)
+    public function getAll($page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
-        $posts = parent::get_all($page, $perPage, $data, $includeDeleted);
+        $posts = parent::getAll($page, $perPage, $data, $includeDeleted);
 
         //  Handle requests for the raw query object
         if (!empty($data['RETURN_QUERY_OBJECT'])) {
@@ -687,7 +687,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                 foreach ($post->categories as $c) {
 
-                    $c->url = $this->blog_category_model->format_url($c->slug, $c->blog_id);
+                    $c->url = $this->blog_category_model->formatUrl($c->slug, $c->blog_id);
                 }
             }
 
@@ -710,7 +710,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                 foreach ($post->tags as $t) {
 
-                    $t->url = $this->blog_tag_model->format_url($t->slug, $t->blog_id);
+                    $t->url = $this->blog_tag_model->formatUrl($t->slug, $t->blog_id);
                 }
             }
 
@@ -771,14 +771,14 @@ class NAILS_Blog_post_model extends NAILS_Model
                         array('column' => $this->tablePrefix . '.published <=', 'value' => 'NOW()', 'escape' => false)
                     )
                 );
-                $aResult = $this->get_all(0, 1, $aSiblingData);
+                $aResult = $this->getAll(0, 1, $aSiblingData);
 
                 if (!empty($aResult)) {
                     $post->siblings->next = $aResult[0];
                 }
 
                 $aSiblingData['where'][0]['column'] = $this->tablePrefix . '.published <';
-                $aResult = $this->get_all(0, 1, $aSiblingData);
+                $aResult = $this->getAll(0, 1, $aSiblingData);
 
                 if (!empty($aResult)) {
                     $post->siblings->prev = $aResult[0];
@@ -796,13 +796,13 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Fetch a pst by it's ID
      * @param  int   $id The ID of the object to fetch
-     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  mixed $data Any data to pass to getCountCommon()
      * @return stdClass
      **/
-    public function get_by_id($id, $data = null)
+    public function getById($id, $data = null)
     {
-        $data = $this->_include_everything($data);
-        return parent::get_by_id($id, $data);
+        $data = $this->includeEverything($data);
+        return parent::getById($id, $data);
     }
 
     // --------------------------------------------------------------------------
@@ -810,13 +810,13 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Fetch a post by it's slug
      * @param  int   $slug The slug of the object to fetch
-     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  mixed $data Any data to pass to getCountCommon()
      * @return stdClass
      **/
-    public function get_by_slug($id, $data = null)
+    public function getBySlug($id, $data = null)
     {
-        $data = $this->_include_everything($data);
-        return parent::get_by_slug($id, $data);
+        $data = $this->includeEverything($data);
+        return parent::getBySlug($id, $data);
     }
 
     // --------------------------------------------------------------------------
@@ -830,13 +830,13 @@ class NAILS_Blog_post_model extends NAILS_Model
      * Nails style guidelines) will be interpreted incorrectly.
      *
      * @param  mixed $id_slug The ID or slug of the object to fetch
-     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  mixed $data Any data to pass to getCountCommon()
      * @return stdClass
      **/
-    public function get_by_id_or_slug($id, $data = null)
+    public function getByIdOrSlug($id, $data = null)
     {
-        $data = $this->_include_everything($data);
-        return parent::get_by_id($id, $data);
+        $data = $this->includeEverything($data);
+        return parent::getById($id, $data);
     }
 
     // --------------------------------------------------------------------------
@@ -850,7 +850,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param string $data Data passed from the calling method
      * @return void
      **/
-    protected function _getcount_common($data = null)
+    protected function getCountCommon($data = null)
     {
         $this->db->select(
             array(
@@ -928,7 +928,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        parent::_getcount_common($data);
+        parent::getCountCommon($data);
     }
 
     // --------------------------------------------------------------------------
@@ -936,13 +936,13 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Sets the data array to include everything
      *
-     * This method is called by the get_by_*() methods and, if not already set,
+     * This method is called by the getBy*() methods and, if not already set,
      * will alter the $data array so that all the include_* parameters are set.
      *
      * @param string $data Data passed from the calling method
      * @return void
      **/
-    protected function _include_everything($data)
+    protected function includeEverything($data)
     {
         if (is_null($data)) {
 
@@ -989,7 +989,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Fetches latest posts
      * @param  int   $limit The number of posts to return
-     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  mixed $data Any data to pass to getCountCommon()
      * @param  bool  $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
@@ -997,7 +997,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         $this->db->limit($limit);
         $this->db->order_by($this->tablePrefix . '.published', 'DESC');
-        return $this->get_all(null, null, $data, $includeDeleted, 'GET_LATEST');
+        return $this->getAll(null, null, $data, $includeDeleted, 'GET_LATEST');
     }
 
     // --------------------------------------------------------------------------
@@ -1006,7 +1006,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * Fetches posts published within a certain year and/or month
      * @param  int $year The year to restrict the search to
      * @param  int $month The month to restrict the search to
-     * @param  mixed $data Any data to pass to _getcount_common()
+     * @param  mixed $data Any data to pass to getCountCommon()
      * @param  bool $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
@@ -1026,7 +1026,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        return $this->get_all(null, null, $data, $includeDeleted, 'GET_ARCHIVE');
+        return $this->getAll(null, null, $data, $includeDeleted, 'GET_ARCHIVE');
     }
 
     // --------------------------------------------------------------------------
@@ -1036,7 +1036,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  mixed   $categoryIdSlug The category's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */
@@ -1074,7 +1074,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         $this->db->group_by($this->tablePrefix . '.id');
 
-        return $this->get_all($page, $perPage, $data, $includeDeleted);
+        return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
 
     // --------------------------------------------------------------------------
@@ -1082,7 +1082,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Count the number of posts in a particular category
      * @param  mixed   $categoryIdSlug The category's ID or slug
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return int
      */
@@ -1113,7 +1113,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
         }
 
-        return $this->count_all($data, $includeDeleted);
+        return $this->countAll($data, $includeDeleted);
     }
 
     // --------------------------------------------------------------------------
@@ -1123,7 +1123,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  mixed   $tagIdSlug      The tag's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */
@@ -1156,7 +1156,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         $this->db->group_by($this->tablePrefix . '.id');
 
-        return $this->get_all($page, $perPage, $data, $includeDeleted);
+        return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
 
     // --------------------------------------------------------------------------
@@ -1164,7 +1164,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Count the number of posts in a particular tag
      * @param  mixed   $tagIdSlug      The tag's ID or slug
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return int
      */
@@ -1195,7 +1195,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
         }
 
-        return $this->count_all($data, $includeDeleted);
+        return $this->countAll($data, $includeDeleted);
     }
 
     // --------------------------------------------------------------------------
@@ -1207,7 +1207,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             array('is_published', false)
         );
 
-        return $this->count_all($data, $includeDeleted);
+        return $this->countAll($data, $includeDeleted);
     }
 
     // --------------------------------------------------------------------------
@@ -1247,7 +1247,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         $this->db->where_in($this->tablePrefix . '.id', $ids);
 
-        return $this->get_all();
+        return $this->getAll();
     }
 
     // --------------------------------------------------------------------------
@@ -1345,7 +1345,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  int    $blogId The blog's ID
      * @return string
      */
-    public function format_url($slug, $blogId)
+    public function formatUrl($slug, $blogId)
     {
         $this->load->model('blog/blog_model');
         return $this->blog_model->getBlogUrl($blogId) . '/' . $slug;
@@ -1358,12 +1358,12 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  stdClass &$post The post Object to format
      * @return void
      */
-    protected function _format_object(&$post)
+    protected function formatObject(&$post)
     {
-        parent::_format_object($post);
+        parent::formatObject($post);
 
         //  Generate URL
-        $post->url = $this->format_url($post->slug, $post->blog_id);
+        $post->url = $this->formatUrl($post->slug, $post->blog_id);
 
         //  Blog
         $post->blog        = new \stdClass();
@@ -1510,7 +1510,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     /**
      * Returns the siblings of a post (i.e the posts before and after it)
      * @param  integer $iPostId The post's ID
-     * @param  array   $aData   Any data to pass to get_all()
+     * @param  array   $aData   Any data to pass to getAll()
      * @return stdClass
      */
     public function getSiblings($iPostId, $aData = array())

@@ -74,8 +74,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Load posts and count
-        $this->data['posts'] = $this->blog_post_model->get_all($page, $perPage, $data);
-        $this->data['pagination']->total = $this->blog_post_model->count_all($data);
+        $this->data['posts'] = $this->blog_post_model->getAll($page, $perPage, $data);
+        $this->data['pagination']->total = $this->blog_post_model->countAll($data);
 
         // --------------------------------------------------------------------------
 
@@ -113,11 +113,11 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Get the single post by its slug
         if ($id) {
 
-            $this->data['post'] = $this->blog_post_model->get_by_id($id);
+            $this->data['post'] = $this->blog_post_model->getById($id);
 
         } else {
 
-            $this->data['post'] = $this->blog_post_model->get_by_slug($this->uri->rsegment(3));
+            $this->data['post'] = $this->blog_post_model->getBySlug($this->uri->rsegment(3));
         }
 
         // --------------------------------------------------------------------------
@@ -231,7 +231,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Get category
-        $this->data['category'] = $this->blog_category_model->get_by_slug($this->uri->rsegment(4));
+        $this->data['category'] = $this->blog_category_model->getBySlug($this->uri->rsegment(4));
 
         if (!$this->data['category']) {
 
@@ -337,7 +337,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Get tag
-        $this->data['tag'] = $this->blog_tag_model->get_by_slug($this->uri->rsegment(4));
+        $this->data['tag'] = $this->blog_tag_model->getBySlug($this->uri->rsegment(4));
 
         if (!$this->data['tag']) {
 
@@ -385,7 +385,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         //  Load posts and count
         $this->data['posts'] = $this->blog_post_model->get_with_tag($this->data['tag']->id, $page, $perPage, $data);
-        $this->data['pagination']->total = $this->blog_post_model->count_all($data);
+        $this->data['pagination']->total = $this->blog_post_model->countAll($data);
 
         // --------------------------------------------------------------------------
 
@@ -446,7 +446,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         $data['where'][] = array('column' => 'is_published', 'value' => true);
         $data['where'][] = array('column' => 'published <=', 'value' => 'NOW()', 'escape' => false);
 
-        $this->data['posts'] = $this->blog_post_model->get_all(null, null, $data);
+        $this->data['posts'] = $this->blog_post_model->getAll(null, null, $data);
         $this->data['isRss'] = true;
 
         //  Set Output

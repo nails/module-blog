@@ -31,7 +31,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
         $this->load->model('blog/blog_model');
 
         $iBlogId = (int) $this->uri->rsegment(2);
-        $this->oBlog = $this->blog_model->get_by_id($iBlogId);
+        $this->oBlog = $this->blog_model->getById($iBlogId);
 
         if (empty($this->oBlog)) {
 

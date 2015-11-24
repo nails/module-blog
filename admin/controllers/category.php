@@ -27,7 +27,7 @@ class Category extends BaseAdmin
         //  Fetch the blogs, each blog should have its own admin section
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $out = array();
 
@@ -75,7 +75,7 @@ class Category extends BaseAdmin
         //  Fetch the blogs, each blog should have its own admin nav grouping
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $out = array();
 
@@ -112,7 +112,7 @@ class Category extends BaseAdmin
 
         //  Are we working with a valid blog?
         $blogId = $this->uri->segment(5);
-        $this->blog = $this->blog_model->get_by_id($blogId);
+        $this->blog = $this->blog_model->getById($blogId);
 
         if (empty($this->blog)) {
 
@@ -165,7 +165,7 @@ class Category extends BaseAdmin
         $data['where']         = array();
         $data['where'][]       = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-        $this->data['categories'] = $this->blog_category_model->get_all(null, null, $data);
+        $this->data['categories'] = $this->blog_category_model->getAll(null, null, $data);
 
         // --------------------------------------------------------------------------
 
@@ -236,7 +236,7 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch data
-        $this->data['categories'] = $this->blog_category_model->get_all();
+        $this->data['categories'] = $this->blog_category_model->getAll();
 
         // --------------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->data['category'] = $this->blog_category_model->get_by_id($this->uri->segment(6));
+        $this->data['category'] = $this->blog_category_model->getById($this->uri->segment(6));
 
         if (empty($this->data['category'])) {
 
@@ -270,7 +270,7 @@ class Category extends BaseAdmin
 
         if ($this->input->post()) {
 
-            $oFormValidation = Factory::service('FormValidation');;
+            $oFormValidation = Factory::service('FormValidation');
             $oFormValidation->set_rules('label', '', 'xss_clean|required');
             $oFormValidation->set_rules('description', '', 'xss_clean');
             $oFormValidation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
@@ -315,7 +315,7 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch data
-        $this->data['categories'] = $this->blog_category_model->get_all();
+        $this->data['categories'] = $this->blog_category_model->getAll();
 
         // --------------------------------------------------------------------------
 

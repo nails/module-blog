@@ -28,7 +28,7 @@ class Post extends BaseAdmin
         $oCi =& get_instance();
         $oCi->load->model('blog/blog_model');
         $oCi->load->model('blog/blog_post_model');
-        $aBlogs = $oCi->blog_model->get_all();
+        $aBlogs = $oCi->blog_model->getAll();
 
         $aOut = array();
 
@@ -87,7 +87,7 @@ class Post extends BaseAdmin
         //  Fetch the blogs, each blog should have its own admin nav grouping
         $oCi =& get_instance();
         $oCi->load->model('blog/blog_model');
-        $aBlogs = $oCi->blog_model->get_all();
+        $aBlogs = $oCi->blog_model->getAll();
 
         $aOut = array();
 
@@ -132,7 +132,7 @@ class Post extends BaseAdmin
 
         //  Are we working with a valid blog?
         $iBlogId = (int) $this->uri->segment(5);
-        $this->blog = $this->blog_model->get_by_id($iBlogId);
+        $this->blog = $this->blog_model->getById($iBlogId);
 
         if (empty($this->blog)) {
 
@@ -235,8 +235,8 @@ class Post extends BaseAdmin
         );
 
         //  Get the items for the page
-        $iTotalRows          = $this->blog_post_model->count_all($aData);
-        $this->data['posts'] = $this->blog_post_model->get_all($iPage, $iPerPage, $aData);
+        $iTotalRows          = $this->blog_post_model->countAll($aData);
+        $this->data['posts'] = $this->blog_post_model->getAll($iPage, $iPerPage, $aData);
 
         //  Set Search and Pagination objects for the view
         $this->data['search']     = Helper::searchObject(true, $aSortColumns, $sSortOn, $sSortOrder, $iPerPage, $sKeywords, $aCbFilters);
@@ -245,7 +245,7 @@ class Post extends BaseAdmin
         //  Add a header button
         if (userHasPermission('admin:blog:post:' . $this->blog->id . ':create')) {
 
-             Helper::addHeaderButton(
+            Helper::addHeaderButton(
                 'admin/blog/post/create/' . $this->blog->id,
                 'New ' . ucfirst($this->data['postName'])
             );
@@ -423,7 +423,7 @@ class Post extends BaseAdmin
             $aData['where']   = array();
             $aData['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
+            $this->data['categories'] = $this->blog_category_model->getAll(null, null, $aData);
         }
 
         if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
@@ -432,7 +432,7 @@ class Post extends BaseAdmin
             $aData['where']   = array();
             $aData['where'][] = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $aData);
+            $this->data['tags'] = $this->blog_tag_model->getAll(null, null, $aData);
         }
 
         // --------------------------------------------------------------------------
@@ -483,7 +483,7 @@ class Post extends BaseAdmin
         //  Fetch and check post
         $iPostId = (int) $this->uri->segment(6);
 
-        $this->data['post'] = $this->blog_post_model->get_by_id($iPostId);
+        $this->data['post'] = $this->blog_post_model->getById($iPostId);
 
         if (!$this->data['post']) {
 
@@ -626,7 +626,7 @@ class Post extends BaseAdmin
 
                                             foreach ($value as $v) {
 
-                                                $temp = $this->blog_category_model->get_by_id($v);
+                                                $temp = $this->blog_category_model->getById($v);
 
                                                 if ($temp) {
 
@@ -669,7 +669,7 @@ class Post extends BaseAdmin
 
                                             foreach ($value as $v) {
 
-                                                $temp = $this->blog_tag_model->get_by_id($v);
+                                                $temp = $this->blog_tag_model->getById($v);
 
                                                 if ($temp) {
 
@@ -750,12 +750,12 @@ class Post extends BaseAdmin
 
         if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-            $this->data['categories'] = $this->blog_category_model->get_all(null, null, $aData);
+            $this->data['categories'] = $this->blog_category_model->getAll(null, null, $aData);
         }
 
         if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-            $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $aData);
+            $this->data['tags'] = $this->blog_tag_model->getAll(null, null, $aData);
         }
 
         // --------------------------------------------------------------------------
@@ -818,7 +818,7 @@ class Post extends BaseAdmin
 
         //  Fetch and check post
         $iPostId = (int) $this->uri->segment(6);
-        $oPost   = $this->blog_post_model->get_by_id($iPostId);
+        $oPost   = $this->blog_post_model->getById($iPostId);
 
         if (!$oPost || $oPost->blog->id != $this->blog->id) {
 
@@ -872,7 +872,7 @@ class Post extends BaseAdmin
 
         if ($this->blog_post_model->restore($iPostId)) {
 
-            $oPost = $this->blog_post_model->get_by_id($iPostId);
+            $oPost = $this->blog_post_model->getById($iPostId);
 
             $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was restored successfully.');
 

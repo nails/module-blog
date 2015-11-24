@@ -27,7 +27,7 @@ class Tag extends BaseAdmin
         //  Fetch the blogs, each blog should have its own admin section
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $out = array();
 
@@ -37,12 +37,10 @@ class Tag extends BaseAdmin
 
                 //  Categories enabled for this blog?
                 if (!appSetting('tags_enabled', 'blog-' . $blog->id)) {
-
                     continue;
                 }
 
                 if (!userHasPermission('admin:blog:tag:' . $blog->id . ':manage')) {
-
                     continue;
                 }
 
@@ -75,7 +73,7 @@ class Tag extends BaseAdmin
         //  Fetch the blogs, each blog should have its own admin nav grouping
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $out = array();
 
@@ -112,7 +110,7 @@ class Tag extends BaseAdmin
 
         //  Are we working with a valid blog?
         $blogId = $this->uri->segment(5);
-        $this->blog = $this->blog_model->get_by_id($blogId);
+        $this->blog = $this->blog_model->getById($blogId);
 
         if (empty($this->blog)) {
 
@@ -165,7 +163,7 @@ class Tag extends BaseAdmin
         $data['where']         = array();
         $data['where'][]       = array('column' => 'blog_id', 'value' => $this->blog->id);
 
-        $this->data['tags'] = $this->blog_tag_model->get_all(null, null, $data);
+        $this->data['tags'] = $this->blog_tag_model->getAll(null, null, $data);
 
         // --------------------------------------------------------------------------
 
@@ -237,7 +235,7 @@ class Tag extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch data
-        $this->data['tags'] = $this->blog_tag_model->get_all();
+        $this->data['tags'] = $this->blog_tag_model->getAll();
 
         // --------------------------------------------------------------------------
 
@@ -260,7 +258,7 @@ class Tag extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->data['tag'] = $this->blog_tag_model->get_by_id($this->uri->segment(6));
+        $this->data['tag'] = $this->blog_tag_model->getById($this->uri->segment(6));
 
         if (empty($this->data['tag'])) {
 
@@ -316,7 +314,7 @@ class Tag extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch data
-        $this->data['tags'] = $this->blog_tag_model->get_all();
+        $this->data['tags'] = $this->blog_tag_model->getAll();
 
         // --------------------------------------------------------------------------
 

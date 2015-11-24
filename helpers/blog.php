@@ -33,7 +33,7 @@ if (!function_exists('blog_posts_with_tag')) {
      * @param  mixed   $tagIdSlug      The tag's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */
@@ -54,7 +54,7 @@ if (!function_exists('blog_posts_with_category')) {
      * @param  mixed   $categoryIdSlug The category's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
-     * @param  array   $data           Data to pass to _getcount_common()
+     * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */

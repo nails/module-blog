@@ -21,7 +21,7 @@ class Routes
     public function getRoutes()
     {
         get_instance()->load->model('blog/blog_model');
-        $blogs  = get_instance()->blog_model->get_all();
+        $blogs  = get_instance()->blog_model->getAll();
         $routes = array();
 
         foreach ($blogs as $blog) {

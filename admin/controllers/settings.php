@@ -48,7 +48,7 @@ class Settings extends BaseAdmin
         //  Fetch the blogs, each blog should have its own permission
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $out = array();
 
@@ -84,7 +84,7 @@ class Settings extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->data['blogs'] = $this->blog_model->get_all_flat();
+        $this->data['blogs'] = $this->blog_model->getAllFlat();
 
         if (empty($this->data['blogs'])) {
 

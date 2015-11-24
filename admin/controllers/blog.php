@@ -26,7 +26,7 @@ class Blog extends BaseAdmin
     {
         $ci =& get_instance();
         $ci->load->model('blog/blog_model');
-        $blogs = $ci->blog_model->get_all();
+        $blogs = $ci->blog_model->getAll();
 
         $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
         $navGroup->setLabel('Settings');
@@ -103,7 +103,7 @@ class Blog extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Get blogs
-        $this->data['blogs'] = $this->blog_model->get_all();
+        $this->data['blogs'] = $this->blog_model->getAll();
 
         if (empty($this->data['blogs'])) {
 
@@ -210,7 +210,7 @@ class Blog extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->data['blog'] = $this->blog_model->get_by_id($this->uri->segment(5));
+        $this->data['blog'] = $this->blog_model->getById($this->uri->segment(5));
 
         if (empty($this->data['blog'])) {
 
@@ -277,7 +277,7 @@ class Blog extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $blog = $this->blog_model->get_by_id($this->uri->segment(5));
+        $blog = $this->blog_model->getById($this->uri->segment(5));
 
         if (empty($blog)) {
 

@@ -32,9 +32,9 @@ class NAILS_Blog_tag_model extends NAILS_Model
      * @param  array $data Data passed from the calling method
      * @return void
      */
-    protected function _getcount_common($data = array())
+    protected function getCountCommon($data = array())
     {
-        parent::_getcount_common($data);
+        parent::getCountCommon($data);
 
         // --------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $aTagData['slug'] = $this->_generate_slug($aData['label']);
+        $aTagData['slug'] = $this->generateSlug($aData['label']);
 
         if (isset($aData['description'])) {
 
@@ -148,7 +148,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $aTagData['slug'] = $this->_generate_slug($aData['label'], '', '', null, null, $iId);
+        $aTagData['slug'] = $this->generateSlug($aData['label'], '', '', null, null, $iId);
 
         if (isset($aData['description'])) {
 
@@ -182,7 +182,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
      * @param  int    $blogId The blog ID to which the tag belongs
      * @return string
      */
-    public function format_url($slug, $blogId)
+    public function formatUrl($slug, $blogId)
     {
         $this->load->model('blog/blog_model');
         return $this->blog_model->getBlogUrl($blogId) . '/tag/' . $slug;
@@ -195,11 +195,11 @@ class NAILS_Blog_tag_model extends NAILS_Model
      * @param  stdClass &$tag The tag object to format
      * @return void
      */
-    protected function _format_object(&$tag)
+    protected function formatObject(&$tag)
     {
-        parent::_format_object($tag);
+        parent::formatObject($tag);
 
-        $tag->url  = $this->format_url($tag->slug, $tag->blog_id);
+        $tag->url  = $this->formatUrl($tag->slug, $tag->blog_id);
 
         if (isset($tag->post_count)) {
 

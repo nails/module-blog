@@ -12,155 +12,155 @@
 
 class NAILS_Blog_widget_model extends NAILS_Model
 {
-	/**
-	 * Returns an array of the latest blog posts
-	 * @param  integer $blogId The ID of the blog to get posts from
-	 * @param  integer $limit  The maximum number of posts to return
-	 * @return array
-	 */
-	public function latest_posts($blogId, $limit = 5)
-	{
-		$this->db->select('id,blog_id,slug,title,published');
-		$this->db->where('is_published', true);
-		$this->db->where('published <=', 'NOW()', false);
-		$this->db->where('is_deleted', false);
-		$this->db->where('blog_id', $blogId);
-		$this->db->limit($limit);
-		$this->db->order_by('published', 'DESC');
-		$posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post')->result();
+    /**
+     * Returns an array of the latest blog posts
+     * @param  integer $blogId The ID of the blog to get posts from
+     * @param  integer $limit  The maximum number of posts to return
+     * @return array
+     */
+    public function latest_posts($blogId, $limit = 5)
+    {
+        $this->db->select('id,blog_id,slug,title,published');
+        $this->db->where('is_published', true);
+        $this->db->where('published <=', 'NOW()', false);
+        $this->db->where('is_deleted', false);
+        $this->db->where('blog_id', $blogId);
+        $this->db->limit($limit);
+        $this->db->order_by('published', 'DESC');
+        $posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post')->result();
 
-		if (!$this->load->isModelLoaded('blog_post_model')) {
+        if (!$this->load->isModelLoaded('blog_post_model')) {
 
-			$this->load->model('blog/blog_post_model');
-		}
+            $this->load->model('blog/blog_post_model');
+        }
 
-		foreach ($posts as $post) {
+        foreach ($posts as $post) {
 
-			$post->url = $this->blog_post_model->format_url($post->slug, $post->blog_id);
-		}
+            $post->url = $this->blog_post_model->formatUrl($post->slug, $post->blog_id);
+        }
 
-		return $posts;
-	}
+        return $posts;
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-	/**
-	 * Returns an array of the most popular blog posts
-	 * @param  integer $blogId The ID of the blog to get posts from
-	 * @param  integer $limit  The maximum number of posts to return
-	 * @return array
-	 */
-	public function popular_posts($blogId, $limit = 5)
-	{
-		$this->db->select('bp.id,bp.blog_id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits');
-		$this->db->join(NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id');
-		$this->db->where('bp.is_published', true);
-		$this->db->where('bp.published <=', 'NOW()', false);
-		$this->db->where('bp.is_deleted', false);
-		$this->db->where('blog_id', $blogId);
-		$this->db->group_by('bp.id');
-		$this->db->order_by('hits', 'DESC');
-		$this->db->order_by('bp.published', 'DESC');
-		$this->db->limit($limit);
+    /**
+     * Returns an array of the most popular blog posts
+     * @param  integer $blogId The ID of the blog to get posts from
+     * @param  integer $limit  The maximum number of posts to return
+     * @return array
+     */
+    public function popular_posts($blogId, $limit = 5)
+    {
+        $this->db->select('bp.id,bp.blog_id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits');
+        $this->db->join(NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id');
+        $this->db->where('bp.is_published', true);
+        $this->db->where('bp.published <=', 'NOW()', false);
+        $this->db->where('bp.is_deleted', false);
+        $this->db->where('blog_id', $blogId);
+        $this->db->group_by('bp.id');
+        $this->db->order_by('hits', 'DESC');
+        $this->db->order_by('bp.published', 'DESC');
+        $this->db->limit($limit);
 
-		$posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post_hit bph')->result();
+        $posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post_hit bph')->result();
 
-		if (!$this->load->isModelLoaded('blog_post_model')) {
+        if (!$this->load->isModelLoaded('blog_post_model')) {
 
-			$this->load->model('blog/blog_post_model');
-		}
+            $this->load->model('blog/blog_post_model');
+        }
 
-		foreach ($posts as $post) {
+        foreach ($posts as $post) {
 
-			$post->url = $this->blog_post_model->format_url($post->slug, $post->blog_id);
-		}
+            $post->url = $this->blog_post_model->formatUrl($post->slug, $post->blog_id);
+        }
 
-		return $posts;
-	}
+        return $posts;
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-	/**
-	 * Returns an array of a blog's categories
-	 * @param  integer $blogId        The ID of the blog to get categories from
-	 * @param  boolean $includeCount  Whether to include the post count of each category
-	 * @param  boolean $onlyPopulated Whether to remove categories which don't have any posts in them
-	 * @return array
-	 */
-	public function categories($blogId, $includeCount = true, $onlyPopulated = true)
-	{
-		$this->db->select('c.id,c.blog_id,c.slug,c.label');
+    /**
+     * Returns an array of a blog's categories
+     * @param  integer $blogId        The ID of the blog to get categories from
+     * @param  boolean $includeCount  Whether to include the post count of each category
+     * @param  boolean $onlyPopulated Whether to remove categories which don't have any posts in them
+     * @return array
+     */
+    public function categories($blogId, $includeCount = true, $onlyPopulated = true)
+    {
+        $this->db->select('c.id,c.blog_id,c.slug,c.label');
 
-		if ($includeCount) {
+        if ($includeCount) {
 
-			$sql  = '(SELECT COUNT(DISTINCT bpc.post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_category bpc JOIN ';
-			$sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpc.post_id = bp.id WHERE bpc.category_id = c.id AND ';
-			$sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
+            $sql  = '(SELECT COUNT(DISTINCT bpc.post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_category bpc JOIN ';
+            $sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpc.post_id = bp.id WHERE bpc.category_id = c.id AND ';
+            $sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
 
-			$this->db->select($sql);
-		}
+            $this->db->select($sql);
+        }
 
-		if ($onlyPopulated) {
+        if ($onlyPopulated) {
 
-			$this->db->having('post_count > ', 0);
-		}
+            $this->db->having('post_count > ', 0);
+        }
 
-		$this->db->where('c.blog_id', $blogId);
-		$this->db->order_by('c.label');
+        $this->db->where('c.blog_id', $blogId);
+        $this->db->order_by('c.label');
 
-		$categories = $this->db->get(NAILS_DB_PREFIX . 'blog_category c')->result();
+        $categories = $this->db->get(NAILS_DB_PREFIX . 'blog_category c')->result();
 
-		$this->load->model('blog/blog_category_model');
+        $this->load->model('blog/blog_category_model');
 
-		foreach ($categories as $category) {
+        foreach ($categories as $category) {
 
-			$category->url = $this->blog_category_model->format_url($category->slug, $category->blog_id);
-		}
+            $category->url = $this->blog_category_model->formatUrl($category->slug, $category->blog_id);
+        }
 
-		return $categories;
-	}
+        return $categories;
+    }
 
-	// --------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
-	/**
-	 * Returns an array of a blog's tags
-	 * @param  integer $blogId        The ID of the blog to get tags from
-	 * @param  boolean $includeCount  Whether to include the post count of each tag
-	 * @param  boolean $onlyPopulated Whether to remove tags which don't have any posts in them
-	 * @return array
-	 */
-	public function tags($blogId, $includeCount = true, $onlyPopulated = true)
-	{
-		$this->db->select('t.id,t.blog_id,t.slug,t.label');
+    /**
+     * Returns an array of a blog's tags
+     * @param  integer $blogId        The ID of the blog to get tags from
+     * @param  boolean $includeCount  Whether to include the post count of each tag
+     * @param  boolean $onlyPopulated Whether to remove tags which don't have any posts in them
+     * @return array
+     */
+    public function tags($blogId, $includeCount = true, $onlyPopulated = true)
+    {
+        $this->db->select('t.id,t.blog_id,t.slug,t.label');
 
-		if ($includeCount) {
+        if ($includeCount) {
 
-			$sql  = '(SELECT COUNT(DISTINCT bpt.post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_tag bpt JOIN ';
-			$sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpt.post_id = bp.id WHERE bpt.tag_id = t.id AND ';
-			$sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
+            $sql  = '(SELECT COUNT(DISTINCT bpt.post_id) FROM ' . NAILS_DB_PREFIX . 'blog_post_tag bpt JOIN ';
+            $sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpt.post_id = bp.id WHERE bpt.tag_id = t.id AND ';
+            $sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
 
-			$this->db->select($sql);
-		}
+            $this->db->select($sql);
+        }
 
-		if ($onlyPopulated) {
+        if ($onlyPopulated) {
 
-			$this->db->having('post_count > ', 0);
-		}
+            $this->db->having('post_count > ', 0);
+        }
 
-		$this->db->where('t.blog_id', $blogId);
-		$this->db->order_by('t.label');
+        $this->db->where('t.blog_id', $blogId);
+        $this->db->order_by('t.label');
 
-		$tags = $this->db->get(NAILS_DB_PREFIX . 'blog_tag t')->result();
+        $tags = $this->db->get(NAILS_DB_PREFIX . 'blog_tag t')->result();
 
-		$this->load->model('blog/blog_tag_model');
+        $this->load->model('blog/blog_tag_model');
 
-		foreach ($tags as $tag) {
+        foreach ($tags as $tag) {
 
-			$tag->url = $this->blog_tag_model->format_url($tag->slug, $tag->blog_id);
-		}
+            $tag->url = $this->blog_tag_model->formatUrl($tag->slug, $tag->blog_id);
+        }
 
-		return $tags;
-	}
+        return $tags;
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -191,7 +191,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
 
 if (!defined('NAILS_ALLOW_EXTENSION_BLOG_WIDGET_MODEL')) {
 
-	class Blog_widget_model extends NAILS_Blog_widget_model
-	{
-	}
+    class Blog_widget_model extends NAILS_Blog_widget_model
+    {
+    }
 }

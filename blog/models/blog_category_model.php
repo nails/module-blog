@@ -32,9 +32,9 @@ class NAILS_Blog_category_model extends NAILS_Model
      * @param  array $data Data passed from the calling method
      * @return void
      */
-    protected function _getcount_common($data = array())
+    protected function getCountCommon($data = array())
     {
-        parent::_getcount_common($data);
+        parent::getCountCommon($data);
 
         // --------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ class NAILS_Blog_category_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $aCategoryData['slug'] = $this->_generate_slug($aData['label']);
+        $aCategoryData['slug'] = $this->generateSlug($aData['label']);
 
         if (isset($aData['description'])) {
 
@@ -148,7 +148,7 @@ class NAILS_Blog_category_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $aCategoryData['slug'] = $this->_generate_slug($aData['label'], '', '', null, null, $iId);
+        $aCategoryData['slug'] = $this->generateSlug($aData['label'], '', '', null, null, $iId);
 
         if (isset($aData['description'])) {
 
@@ -182,7 +182,7 @@ class NAILS_Blog_category_model extends NAILS_Model
      * @param  int    $blogId The blog ID to which the category belongs
      * @return string
      */
-    public function format_url($slug, $blogId)
+    public function formatUrl($slug, $blogId)
     {
         $this->load->model('blog/blog_model');
         return $this->blog_model->getBlogUrl($blogId) . '/category/' . $slug;
@@ -195,11 +195,11 @@ class NAILS_Blog_category_model extends NAILS_Model
      * @param  stdClass &$category The category object to format
      * @return void
      */
-    protected function _format_object(&$category)
+    protected function formatObject(&$category)
     {
-        parent::_format_object($category);
+        parent::formatObject($category);
 
-        $category->url  = $this->format_url($category->slug, $category->blog_id);
+        $category->url  = $this->formatUrl($category->slug, $category->blog_id);
 
         if (isset($category->post_count)) {
 

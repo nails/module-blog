@@ -38,9 +38,9 @@ class NAILS_Blog_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
-    protected function _format_object(&$object)
+    protected function formatObject(&$object)
     {
-        parent::_format_object($object);
+        parent::formatObject($object);
 
         $object->url = $this->getBlogUrl($object->id);
     }
