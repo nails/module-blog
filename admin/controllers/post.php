@@ -405,7 +405,7 @@ class Post extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'An error occurred and the post could not be created. ';
-                    $this->data['error'] .= $this->blog_post_model->last_error();
+                    $this->data['error'] .= $this->blog_post_model->lastError();
                 }
 
             } else {
@@ -730,7 +730,7 @@ class Post extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'An error occurred and the post could not be updated. ';
-                    $this->data['error'] .= $this->blog_post_model->last_error();
+                    $this->data['error'] .= $this->blog_post_model->lastError();
                 }
 
             } else {
@@ -842,7 +842,7 @@ class Post extends BaseAdmin
         } else {
 
             $sStatus  = 'error';
-            $sMessage = 'I failed to delete that post. ' . $this->blog_post_model->last_error();
+            $sMessage = 'I failed to delete that post. ' . $this->blog_post_model->lastError();
         }
 
         $this->session->set_flashdata($sStatus, $sMessage);
@@ -890,7 +890,7 @@ class Post extends BaseAdmin
 
             $sStatus   = 'error';
             $sMessage  = 'I failed to restore that ' . $this->data['postName'] . '. ';
-            $sMessage .= $this->blog_post_model->last_error();
+            $sMessage .= $this->blog_post_model->lastError();
             $this->session->set_flashdata($sStatus, $sMessage);
         }
 

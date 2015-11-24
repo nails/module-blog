@@ -219,7 +219,7 @@ class Category extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'There was a problem creating the Category. ';
-                    $this->data['error'] .= $this->blog_category_model->last_error();
+                    $this->data['error'] .= $this->blog_category_model->lastError();
                 }
 
             } else {
@@ -297,7 +297,7 @@ class Category extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'There was a problem saving the Category. ';
-                    $this->data['error'] .= $this->blog_category_model->last_error();
+                    $this->data['error'] .= $this->blog_category_model->lastError();
                 }
 
             } else {
@@ -348,7 +348,7 @@ class Category extends BaseAdmin
 
             $status   = 'error';
             $message  = 'There was a problem deleting the Category. ';
-            $message .= $this->blog_category_model->last_error();
+            $message .= $this->blog_category_model->lastError();
             $this->session->set_flashdata($status, $message);
         }
 

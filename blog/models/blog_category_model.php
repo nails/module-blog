@@ -76,7 +76,7 @@ class NAILS_Blog_category_model extends NAILS_Model
         //  Some basic sanity testing
         if (empty($aData['label'])) {
 
-            $this->_set_error('"label" is a required field.');
+            $this->setError('"label" is a required field.');
             return false;
 
         } else {
@@ -86,7 +86,7 @@ class NAILS_Blog_category_model extends NAILS_Model
 
         if (empty($aData['blog_id'])) {
 
-            $this->_set_error('"blog_id" is a required field.');
+            $this->setError('"blog_id" is a required field.');
             return false;
 
         } else {
@@ -138,7 +138,7 @@ class NAILS_Blog_category_model extends NAILS_Model
         //  Some basic sanity testing
         if (empty($aData['label'])) {
 
-            $this->_set_error('"label" is a required field.');
+            $this->setError('"label" is a required field.');
             return false;
 
         } else {

@@ -220,7 +220,7 @@ class Tag extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'There was a problem creating the Tag. ';
-                    $this->data['error'] .= $this->blog_tag_model->last_error();
+                    $this->data['error'] .= $this->blog_tag_model->lastError();
                 }
 
             } else {
@@ -299,7 +299,7 @@ class Tag extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'There was a problem saving the Tag. ';
-                    $this->data['error'] .= $this->blog_tag_model->last_error();
+                    $this->data['error'] .= $this->blog_tag_model->lastError();
                 }
 
             } else {
@@ -349,7 +349,7 @@ class Tag extends BaseAdmin
 
             $status   = 'error';
             $message  = 'There was a problem deleting the Tag. ';
-            $message .= $this->blog_tag_model->last_error();
+            $message .= $this->blog_tag_model->lastError();
             $this->session->set_flashdata($status, $message);
         }
 

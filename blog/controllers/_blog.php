@@ -76,7 +76,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
             $sSubject  = 'Failed to load blog skin "' . $sSkinSlug . '"';
             $sMessage  = 'Blog skin "' . $sSkinSlug . '" failed to load at ' . APP_NAME;
-            $sMessage .= ', the following reason was given: ' . $this->blog_skin_model->last_error();
+            $sMessage .= ', the following reason was given: ' . $this->blog_skin_model->lastError();
 
             showFatalError($sSubject, $sMessage);
         }
@@ -91,7 +91,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
                 $sSubject  = 'Failed to load blog skin "' . $this->oSkin->parent . '"';
                 $sMessage  = 'Blog skin "' . $sSkinSlug . '" has defined a parent ("' . $this->oSkin->parent . '")" ';
                 $sMessage .= 'but the parent skin could not be loaded at ' . APP_NAME . ', ';
-                $sMessage .= 'the following reason was given: ' . $this->blog_skin_model->last_error();
+                $sMessage .= 'the following reason was given: ' . $this->blog_skin_model->lastError();
 
                 showFatalError($sSubject, $sMessage);
             }

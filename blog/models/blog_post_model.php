@@ -98,13 +98,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if (!$this->isPreviewMode && empty($data['title'])) {
 
-            $this->_set_error('Title missing');
+            $this->setError('Title missing');
             return false;
         }
 
         if (empty($data['blog_id'])) {
 
-            $this->_set_error('Blog ID missing');
+            $this->setError('Blog ID missing');
             return false;
         }
 
@@ -628,7 +628,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             }
             $this->db->where('slug', $sSlug);
             if ($this->db->count_all_results($this->table)) {
-                $this->_set_error('Slug "' . $sSlug . '" is already in use by another post.');
+                $this->setError('Slug "' . $sSlug . '" is already in use by another post.');
                 return false;
             }
         }
@@ -636,7 +636,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  If a the slug is a reserved word then bail out
         if (array_search($sSlug, $this->reservedWords) !== false) {
 
-            $this->_set_error('Slug "' . $sSlug . '" is a reserved word and cannot be used.');
+            $this->setError('Slug "' . $sSlug . '" is a reserved word and cannot be used.');
             return false;
         }
 
@@ -1261,7 +1261,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         if (!$id) {
 
-            $this->_set_error('Post ID is required.');
+            $this->setError('Post ID is required.');
             return false;
         }
 
@@ -1277,7 +1277,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if ($hitData['user_id'] && $this->user_model->isAdmin($hitData['user_id'])) {
 
-            $this->_set_error('Administrators cannot affect the post\'s popularity.');
+            $this->setError('Administrators cannot affect the post\'s popularity.');
             return false;
         }
 
@@ -1295,7 +1295,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if ($this->db->count_all_results($this->tableHit)) {
 
-            $this->_set_error('Hit timeout in effect.');
+            $this->setError('Hit timeout in effect.');
             return false;
         }
 
@@ -1309,7 +1309,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         } else {
 
-            $this->_set_error('Failed to add hit.');
+            $this->setError('Failed to add hit.');
             return false;
         }
     }

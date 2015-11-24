@@ -241,7 +241,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
             }
         }
 
-        $this->_set_error('"' . $sSlug . '" was not found.');
+        $this->setError('"' . $sSlug . '" was not found.');
         return false;
     }
 }

@@ -180,7 +180,7 @@ class Blog extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'Failed to create blog. ';
-                    $this->data['error'] .= $this->blog_model->last_error();
+                    $this->data['error'] .= $this->blog_model->lastError();
                 }
 
             } else {
@@ -247,7 +247,7 @@ class Blog extends BaseAdmin
                 } else {
 
                     $this->data['error']  = 'Failed to create blog. ';
-                    $this->data['error'] .= $this->blog_model->last_error();
+                    $this->data['error'] .= $this->blog_model->lastError();
                 }
 
             } else {
@@ -293,7 +293,7 @@ class Blog extends BaseAdmin
 
         } else {
 
-            $this->session->set_flashdata('error', 'Failed to delete blog. ' . $this->blog_model->last_error());
+            $this->session->set_flashdata('error', 'Failed to delete blog. ' . $this->blog_model->lastError());
         }
 
         redirect('admin/blog/blog/index');
