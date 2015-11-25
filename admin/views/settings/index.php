@@ -534,7 +534,7 @@
 
                             echo form_field_boolean($aField);
 
-                            $associations = $this->blog_model->get_associations();
+                            $associations = $this->blog_model->getAssociations();
 
                             if (is_array($associations)) :
 

@@ -18,7 +18,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
      * @param  integer $limit  The maximum number of posts to return
      * @return array
      */
-    public function latest_posts($blogId, $limit = 5)
+    public function latestPosts($blogId, $limit = 5)
     {
         $this->db->select('id,blog_id,slug,title,published');
         $this->db->where('is_published', true);
@@ -50,7 +50,7 @@ class NAILS_Blog_widget_model extends NAILS_Model
      * @param  integer $limit  The maximum number of posts to return
      * @return array
      */
-    public function popular_posts($blogId, $limit = 5)
+    public function popularPosts($blogId, $limit = 5)
     {
         $this->db->select('bp.id,bp.blog_id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits');
         $this->db->join(NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id');

@@ -1,10 +1,13 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
-* Name:			Blog Langfile
-*
-* Description:  Language file for Blog module
-* 
-*/
+ * English language strings for The blog
+ *
+ * @package     Nails
+ * @subpackage  module-blog
+ * @category    Language
+ * @author      Nails Dev Team
+ * @link
+ */
 
-	$lang['placeholder'] = '';
+$lang['placeholder'] = '';

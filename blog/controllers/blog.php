@@ -212,7 +212,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         $data['user_id']  = activeUser('id');
         $data['referrer'] = $this->input->server('HTTP_REFERER');
 
-        $this->blog_post_model->add_hit($this->data['post']->id, $data);
+        $this->blog_post_model->addHit($this->data['post']->id, $data);
     }
 
     // --------------------------------------------------------------------------
@@ -278,13 +278,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Load posts and count
-        $this->data['posts'] = $this->blog_post_model->get_with_category(
+        $this->data['posts'] = $this->blog_post_model->getWithCategory(
             $this->data['category']->id,
             $page,
             $perPage,
             $data
         );
-        $this->data['pagination']->total = $this->blog_post_model->count_with_category(
+        $this->data['pagination']->total = $this->blog_post_model->countWithCategory(
             $this->data['category']->id,
             $data
         );
@@ -384,7 +384,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Load posts and count
-        $this->data['posts'] = $this->blog_post_model->get_with_tag($this->data['tag']->id, $page, $perPage, $data);
+        $this->data['posts'] = $this->blog_post_model->getWithTag($this->data['tag']->id, $page, $perPage, $data);
         $this->data['pagination']->total = $this->blog_post_model->countAll($data);
 
         // --------------------------------------------------------------------------
@@ -489,7 +489,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         if (appSetting('sidebar_latest_posts', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->latest_posts = $this->blog_widget_model->latest_posts($this->oBlog->id);
+            $this->data['widget']->latest_posts = $this->blog_widget_model->latestPosts($this->oBlog->id);
         }
 
         if (appSetting('sidebar_categories', 'blog-' . $this->oBlog->id)) {
@@ -504,7 +504,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         if (appSetting('sidebar_popular_posts', 'blog-' . $this->oBlog->id)) {
 
-            $this->data['widget']->popular_posts = $this->blog_widget_model->popular_posts($this->oBlog->id);
+            $this->data['widget']->popular_posts = $this->blog_widget_model->popularPosts($this->oBlog->id);
         }
     }
 

@@ -65,7 +65,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
      * @param  boolean $refresh Fetchf rom refresh - skip the cache
      * @return array
      */
-    public function get_available($refresh = false)
+    public function getAvailable($refresh = false)
     {
         if (!is_null($this->aAvailable) && !$refresh) {
 
@@ -231,7 +231,7 @@ class NAILS_Blog_skin_model extends NAILS_Model
      */
     public function get($sSlug, $bRefresh = false)
     {
-        $aSkins = $this->get_available($bRefresh);
+        $aSkins = $this->getAvailable($bRefresh);
 
         foreach ($aSkins as $oSkin) {
 

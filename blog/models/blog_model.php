@@ -52,7 +52,7 @@ class NAILS_Blog_model extends NAILS_Model
      * @param  int   $post_id The ID f the post
      * @return array
      */
-    public function get_associations($post_id = NULL)
+    public function getAssociations($post_id = NULL)
     {
         $this->config->load('blog/blog');
         $_associations  = $this->config->item('blog_post_associations');

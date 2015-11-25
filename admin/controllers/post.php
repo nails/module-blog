@@ -438,7 +438,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $this->data['associations']      = $this->blog_model->get_associations();
+        $this->data['associations']      = $this->blog_model->getAssociations();
         $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
 
         // --------------------------------------------------------------------------
@@ -761,7 +761,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $this->data['associations']      = $this->blog_model->get_associations($this->data['post']->id);
+        $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
         $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
 
         // --------------------------------------------------------------------------

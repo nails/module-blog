@@ -557,7 +557,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             //  Fetch association config
             $this->load->model('blog/blog_model');
-            $associations = $this->blog_model->get_associations();
+            $associations = $this->blog_model->getAssociations();
 
             foreach ($data['associations'] as $index => $association) {
 
@@ -664,7 +664,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         }
 
         $this->load->model('blog/blog_model');
-        $associations = $this->blog_model->get_associations();
+        $associations = $this->blog_model->getAssociations();
 
         foreach ($posts as $post) {
 
@@ -993,7 +993,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  bool  $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
-    public function get_latest($limit = 9, $data = null, $includeDeleted = false)
+    public function getLatest($limit = 9, $data = null, $includeDeleted = false)
     {
         $this->db->limit($limit);
         $this->db->order_by($this->tablePrefix . '.published', 'DESC');
@@ -1010,7 +1010,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  bool $includeDeleted If non-destructive delete is enabled then include deleted items
      * @return array
      **/
-    public function get_archive($year = null, $month = null, $data = null, $includeDeleted = false)
+    public function getArchive($year = null, $month = null, $data = null, $includeDeleted = false)
     {
         if ($year) {
 
@@ -1040,7 +1040,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */
-    public function get_with_category($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
+    public function getWithCategory($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
         //  Join the $this->tableCat table so we can WHERE on it.
         $this->db->join(
@@ -1086,7 +1086,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return int
      */
-    public function count_with_category($categoryIdSlug, $data = null, $includeDeleted = false)
+    public function countWithCategory($categoryIdSlug, $data = null, $includeDeleted = false)
     {
         //  Join the $this->tableCat table so we can WHERE on it.
         $this->db->join(
@@ -1127,7 +1127,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return array
      */
-    public function get_with_tag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
+    public function getWithTag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
         //  Join the $this->tableTag table so we can WHERE on it.
         $this->db->join(
@@ -1168,7 +1168,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
      * @return int
      */
-    public function count_with_tag($tagIdSlug, $data = null, $includeDeleted = false)
+    public function countWithTag($tagIdSlug, $data = null, $includeDeleted = false)
     {
         //  Join the $this->tableTag table so we can WHERE on it.
         $this->db->join(
@@ -1218,7 +1218,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  int $associatedId     The Id of the item to be associated with
      * @return array
      */
-    public function get_with_association($associationIndex, $associatedId)
+    public function getWithAssociation($associationIndex, $associatedId)
     {
         $this->config->load('blog/blog');
 
@@ -1257,7 +1257,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param int    $id   The post's ID
      * @param array  $data Details about the hit
      */
-    public function add_hit($id, $data = array())
+    public function addHit($id, $data = array())
     {
         if (!$id) {
 

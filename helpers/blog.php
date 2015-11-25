@@ -17,10 +17,10 @@ if (!function_exists('blog_latest_posts')) {
      * @param  integer $limit The maximum number of posts to return
      * @return array
      */
-    function blog_latest_posts($limit = 9)
+    function blog_latestPosts($limit = 9)
     {
         get_instance()->load->model('blog/blog_post_model');
-        return get_instance()->blog_post_model->get_latest($limit);
+        return get_instance()->blog_post_model->getLatest($limit);
     }
 }
 
@@ -40,7 +40,7 @@ if (!function_exists('blog_posts_with_tag')) {
     function blog_posts_with_tag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
         get_instance()->load->model('blog/blog_post_model');
-        return get_instance()->blog_post_model->get_with_tag($tagIdSlug, $page, $perPage, $data, $includeDeleted);
+        return get_instance()->blog_post_model->getWithTag($tagIdSlug, $page, $perPage, $data, $includeDeleted);
     }
 }
 
@@ -61,7 +61,7 @@ if (!function_exists('blog_posts_with_category')) {
     function blog_posts_with_category($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
         get_instance()->load->model('blog/blog_post_model');
-        return get_instance()->blog_post_model->get_with_category($categoryIdSlug, $page, $perPage, $data, $includeDeleted);
+        return get_instance()->blog_post_model->getWithCategory($categoryIdSlug, $page, $perPage, $data, $includeDeleted);
     }
 }
 
@@ -78,6 +78,6 @@ if (!function_exists('blog_posts_with_association')) {
     function blog_posts_with_association($associationIndex, $associatedId)
     {
         get_instance()->load->model('blog/blog_post_model');
-        return get_instance()->blog_post_model->get_with_association($associationIndex, $associatedId);
+        return get_instance()->blog_post_model->getWithAssociation($associationIndex, $associatedId);
     }
 }
