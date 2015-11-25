@@ -45,7 +45,7 @@ class Tag extends BaseAdmin
                 }
 
                 //  Clear group naming
-                $groupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
+                $sGroupLabel = count($blogs) > 1 ? 'Blog: ' . $blog->label : $blog->label;
 
                 //  Create the navGrouping
                 $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
