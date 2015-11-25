@@ -57,9 +57,9 @@ class Post extends BaseAdmin
                 }
 
                 //  Create the navGrouping
-                $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
-                $navGroup->setLabel($sGroupLabel);
-                $navGroup->setIcon('fa-pencil-square-o');
+                $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+                $oNavGroup->setLabel($sGroupLabel);
+                $oNavGroup->setIcon('fa-pencil-square-o');
                 $oNavGroup->addAction(
                     'Manage ' . ucFirst($postNamePlural),
                     'index/' . $oBlog->id,
@@ -535,11 +535,11 @@ class Post extends BaseAdmin
 
                 } elseif ($this->input->post('type') === 'VIDEO') {
 
-                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required|callback__callbackValidVideoUrl');
+                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required|callback_callbackValidVideoUrl');
 
                 } elseif ($this->input->post('type') === 'AUDIO') {
 
-                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required|callback__callbackValidAudioUrl');
+                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required|callback_callbackValidAudioUrl');
                 }
 
                 $oFormValidation->set_message('required', lang('fv_required'));
@@ -915,7 +915,7 @@ class Post extends BaseAdmin
      * @param  string  $sUrl The URL to check
      * @return boolean
      */
-    public function _callbackValidAudioUrl($sUrl)
+    public function callbackValidAudioUrl($sUrl)
     {
         $sId = $this->blog_post_model->extractSpotifyId($sUrl);
 
@@ -926,7 +926,7 @@ class Post extends BaseAdmin
         } else {
 
             $oFormValidation = Factory::service('FormValidation');
-            $oFormValidation->set_message('_callbackValidAudioUrl', 'Not a valid Spotify Track URL.');
+            $oFormValidation->set_message('callbackValidAudioUrl', 'Not a valid Spotify Track URL.');
             return false;
         }
     }
@@ -938,7 +938,7 @@ class Post extends BaseAdmin
      * @param  string  $sUrl The URL to check
      * @return boolean
      */
-    public function _callbackValidVideoUrl($sUrl)
+    public function callbackValidVideoUrl($sUrl)
     {
         $sId = $this->blog_post_model->extractYoutubeId($sUrl);
 

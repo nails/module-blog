@@ -14,43 +14,53 @@
             <tbody>
             <?php
 
-                if (! empty($blogs)) {
+            if (! empty($blogs)) {
 
-                    foreach ($blogs as $blog) {
+                foreach ($blogs as $blog) {
 
-                        echo '<tr>';
-                            echo '<td class="label">';
-                                echo $blog->label;
-                                echo $blog->description ? '<small>' . $blog->description . '</small>' : '';
-                            echo '</td>';
-                            echo '<td class="actions">';
+                    ?>
+                    <tr>
+                        <td class="label">
+                            <?=$blog->label?>
+                            <?=$blog->description ? '<small>' . $blog->description . '</small>' : ''?>
+                        </td>
+                        <td class="actions">
+                            <?php
 
-                                if (userHasPermission('admin:blog:blog:edit')) {
+                            if (userHasPermission('admin:blog:blog:edit')) {
 
-                                    echo anchor('admin/blog/blog/edit/' . $blog->id, lang('action_edit'), 'class="awesome small"');
-                                }
+                                echo anchor(
+                                    'admin/blog/blog/edit/' . $blog->id,
+                                    lang('action_edit'),
+                                    'class="btn btn-xs btn-primary"'
+                                );
+                            }
 
-                                if (userHasPermission('admin:blog:blog:delete')) {
+                            if (userHasPermission('admin:blog:blog:delete')) {
 
-                                    echo anchor(
-                                        'admin/blog/blog/delete/' . $blog->id,
-                                        lang('action_delete'),
-                                        'class="awesome small red confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone."'
-                                    );
-                                }
+                                echo anchor(
+                                    'admin/blog/blog/delete/' . $blog->id,
+                                    lang('action_delete'),
+                                    'class="btn btn-xs btn-danger confirm" data-body="Deleting a blog will delete all associated posts, categories and tags. This action cannot be undone."'
+                                );
+                            }
 
-                            echo '</td>';
-                        echo '</tr>';
-                    }
-
-                } else {
-
-                    echo '<tr>';
-                        echo '<td class="no-data" colspan="2">';
-                            echo 'No blogs found';
-                        echo '</td>';
-                    echo '</tr>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
                 }
+
+            } else {
+
+                ?>
+                <tr>
+                    <td class="no-data" colspan="2">
+                        No blogs found
+                    </td>
+                </tr>
+                <?php
+            }
 
             ?>
             </tbody>

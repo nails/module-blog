@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
 
@@ -23,16 +24,23 @@ class Settings extends BaseAdmin
      */
     public static function announce()
     {
-        $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
-        $navGroup->setLabel('Settings');
-        $navGroup->setIcon('fa-wrench');
+        $ci =& get_instance();
+        $ci->load->model('blog/blog_model');
+        $blogs = $ci->blog_model->getAll();
 
-        if (userHasPermission('admin:blog:settings:\d+:update')) {
+        if (!empty($blogs)) {
 
-            $navGroup->addAction('Blog');
+            $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+            $oNavGroup->setLabel('Settings');
+            $oNavGroup->setIcon('fa-wrench');
+
+            if (userHasPermission('admin:blog:settings:\d+:update')) {
+
+                $oNavGroup->addAction('Blog');
+            }
+
+            return $oNavGroup;
         }
-
-        return $navGroup;
     }
 
     // --------------------------------------------------------------------------
@@ -53,9 +61,7 @@ class Settings extends BaseAdmin
         $out = array();
 
         if (!empty($blogs)) {
-
             foreach ($blogs as $blog) {
-
                 $permissions[$blog->id . ':update']  = $blog->label . ': Can update settings';
             }
         }
@@ -134,11 +140,11 @@ class Settings extends BaseAdmin
         //  Process POST
         if ($this->input->post()) {
 
-            $method = $this->input->post('update');
+            $method = ucfirst(strtolower($this->input->post('update')));
 
-            if (method_exists($this, '_blog_update_' . $method)) {
+            if (method_exists($this, 'blogUpdate' . $method)) {
 
-                $this->{'_blog_update_' . $method}();
+                $this->{'blogUpdate' . $method}();
 
             } else {
 
@@ -193,7 +199,7 @@ class Settings extends BaseAdmin
      * Set Blog settings
      * @return void
      */
-    protected function _blog_update_settings()
+    protected function blogUpdateSettings()
     {
         //  Prepare update
         $settings                       = array();
@@ -237,7 +243,7 @@ class Settings extends BaseAdmin
      * Set Blog Skin settings
      * @return void
      */
-    protected function _blog_update_skin()
+    protected function blogUpdateSkin()
     {
         //  Prepare update
         $settings         = array();
@@ -261,7 +267,7 @@ class Settings extends BaseAdmin
      * Set Blog Commenting settings
      * @return void
      */
-    protected function _blog_update_commenting()
+    protected function blogUpdateCommenting()
     {
         //  Prepare update
         $settings                              = array();
@@ -288,7 +294,7 @@ class Settings extends BaseAdmin
      * Set Blog Social settings
      * @return void
      */
-    protected function _blog_update_social()
+    protected function blogUpdateSocial()
     {
         //  Prepare update
         $settings                              = array();
@@ -324,7 +330,7 @@ class Settings extends BaseAdmin
      * Set Blog Sidebar settings
      * @return void
      */
-    protected function _blog_update_sidebar()
+    protected function blogUpdateSidebar()
     {
         //  Prepare update
         $settings                          = array();
@@ -333,7 +339,7 @@ class Settings extends BaseAdmin
         $settings['sidebar_tags']          = (bool) $this->input->post('sidebar_tags');
         $settings['sidebar_popular_posts'] = (bool) $this->input->post('sidebar_popular_posts');
 
-        //  @TODO: Associations
+        //  @todo: Associations
 
         // --------------------------------------------------------------------------
 

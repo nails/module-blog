@@ -28,25 +28,23 @@ class Blog extends BaseAdmin
         $ci->load->model('blog/blog_model');
         $blogs = $ci->blog_model->getAll();
 
-        $navGroup = Factory::factory('Nav', 'nailsapp/module-admin');
-        $navGroup->setLabel('Settings');
+        $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+        $oNavGroup->setLabel('Settings');
 
         if (!empty($blogs)) {
 
             if (userHasPermission('admin:blog:blog:manage')) {
-
-                $navGroup->addAction('Blog: Manage');
+                $oNavGroup->addAction('Blog: Manage');
             }
 
         } else {
 
             if (userHasPermission('admin:blog:blog:create')) {
-
-                $navGroup->addAction('Blog: Create New', 'create');
+                $oNavGroup->addAction('Blog: Create New', 'create');
             }
         }
 
-        return $navGroup;
+        return $oNavGroup;
     }
 
     // --------------------------------------------------------------------------
