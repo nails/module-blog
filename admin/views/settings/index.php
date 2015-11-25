@@ -23,7 +23,7 @@
 
                 echo '</select>';
                 echo '<noscript>';
-                    echo '<button type="submit" class="awesome small">Select</button>';
+                    echo '<button type="submit" class="btn btn-xs btn-primary">Select</button>';
                 echo '</noscript>';
             echo form_close();
 
@@ -195,7 +195,7 @@
                         ?>
                     </fieldset>
                     <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
+                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
                 </div>
@@ -255,7 +255,7 @@
 
                         } else {
 
-                            echo '<p class="system-alert error">';
+                            echo '<p class="alert alert-danger">';
                                 echo '<strong>Error:</strong> ';
                                 echo 'I\'m sorry, but I couldn\'t find any skins to use. This is a configuration error and should be raised with the developer.';
                             echo '</p>';
@@ -263,7 +263,7 @@
 
                     ?>
                     <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
+                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
                 </div>
@@ -315,7 +315,7 @@
                         <hr />
 
                         <div id="native-settings" style="display:<?=empty($settings[$aField['key']]) || $settings[$aField['key']] == 'NATIVE' ? 'block' : 'none'?>">
-                            <p class="system-alert message">
+                            <p class="alert alert-warning">
                                 <strong>Coming Soon!</strong> Native commenting is in the works and will be available soon.
                                 <?php
 
@@ -344,7 +344,7 @@
                         </div>
                     </fieldset>
                     <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
+                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
                 </div>
@@ -475,7 +475,7 @@
                         ?>
                     </fieldset>
                     <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
+                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
                 </div>
@@ -554,7 +554,7 @@
                         ?>
                     </fieldset>
                     <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="awesome" style="margin-bottom:0;"')?>
+                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
                     </p>
                     <?=form_close()?>
                 </div>
@@ -563,9 +563,11 @@
 
         } else {
 
-            echo '<p class="system-alert" id="alert-choose-blog" style="margin-bottom:5px;">';
-                echo 'Please choose a blog above to begin configuring.';
-            echo '<p>';
+            ?>
+            <p class="alert alert-warning" id="alert-choose-blog" style="margin-bottom:5px;">
+                Please choose a blog above to begin configuring.
+            <p>
+            <?php
         }
 
     ?>

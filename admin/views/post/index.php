@@ -99,11 +99,19 @@
 
                                 if ($post->is_published && strtotime($post->published) <= time()) {
 
-                                    echo anchor($post->url, lang('action_view'), 'class="awesome small green" target="_blank"');
+                                    echo anchor(
+                                        $post->url,
+                                        lang('action_view'),
+                                        'class="btn btn-xs btn-default" target="_blank"'
+                                    );
 
                                 } else {
 
-                                    echo anchor($post->url . '?preview=1', lang('action_preview'), 'class="awesome small green" target="_blank"');
+                                    echo anchor(
+                                        $post->url . '?preview=1',
+                                        lang('action_preview'),
+                                        'class="btn btn-xs btn-success" target="_blank"'
+                                    );
                                 }
 
                                 if (userHasPermission('admin:blog:post:' . $blog->id . ':edit')) {
@@ -111,7 +119,7 @@
                                     echo anchor(
                                         'admin/blog/post/edit/' . $blog->id . '/' . $post->id,
                                         lang('action_edit'),
-                                        'class="awesome small"'
+                                        'class="btn btn-xs btn-primary"'
                                     );
                                 }
 
@@ -120,7 +128,7 @@
                                     echo anchor(
                                         'admin/blog/post/delete/' . $blog->id . '/' . $post->id,
                                         lang('action_delete'),
-                                        'class="awesome small red confirm" data-title="Confirm Delete" data-body="Are you sure you want to delete this ' . $postName . '?"'
+                                        'class="btn btn-xs btn-danger confirm" data-title="Confirm Delete" data-body="Are you sure you want to delete this ' . $postName . '?"'
                                     );
                                 }
 

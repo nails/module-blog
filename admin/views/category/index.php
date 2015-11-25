@@ -51,12 +51,20 @@
 
                                     if (userHasPermission('admin:blog:category:' . $blog->id . ':edit')) {
 
-                                        echo anchor('admin/blog/category/edit/' . $blog->id . '/' . $category->id . $isModal, lang('action_edit'), 'class="awesome small"');
+                                        echo anchor(
+                                            'admin/blog/category/edit/' . $blog->id . '/' . $category->id . $isModal,
+                                            lang('action_edit'),
+                                            'class="btn btn-xs btn-primary"'
+                                        );
                                     }
 
                                     if (userHasPermission('admin:blog:category:' . $blog->id . ':delete')) {
 
-                                        echo anchor('admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal, lang('action_delete'), 'class="awesome small red confirm" data-body="This action cannot be undone."');
+                                        echo anchor(
+                                            'admin/blog/category/delete/' . $blog->id . '/' . $category->id . $isModal,
+                                            lang('action_delete'),
+                                            'class="btn btn-xs btn-danger confirm" data-body="This action cannot be undone."'
+                                        );
                                     }
 
                                 echo '</td>';

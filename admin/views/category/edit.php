@@ -85,8 +85,8 @@
                 ?>
             </fieldset>
             <p style="margin-top:1em;">
-                <?=form_submit('submit', 'Save', 'class="awesome"')?>
-                <?=anchor('admin/blog/category/index/' . $blog->id . $isModal, 'Cancel', 'class="awesome red confirm" data-body="All unsaved changes will be lost."')?>
+                <?=form_submit('submit', 'Save', 'class="btn btn-primary"')?>
+                <?=anchor('admin/blog/category/index/' . $blog->id . $isModal, 'Cancel', 'class="btn btn-danger confirm" data-body="All unsaved changes will be lost."')?>
             </p>
         </div>
     </section>

@@ -180,7 +180,7 @@
                                     'placeholder="Video Source URL"'
                                 );
 
-                                echo form_error('video_url', '<div class="system-alert error">', '</div>');
+                                echo form_error('video_url', '<div class="alert alert-danger">', '</div>');
                             ?>
                             <small>
                                 Copy and paste a URL from YouTube or Vimeo.
@@ -212,7 +212,7 @@
                                     'placeholder="Audio Source URL"'
                                 );
 
-                                echo form_error('audio_url', '<div class="system-alert error">', '</div>');
+                                echo form_error('audio_url', '<div class="alert alert-danger">', '</div>');
                             ?>
                             <small>
                                 Copy and paste a URL for a track on Spotify.
@@ -272,10 +272,10 @@
                                     set_value('image_id', $sDefault)
                                 );
 
-                                echo form_error('image_id', '<div class="system-alert error">', '</div>');
+                                echo form_error('image_id', '<div class="alert alert-danger">', '</div>');
 
                             ?>
-                            <a href="#" class="awesome small green">
+                            <a href="#" class="btn btn-xs btn-success">
                                 Choose
                             </a href="#">
                         </div>
@@ -387,7 +387,7 @@
                     </select>
                 </p>
                 <p>
-                    <a href="#" class="manage-categories awesome orange small">Manage Categories</a>
+                    <a href="#" class="manage-categories btn btn-warning small">Manage Categories</a>
                 </p>
             </div>
             <?php
@@ -435,7 +435,7 @@
                     </select>
                 </p>
                 <p>
-                    <a href="#" class="manage-tags awesome orange small">Manage Tags</a>
+                    <a href="#" class="manage-tags btn btn-warning small">Manage Tags</a>
                 </p>
             </div>
             <?php
@@ -527,7 +527,7 @@
                 <p>
                     <input type="file" id="file_upload" />
                 </p>
-                <p class="system-alert notice" id="upload-message" style="display:none">
+                <p class="alert alert-info" id="upload-message" style="display:none">
                     <strong>Please be patient while files upload.</strong>
                     <br />Tabs have been disabled until uploads are complete.
                 </p>
@@ -623,10 +623,10 @@
         </div>
     </section>
     <p>
-        <button type="submit" class="awesome" id="btnSubmit">
+        <button type="submit" class="btn btn-primary" id="btnSubmit">
             <?=lang('action_save_changes')?>
         </button>
-        <button class="awesome js-only" id="btnPreview">Preview</button>
+        <button class="btn btn-primary js-only" id="btnPreview">Preview</button>
     </p>
     <?=form_close()?>
 </div>
