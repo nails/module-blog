@@ -212,7 +212,7 @@
 
                         if ($skins) {
 
-                            $selectedSkin = !empty($settings['skin']) ? $settings['skin'] : 'blog-skin-classic';
+                            $selectedSkin = !empty($settings['skin']) ? $settings['skin'] : 'skin-blog-classic';
 
                             echo '<ul class="skins">';
                             foreach ($skins as $skin) {

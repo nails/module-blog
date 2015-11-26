@@ -68,7 +68,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Load up the blog's skin
-        $sSkinSlug = appSetting('skin', $sSettingBlogName) ? appSetting('skin', $sSettingBlogName) : 'blog-skin-classic';
+        $sSkinSlug = appSetting('skin', $sSettingBlogName) ? appSetting('skin', $sSettingBlogName) : 'skin-blog-classic';
 
         $this->oSkin = $this->blog_skin_model->get($sSkinSlug);
 
