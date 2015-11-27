@@ -439,7 +439,7 @@ class Post extends BaseAdmin
 
         //  Load other data
         $this->data['associations']      = $this->blog_model->getAssociations();
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
+        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
@@ -455,7 +455,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'CREATE\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
         $this->asset->inline($sInlineJs, 'JS');
@@ -762,7 +762,7 @@ class Post extends BaseAdmin
 
         //  Load other data
         $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->url_scale_scheme();
+        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
@@ -791,7 +791,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'EDIT\', \'' . $sInitalPublishState . '\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generate_api_upload_token() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
         $this->asset->inline($sInlineJs, 'JS');

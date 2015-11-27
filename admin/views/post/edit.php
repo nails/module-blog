@@ -236,7 +236,7 @@
                         <div
                             class="type-fields"
                             id="post-type-fields-photo"
-                            data-manager-url="<?=cdnManageUrl('blog', array('_EDIT', 'typePhotoCdnManagerCallback'))?>"
+                            data-manager-url="<?=cdnManagerUrl('blog', array('_EDIT', 'typePhotoCdnManagerCallback'))?>"
                             data-url-scheme="<?=$cdnUrlScaleScheme?>"
                         >
                             <strong>Featured Image</strong>

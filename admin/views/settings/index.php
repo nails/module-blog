@@ -1,5 +1,4 @@
-<div class="group-settings blog">
-
+<div class="group-settings blog configure">
     <?php
 
         if (count($blogs) > 1) {
@@ -38,39 +37,30 @@
 
         if (!empty($selectedBlogId)) {
 
+            echo form_open('admin/blog/settings?blog_id=' . $selectedBlogId);
+            $sActiveTab = $this->input->post('active_tab') ?: 'tab-general';
+            echo '<input type="hidden" name="active_tab" value="' . $sActiveTab . '" id="active-tab">';
+
             ?>
-            <ul class="tabs">
-                <?php $active = $this->input->post('update') == 'settings' || !$this->input->post() ? 'active' : ''?>
-                <li class="tab <?=$active?>">
+            <ul class="tabs" data-active-tab-input="#active-tab">
+                <li class="tab">
                     <a href="#" data-tab="tab-general">General</a>
                 </li>
-
-                <?php $active = $this->input->post('update') == 'skin' ? 'active' : ''?>
-                <li class="tab <?=$active?>">
+                <li class="tab">
                     <a href="#" data-tab="tab-skin">Skin</a>
                 </li>
-
-                <?php $active = $this->input->post('update') == 'commenting' ? 'active' : ''?>
-                <li class="tab <?=$active?>">
+                <li class="tab">
                     <a href="#" data-tab="tab-commenting">Commenting</a>
                 </li>
-
-                <?php $active = $this->input->post('update') == 'social' ? 'active' : ''?>
-                <li class="tab <?=$active?>">
+                <li class="tab">
                     <a href="#" data-tab="tab-social">Social Tools</a>
                 </li>
-
-                <?php $active = $this->input->post('update') == 'sidebar' ? 'active' : ''?>
-                <li class="tab <?=$active?>">
+                <li class="tab">
                     <a href="#" data-tab="tab-sidebar">Sidebar</a>
                 </li>
             </ul>
-
             <section class="tabs">
-                <?php $display = $this->input->post('update') == 'settings' || !$this->input->post() ? 'active' : ''?>
-                <div class="tab-page tab-general <?=$display?>">
-                    <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
-                    <?=form_hidden('update', 'settings')?>
+                <div class="tab-page tab-general">
                     <p>
                         Generic blog settings. Use these to control some blog behaviours.
                     </p>
@@ -126,8 +116,7 @@
 
                         ?>
                     </fieldset>
-
-                    <fieldset id="blog-settings-excerpts">
+                    <fieldset>
                         <legend>Post Excerpts</legend>
                         <p>
                             Excerpts are short post summaries of posts. If enabled these sumamries will be shown
@@ -146,8 +135,7 @@
 
                         ?>
                     </fieldset>
-
-                    <fieldset id="blog-settings-galcattag">
+                    <fieldset>
                         <legend>Galleries, Categories &amp; Tags</legend>
                         <?php
 
@@ -181,8 +169,7 @@
 
                         ?>
                     </fieldset>
-
-                    <fieldset id="blog-settings-rss">
+                    <fieldset>
                         <legend>RSS</legend>
                         <?php
 
@@ -194,84 +181,84 @@
                             echo form_field_boolean($aField);
                         ?>
                     </fieldset>
-                    <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
-                    </p>
-                    <?=form_close()?>
                 </div>
-
-                <?php $display = $this->input->post('update') == 'skin' ? 'active' : ''?>
-                <div class="tab-page tab-skin <?=$display?>">
-                    <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
-                    <?=form_hidden('update', 'skin')?>
-                    <p>
-                        The following Blog skins are available to use.
-                    </p>
-                    <hr />
+                <div class="tab-page tab-skin">
                     <?php
 
-                        if ($skins) {
+                    if ($skins) {
 
-                            $selectedSkin = !empty($settings['skin']) ? $settings['skin'] : 'skin-blog-classic';
+                        $selectedSkin = !empty($settings['skin']) ? $settings['skin'] : 'skin-blog-classic';
 
-                            echo '<ul class="skins">';
-                            foreach ($skins as $skin) {
+                        ?>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="selected">Selected</th>
+                                    <th class="label">Label</th>
+                                    <th class="configure">Configure</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
 
-                                $name        = !empty($skin->name) ? $skin->name : 'Untitled';
-                                $description = !empty($skin->description) ? $skin->description : '';
+                                foreach ($skins as $skin) {
 
-                                if (file_exists($skin->path . 'icon.png')) {
+                                    $bSelected = $skin->slug == $selectedSkin ? true : false;
 
-                                    $icon = $skin->url . 'icon.png';
+                                    ?>
+                                    <tr>
+                                        <td class="selected">
+                                            <?=form_radio('skin', $skin->slug, $bSelected)?>
+                                        </td>
+                                        <td class="label">
+                                            <?php
 
-                                } elseif (file_exists($skin->path . 'icon.jpg')) {
+                                            echo $skin->name;
+                                            if (!empty($skin->description)) {
 
-                                    $icon = $skin->url . 'icon.jpg';
+                                                echo '<small>';
+                                                echo $skin->description;
+                                                echo '</small>';
+                                            }
 
-                                } elseif (file_exists($skin->path . 'icon.gif')) {
+                                            ?>
+                                        </td>
+                                        <td class="configure">
+                                            <?php
 
-                                    $icon = $skin->url . 'icon.gif';
+                                            if (!empty($skin->data->settings)) {
 
-                                } else {
+                                                echo anchor(
+                                                    'admin/blog/settings/skin?&slug=' . $skin->slug,
+                                                    'Configure',
+                                                    'data-fancybox-type="iframe" class="fancybox btn btn-xs btn-primary"'
+                                                );
+                                            }
 
-                                    $icon = NAILS_ASSETS_URL . 'img/admin/modules/settings/blog-skin-no-icon.png';
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <?php
                                 }
 
-                                $selected  = $skin->slug == $selectedSkin ? true : false;
-                                $class     = $selected ? 'selected' : '';
+                                ?>
+                            </tbody>
+                        </table>
+                        <?php
 
-                                echo '<li class="skin ' . $class . '" rel="tipsy" title="' . $description . '">';
-                                    echo '<div class="icon">' . img($icon) . '</div>';
-                                    echo '<div class="name">';
-                                        echo $name;
-                                        echo '<span class="fa fa-check-circle"></span>';
-                                    echo '</div>';
-                                    echo form_radio('skin', $skin->slug, $selected);
-                                echo '</li>';
-                            }
-                            echo '</ul>';
+                    } else {
 
-                            echo '<hr class="clearfix" />';
-
-                        } else {
-
-                            echo '<p class="alert alert-danger">';
-                                echo '<strong>Error:</strong> ';
-                                echo 'I\'m sorry, but I couldn\'t find any skins to use. This is a configuration error and should be raised with the developer.';
-                            echo '</p>';
-                        }
+                        ?>
+                        <p class="alert alert-danger">
+                            <strong>Error:</strong> I'm sorry, but I couldn't find any front of house skins to use.
+                            This is a configuration error and should be raised with the developer.
+                        </p>
+                        <?php
+                    }
 
                     ?>
-                    <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
-                    </p>
-                    <?=form_close()?>
                 </div>
-
-                <?php $display = $this->input->post('update') == 'commenting' ? 'active' : ''?>
-                <div class="tab-page tab-commenting <?=$display?>">
-                    <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
-                    <?=form_hidden('update', 'commenting')?>
+                <div class="tab-page tab-commenting">
                     <p>
                         Customise how commenting works on your blog.
                     </p>
@@ -280,16 +267,16 @@
                         <legend>Post comments enabled</legend>
                         <?php
 
-                            $aField             = array();
-                            $aField['key']      = 'comments_enabled';
-                            $aField['label']    = 'Comments Enabled';
-                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                        $aField            = array();
+                        $aField['key']     = 'comments_enabled';
+                        $aField['label']   = 'Comments Enabled';
+                        $aField['default'] = !empty($settings[$aField['key']]) ? true : false;
 
-                            echo form_field_boolean($aField);
+                        echo form_field_boolean($aField);
+
                         ?>
                     </fieldset>
-
-                    <fieldset id="blog-settings-comments-engine">
+                    <fieldset>
                         <legend>Post comments powered by</legend>
                         <p>
                             Choose which engine to use for blog post commenting. Please note that
@@ -298,38 +285,35 @@
                         </p>
                         <?php
 
-                            $aField             = array();
-                            $aField['key']      = 'comments_engine';
-                            $aField['label']    = 'Comment Engine';
-                            $aField['default']  = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'NATIVE';
-                            $aField['class']    = 'select2';
-                            $aField['id']       = 'comment-engine';
+                        $aField             = array();
+                        $aField['key']      = 'comments_engine';
+                        $aField['label']    = 'Comment Engine';
+                        $aField['default']  = !empty($settings[$aField['key']]) ? $settings[$aField['key']] : 'NATIVE';
+                        $aField['class']    = 'select2';
+                        $aField['id']       = 'comment-engine';
 
-                            $options           = array();
-                            $options['NATIVE'] = 'Native';
-                            $options['DISQUS'] = 'Disqus';
+                        $options           = array();
+                        $options['NATIVE'] = 'Native';
+                        $options['DISQUS'] = 'Disqus';
 
-                            echo form_field_dropdown($aField, $options);
+                        echo form_field_dropdown($aField, $options);
+
+                        $sDisplay = empty($settings[$aField['key']]) || $settings[$aField['key']] == 'NATIVE' ? 'block' : 'none'
+
                         ?>
+                        <p id="native-settings" class="alert alert-warning" style="display:<?=$sDisplay?>">
+                            <strong>Coming Soon!</strong> Native commenting is in the works and will be available soon.
+                            <?php
 
-                        <hr />
+                                //  TODO: Need to be able to handle a lot with native commenting, e.g
+                                //  - anonymous comments/forced login etc
+                                //  - pingbacks?
+                                //  - anything else WordPress might do?
 
-                        <div id="native-settings" style="display:<?=empty($settings[$aField['key']]) || $settings[$aField['key']] == 'NATIVE' ? 'block' : 'none'?>">
-                            <p class="alert alert-warning">
-                                <strong>Coming Soon!</strong> Native commenting is in the works and will be available soon.
-                                <?php
-
-                                    //  TODO: Need to be able to handle a lot with native commenting, e.g
-                                    //  - anonymous comments/forced login etc
-                                    //  - pingbacks?
-                                    //  - anything else WordPress might do?
-
-                                ?>
-                            </p>
-                        </div>
-
+                            ?>
+                        </p>
                         <div id="disqus-settings" style="display:<?=!empty($settings[$aField['key']]) && $settings[$aField['key']] == 'DISQUS' ? 'block' : 'none'?>">
-                        <?php
+                            <?php
 
                             //  Blog URL
                             $aField                 = array();
@@ -340,24 +324,16 @@
 
                             echo form_field($aField, 'Create a shortname at disqus.com.');
 
-                        ?>
+                            ?>
                         </div>
                     </fieldset>
-                    <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
-                    </p>
-                    <?=form_close()?>
                 </div>
-
-                <?php $display = $this->input->post('update') == 'social' ? 'active' : ''?>
-                <div class="tab-page tab-social <?=$display?>">
-                    <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
-                    <?=form_hidden('update', 'social')?>
+                <div class="tab-page tab-social">
                     <p>
                         Place social sharing tools on your blog post pages.
                     </p>
                     <hr />
-                    <fieldset id="blog-settings-social">
+                    <fieldset>
                         <legend>Enable Services</legend>
                         <?php
 
@@ -474,21 +450,13 @@
                             echo form_field_boolean($aField);
                         ?>
                     </fieldset>
-                    <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
-                    </p>
-                    <?=form_close()?>
                 </div>
-
-                <?php $display = $this->input->post('update') == 'sidebar' ? 'active' : ''?>
-                <div class="tab-page tab-sidebar <?=$display?>">
-                    <?=form_open('admin/blog/settings?blog_id=' . $selectedBlogId, 'style="margin-bottom:0;"')?>
-                    <?=form_hidden('update', 'sidebar')?>
+                <div class="tab-page tab-sidebar">
                     <p>
                         Configure the sidebar widgets.
                     </p>
                     <hr />
-                    <fieldset id="blog-settings-blog-sidebar">
+                    <fieldset>
                         <legend>Enable Widgets</legend>
                         <?php
 
@@ -553,12 +521,11 @@
 
                         ?>
                     </fieldset>
-                    <p>
-                        <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary" style="margin-bottom:0;"')?>
-                    </p>
-                    <?=form_close()?>
                 </div>
             </section>
+            <p>
+                <?=form_submit('submit', lang('action_save_changes'), 'class="btn btn-primary"')?>
+            </p>
             <?php
 
         } else {
