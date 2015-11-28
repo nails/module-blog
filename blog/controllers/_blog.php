@@ -12,6 +12,8 @@
 
 use Nails\Factory;
 
+use Nails\Blog\Excepion\SkinException;
+
 class NAILS_Blog_Controller extends NAILS_Controller
 {
     protected $blog;
@@ -70,18 +72,7 @@ class NAILS_Blog_Controller extends NAILS_Controller
         // --------------------------------------------------------------------------
 
         //  Load up the blog's skin
-        $sSkinSlug = appSetting('skin', $sSettingBlogName) ? appSetting('skin', $sSettingBlogName) : 'skin-blog-classic';
-
-        $this->oSkin = $oSkinModel->get($sSkinSlug);
-
-        if (!$this->oSkin) {
-
-            $sSubject  = 'Failed to load blog skin "' . $sSkinSlug . '"';
-            $sMessage  = 'Blog skin "' . $sSkinSlug . '" failed to load at ' . APP_NAME;
-            $sMessage .= ', the following reason was given: ' . $oSkinModel->lastError();
-
-            showFatalError($sSubject, $sMessage);
-        }
+        $this->oSkin = $oSkinModel->getEnabled();
 
         //  Load the skin's parent, if it has one
         if (!empty($this->oSkin->parent)) {
@@ -90,19 +81,16 @@ class NAILS_Blog_Controller extends NAILS_Controller
 
             if (!$this->oSkinParent) {
 
-                $sSubject  = 'Failed to load blog skin "' . $this->oSkin->parent . '"';
-                $sMessage  = 'Blog skin "' . $sSkinSlug . '" has defined a parent ("' . $this->oSkin->parent . '")" ';
-                $sMessage .= 'but the parent skin could not be loaded at ' . APP_NAME . ', ';
-                $sMessage .= 'the following reason was given: ' . $oSkinModel->lastError();
-
-                showFatalError($sSubject, $sMessage);
+                throw new SkinException(
+                    'Failed to load parent skin "' . $this->oSkin->parent . '" from skin "' . $this->oSkin->slug . '"'
+                );
             }
         }
 
         // --------------------------------------------------------------------------
 
         //  Pass to $this->data, for the views
-        $this->data['skin'] = $this->oSkin;
+        $this->data['skin']       = $this->oSkin;
         $this->data['skinParent'] = $this->oSkinParent;
 
         // --------------------------------------------------------------------------

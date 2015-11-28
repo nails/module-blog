@@ -187,8 +187,6 @@
 
                     if ($skins) {
 
-                        $selectedSkin = !empty($settings['skin']) ? $settings['skin'] : 'skin-blog-classic';
-
                         ?>
                         <table>
                             <thead>
@@ -203,7 +201,14 @@
 
                                 foreach ($skins as $skin) {
 
-                                    $bSelected = $skin->slug == $selectedSkin ? true : false;
+                                    if ($this->input->post()) {
+
+                                        $bSelected = $skin->slug == $this->input->post('skin') ? true : false;
+
+                                    } else {
+
+                                        $bSelected = $skin->slug == $skinSelected->slug ? true : false;
+                                    }
 
                                     ?>
                                     <tr>

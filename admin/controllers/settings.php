@@ -209,7 +209,8 @@ class Settings extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Get data
-        $this->data['skins'] = $oSkinModel->getAvailable();
+        $this->data['skins']        = $oSkinModel->getAvailable();
+        $this->data['skinSelected'] = $oSkinModel->getEnabled();
 
         if (!empty($this->data['selectedBlogId'])) {
 
