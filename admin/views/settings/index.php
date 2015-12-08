@@ -234,7 +234,7 @@
                                             if (!empty($skin->data->settings)) {
 
                                                 echo anchor(
-                                                    'admin/blog/settings/skin?&slug=' . $skin->slug,
+                                                    'admin/admin/settings/skin?slug=' . $skin->slug,
                                                     'Configure',
                                                     'data-fancybox-type="iframe" class="fancybox btn btn-xs btn-primary"'
                                                 );
