@@ -94,4 +94,17 @@ class Skin
 
         return false;
     }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Retrives a skin setting
+     * @param  string $sKey  The key to retrieve
+     * @param  string $sType The skin's type
+     * @return mixed
+     */
+    public function getSetting($sKey)
+    {
+        return appSetting($sKey, $this->aEnabled->slug);
+    }
 }
