@@ -445,7 +445,7 @@ class Post extends BaseAdmin
 
         //  Load assets
         $this->asset->library('uploadify');
-        $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
+        $this->asset->library('MUSTACHE');
         $this->asset->load('moment/moment.js', 'NAILS-BOWER');
         $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
@@ -768,7 +768,7 @@ class Post extends BaseAdmin
 
         //  Load assets
         $this->asset->library('uploadify');
-        $this->asset->load('mustache.js/mustache.js', 'NAILS-BOWER');
+        $this->asset->library('MUSTACHE');
         $this->asset->load('moment/moment.js', 'NAILS-BOWER');
         $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
 
