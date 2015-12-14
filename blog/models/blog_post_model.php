@@ -847,10 +847,10 @@ class NAILS_Blog_post_model extends NAILS_Model
      * This method applies the conditionals which are common across the get_*()
      * methods and the count() method.
      *
-     * @param string $data Data passed from the calling method
+     * @param array $data Data passed from the calling method
      * @return void
      **/
-    protected function getCountCommon($data = null)
+    protected function getCountCommon($data = array())
     {
         $this->db->select(
             array(
