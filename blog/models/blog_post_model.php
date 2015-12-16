@@ -657,12 +657,6 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         $posts = parent::getAll($page, $perPage, $data, $includeDeleted);
 
-        //  Handle requests for the raw query object
-        if (!empty($data['RETURN_QUERY_OBJECT'])) {
-
-            return $posts;
-        }
-
         $this->load->model('blog/blog_model');
         $associations = $this->blog_model->getAssociations();
 
