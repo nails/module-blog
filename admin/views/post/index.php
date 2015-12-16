@@ -76,14 +76,14 @@
 
                             } elseif ($post->is_published && strtotime($post->published) > time()) {
 
-                                echo '<td class="status notice">';
+                                echo '<td class="status info">';
                                     echo '<span class="fa fa-clock-o "></span>';
                                     echo '<small>' . niceTime($post->published) . '</small>';
                                 echo '</td>';
 
                             } else {
 
-                                echo '<td class="status error">';
+                                echo '<td class="status danger">';
                                     echo '<span class="fa fa-times-circle"></span>';
                                 echo '</td>';
                             }
