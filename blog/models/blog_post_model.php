@@ -35,6 +35,9 @@ class NAILS_Blog_post_model extends NAILS_Model
         $this->tableLabelColumn = 'title';
         $this->destructiveDelete = false;
 
+        $this->defaultSortColumn  = 'published';
+        $this->defaultSortOrder   = 'DESC';
+
         // --------------------------------------------------------------------------
 
         //  Define reserved words (for slugs, basically just controller methods)
