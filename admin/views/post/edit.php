@@ -508,16 +508,16 @@
                     <?php
 
                         $sMaxUpload = ini_get('upload_max_filesize');
-                        $iMaxUpload = return_bytes($sMaxUpload);
+                        $iMaxUpload = returnBytes($sMaxUpload);
 
                         $sMaxPost = ini_get('post_max_size');
-                        $iMaxPost = return_bytes($sMaxPost);
+                        $iMaxPost = returnBytes($sMaxPost);
 
                         $sMemoryLimit  = ini_get('memory_limit');
-                        $iMemoryLimit  = return_bytes($sMemoryLimit);
+                        $iMemoryLimit  = returnBytes($sMemoryLimit);
 
                         $iUploadMb = min($iMaxUpload, $iMaxPost, $iMemoryLimit);
-                        $sUploadMb = format_bytes($iUploadMb);
+                        $sUploadMb = formatBytes($iUploadMb);
 
                         echo 'Images only, max file size is ' . $sUploadMb . '.';
 
