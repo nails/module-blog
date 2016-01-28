@@ -292,7 +292,8 @@ class NAILS_Blog_post_model extends NAILS_Model
             if (!empty($data['associations'])) {
 
                 //  Fetch associations config
-                $associations = $this->config->item('blog_post_associations');
+                $oConfig      = Factory::service('Config');
+                $associations = $oConfig->item('blog_post_associations');
 
                 foreach ($data['associations'] as $index => $association) {
 
@@ -1217,9 +1218,10 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function getWithAssociation($associationIndex, $associatedId)
     {
-        $this->config->load('blog/blog');
+        $oConfig = Factory::service('Config');
+        $oConfig->load('blog/blog');
 
-        $associations = $this->config->item('blog_post_associations');
+        $associations = $oConfig->item('blog_post_associations');
 
         if (!isset($associations[$associationIndex])) {
 

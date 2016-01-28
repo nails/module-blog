@@ -12,6 +12,8 @@
  * @link
  */
 
+use Nails\Factory;
+
 class NAILS_Blog_model extends NAILS_Model
 {
     protected $blogUrl;
@@ -27,7 +29,8 @@ class NAILS_Blog_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->config->load('blog/blog');
+        $oConfig = Factory::service('Config');
+        $oConfig->load('blog/blog');
 
         // --------------------------------------------------------------------------
 
@@ -73,11 +76,10 @@ class NAILS_Blog_model extends NAILS_Model
      */
     public function getAssociations($post_id = null)
     {
-        $this->config->load('blog/blog');
-        $_associations  = $this->config->item('blog_post_associations');
+        $oConfig = Factory::service('Config');
+        $_associations = $oConfig->item('blog_post_associations');
 
         if (!$_associations) {
-
             return array();
         }
 
