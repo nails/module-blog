@@ -38,11 +38,30 @@ class NAILS_Blog_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
-    protected function formatObject(&$object)
-    {
-        parent::formatObject($object);
+    /**
+     * Formats a single object
+     *
+     * The getAll() method iterates over each returned item with this method so as to
+     * correctly format the output. Use this to cast integers and booleans and/or organise data into objects.
+     *
+     * @param  object $oObj      A reference to the object being formatted.
+     * @param  array  $aData     The same data array which is passed to _getcount_common, for reference if needed
+     * @param  array  $aIntegers Fields which should be cast as integers if numerical and not null
+     * @param  array  $aBools    Fields which should be cast as booleans if not null
+     * @param  array  $aFloats   Fields which should be cast as floats if not null
+     * @return void
+     */
+    protected function formatObject(
+        &$oObj,
+        $aData = array(),
+        $aIntegers = array(),
+        $aBools = array(),
+        $aFloats = array()
+    ) {
 
-        $object->url = $this->getBlogUrl($object->id);
+        parent::formatObject($oObj, $aData, $aIntegers, $aBools, $aFloats);
+
+        $oObj->url = $this->getBlogUrl($oObj->id);
     }
 
     // --------------------------------------------------------------------------
@@ -52,7 +71,7 @@ class NAILS_Blog_model extends NAILS_Model
      * @param  int   $post_id The ID f the post
      * @return array
      */
-    public function getAssociations($post_id = NULL)
+    public function getAssociations($post_id = null)
     {
         $this->config->load('blog/blog');
         $_associations  = $this->config->item('blog_post_associations');
@@ -89,7 +108,7 @@ class NAILS_Blog_model extends NAILS_Model
 
             if (isset($assoc->source->where) && $assoc->source->where) {
 
-                $this->db->where($assoc->source->where );
+                $this->db->where($assoc->source->where);
             }
 
             $assoc->data = $this->db->get($assoc->source->table)->result();

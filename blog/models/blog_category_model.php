@@ -191,19 +191,32 @@ class NAILS_Blog_category_model extends NAILS_Model
     // --------------------------------------------------------------------------
 
     /**
-     * Formats a category object
-     * @param  stdClass &$category The category object to format
+     * Formats a single object
+     *
+     * The getAll() method iterates over each returned item with this method so as to
+     * correctly format the output. Use this to cast integers and booleans and/or organise data into objects.
+     *
+     * @param  object $oObj      A reference to the object being formatted.
+     * @param  array  $aData     The same data array which is passed to _getcount_common, for reference if needed
+     * @param  array  $aIntegers Fields which should be cast as integers if numerical and not null
+     * @param  array  $aBools    Fields which should be cast as booleans if not null
+     * @param  array  $aFloats   Fields which should be cast as floats if not null
      * @return void
      */
-    protected function formatObject(&$category)
-    {
-        parent::formatObject($category);
+    protected function formatObject(
+        &$oObj,
+        $aData = array(),
+        $aIntegers = array(),
+        $aBools = array(),
+        $aFloats = array()
+    ) {
 
-        $category->url  = $this->formatUrl($category->slug, $category->blog_id);
+        parent::formatObject($oObj, $aData, $aIntegers, $aBools, $aFloats);
 
-        if (isset($category->post_count)) {
+        $oObj->url = $this->formatUrl($oObj->slug, $oObj->blog_id);
 
-            $category->post_count = (int) $category->post_count;
+        if (isset($oObj->post_count)) {
+            $oObj->post_count = (int) $oObj->post_count;
         }
     }
 }

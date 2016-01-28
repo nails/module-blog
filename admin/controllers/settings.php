@@ -190,11 +190,15 @@ class Settings extends BaseAdmin
             // --------------------------------------------------------------------------
 
             //  Save
-            if ($this->app_setting_model->set($settings, 'blog-' . $this->input->get('blog_id'))) {
+            $oAppSettingModel = Factory::model('AppSetting');
+
+            if ($oAppSettingModel->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
                 $this->data['success'] = 'Blog settings have been saved.';
 
-                if (!$this->routes_model->update()) {
+                $oRoutesModel = Factory::model('Routes');
+
+                if (!$oRoutesModel->update()) {
 
                     $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the ';
                     $this->data['warning'] .= 'routes file could not be updated. The blog may not behave as expected,';

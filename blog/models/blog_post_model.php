@@ -1351,85 +1351,98 @@ class NAILS_Blog_post_model extends NAILS_Model
     // --------------------------------------------------------------------------
 
     /**
-     * Format a post object
-     * @param  stdClass &$post The post Object to format
+     * Formats a single object
+     *
+     * The getAll() method iterates over each returned item with this method so as to
+     * correctly format the output. Use this to cast integers and booleans and/or organise data into objects.
+     *
+     * @param  object $oObj      A reference to the object being formatted.
+     * @param  array  $aData     The same data array which is passed to _getcount_common, for reference if needed
+     * @param  array  $aIntegers Fields which should be cast as integers if numerical and not null
+     * @param  array  $aBools    Fields which should be cast as booleans if not null
+     * @param  array  $aFloats   Fields which should be cast as floats if not null
      * @return void
      */
-    protected function formatObject(&$post)
-    {
-        parent::formatObject($post);
+    protected function formatObject(
+        &$oObj,
+        $aData = array(),
+        $aIntegers = array(),
+        $aBools = array(),
+        $aFloats = array()
+    ) {
+
+        parent::formatObject($oObj, $aData, $aIntegers, $aBools, $aFloats);
 
         //  Generate URL
-        $post->url = $this->formatUrl($post->slug, $post->blog_id);
+        $oObj->url = $this->formatUrl($oObj->slug, $oObj->blog_id);
 
         //  Blog
-        $post->blog        = new \stdClass();
-        $post->blog->id    = (int) $post->blog_id;
-        $post->blog->label = $post->blog_label;
+        $oObj->blog        = new \stdClass();
+        $oObj->blog->id    = (int) $oObj->blog_id;
+        $oObj->blog->label = $oObj->blog_label;
 
         //  Author
-        $post->author              = new \stdClass();
-        $post->author->id          = (int) $post->modified_by;
-        $post->author->first_name  = $post->first_name;
-        $post->author->last_name   = $post->last_name;
-        $post->author->email       = $post->email;
-        $post->author->profile_img = $post->profile_img;
-        $post->author->gender      = $post->gender;
+        $oObj->author              = new \stdClass();
+        $oObj->author->id          = (int) $oObj->modified_by;
+        $oObj->author->first_name  = $oObj->first_name;
+        $oObj->author->last_name   = $oObj->last_name;
+        $oObj->author->email       = $oObj->email;
+        $oObj->author->profile_img = $oObj->profile_img;
+        $oObj->author->gender      = $oObj->gender;
 
-        unset($post->blog_id);
-        unset($post->blog_label);
-        unset($post->modified_by);
-        unset($post->first_name);
-        unset($post->last_name);
-        unset($post->email);
-        unset($post->profile_img);
-        unset($post->gender);
+        unset($oObj->blog_id);
+        unset($oObj->blog_label);
+        unset($oObj->modified_by);
+        unset($oObj->first_name);
+        unset($oObj->last_name);
+        unset($oObj->email);
+        unset($oObj->profile_img);
+        unset($oObj->gender);
 
         // --------------------------------------------------------------------------
 
         //  Handle certain post types
-        switch ($post->type) {
+        switch ($oObj->type) {
+
             case 'VIDEO':
+                $oObj->video = new \stdClass();
+                $oObj->video->id = $this->extractYoutubeId($oObj->video_url);
+                $oObj->video->type = null;
+                $oObj->video->url = null;
 
-                $post->video = new \stdClass();
-                $post->video->id = $this->extractYoutubeId($post->video_url);
-                $post->video->type = null;
-                $post->video->url = null;
-
-                if (!empty($post->video->id)) {
-                    $post->video->type = 'YOUTUBE';
-                    $post->video->url  = 'https://www.youtube.com/watch?v=' . $post->video->id;
+                if (!empty($oObj->video->id)) {
+                    $oObj->video->type = 'YOUTUBE';
+                    $oObj->video->url  = 'https://www.youtube.com/watch?v=' . $oObj->video->id;
                 } else {
-                    $post->video->id = $this->extractVimeoId($post->video_url);
-                    if (!empty($post->video->id)) {
-                        $post->video->type = 'VIMEO';
-                        $post->video->url  = 'https://www.vimeo.com/' . $post->video->id;
+                    $oObj->video->id = $this->extractVimeoId($oObj->video_url);
+                    if (!empty($oObj->video->id)) {
+                        $oObj->video->type = 'VIMEO';
+                        $oObj->video->url  = 'https://www.vimeo.com/' . $oObj->video->id;
                     }
                 }
                 break;
 
             case 'AUDIO':
+                $oObj->audio = new \stdClass();
+                $oObj->audio->id = $this->extractSpotifyId($oObj->audio_url);
+                $oObj->audio->type = null;
+                $oObj->audio->url = null;
 
-                $post->audio = new \stdClass();
-                $post->audio->id = $this->extractSpotifyId($post->audio_url);
-                $post->audio->type = null;
-                $post->audio->url = null;
-
-                if (!empty($post->audio->id)) {
-                    $post->audio->type = 'SPOTIFY';
-                    $post->audio->url  = 'https://open.spotify.com/track/' . $post->audio->id;
+                if (!empty($oObj->audio->id)) {
+                    $oObj->audio->type = 'SPOTIFY';
+                    $oObj->audio->url  = 'https://open.spotify.com/track/' . $oObj->audio->id;
                 }
                 break;
 
             case 'PHOTO':
-                $post->photo = new \stdClass();
-                $post->photo->id = (int) $post->image_id ? (int) $post->image_id : null;
+                $oObj->photo = new \stdClass();
+                $oObj->photo->id = (int) $oObj->image_id ? (int) $oObj->image_id : null;
                 break;
         }
 
-        unset($post->image_id);
-        unset($post->audio_url);
-        unset($post->video_url);
+        unset($oObj->image_id);
+        unset($oObj->audio_url);
+        unset($oObj->video_url);
     }
 
     // --------------------------------------------------------------------------
