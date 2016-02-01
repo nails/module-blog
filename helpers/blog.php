@@ -81,20 +81,3 @@ if (!function_exists('blog_posts_with_association')) {
         return get_instance()->blog_post_model->getWithAssociation($associationIndex, $associatedId);
     }
 }
-
-// --------------------------------------------------------------------------
-
-if (!function_exists('blogSkinSetting')) {
-
-    /**
-     * Retrives a skin setting
-     * @param  string $sKey  The key to retrieve
-     * @param  string $sType The skin's type
-     * @return mixed
-     */
-    function blogSkinSetting($sKey, $sType)
-    {
-        $oSkinModel = Factory::model('Skin', 'nailsapp/module-blog');
-        return $oSkinModel->getSetting($sKey, $sType);
-    }
-}

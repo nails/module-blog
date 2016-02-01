@@ -35,13 +35,19 @@
         <p>
             Configure your blog using the options below.
         </p>
-        <p class="alert alert-warning">
-            <strong>@todo</strong>
-            <br />- Move skin related settings into the skin settings (i.e., social tools and sidebar)
-            <br />- Find a way to let settings be customised per blog rather than per skin
-
-        </p>
         <?php
+
+        if (isSuperUser()) {
+
+            ?>
+            <p class="alert alert-warning">
+                <strong>@todo // Super users only can see this</strong>
+                <br />- Move skin related settings into the skin settings (i.e., excerpts, social tools and sidebar)
+                <br />- Allow skins to provide additional fields to posts (not sure how these might be stored, e.g. excerpts)
+                <br />- Find a way to let settings be customised per blog rather than per skin (i.e., find a way to handle the skin model supporting multiple blogs)
+            </p>
+            <?php
+        }
     }
 
     echo '<hr />';

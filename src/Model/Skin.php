@@ -59,7 +59,7 @@ class Skin
      * Fetches all available front skins
      * @return array
      */
-    public function getAvailable()
+    public function getAll()
     {
         return $this->aAvailable;
     }
@@ -84,7 +84,7 @@ class Skin
      */
     public function get($sSlug)
     {
-        $aSkins = $this->getAvailable();
+        $aSkins = $this->getAll();
 
         foreach ($aSkins as $oSkin) {
             if ($oSkin->slug == $sSlug) {
