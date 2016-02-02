@@ -135,6 +135,10 @@ class Settings extends BaseAdmin
             }
         }
 
+        //  Set up the skin model for this blog
+        //  @todo; work out a cleaner way of handling this
+        $oSkinModel->init($this->data['selectedBlogId']);
+
         // --------------------------------------------------------------------------
 
         //  Process POST

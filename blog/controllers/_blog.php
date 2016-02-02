@@ -12,7 +12,7 @@
 
 use Nails\Factory;
 
-use Nails\Blog\Excepion\SkinException;
+use Nails\Blog\Exception\SkinException;
 
 class NAILS_Blog_Controller extends NAILS_Controller
 {
@@ -53,6 +53,8 @@ class NAILS_Blog_Controller extends NAILS_Controller
         $this->load->model('blog/blog_post_model');
         $this->load->model('blog/blog_widget_model');
         $oSkinModel = Factory::model('Skin', 'nailsapp/module-blog');
+        //  @todo; work out a cleaner way of handling this
+        $oSkinModel->init($this->oBlog->id);
 
         // --------------------------------------------------------------------------
 
@@ -75,14 +77,14 @@ class NAILS_Blog_Controller extends NAILS_Controller
         $this->oSkin = $oSkinModel->getEnabled();
 
         //  Load the skin's parent, if it has one
-        if (!empty($this->oSkin->parent)) {
+        if (!empty($this->oSkin->data->parent)) {
 
-            $this->oSkinParent = $oSkinModel->get($this->oSkin->parent);
+            $this->oSkinParent = $oSkinModel->get($this->oSkin->data->parent);
 
             if (!$this->oSkinParent) {
 
                 throw new SkinException(
-                    'Failed to load parent skin "' . $this->oSkin->parent . '" from skin "' . $this->oSkin->slug . '"'
+                    'Failed to load parent skin "' . $this->oSkin->data->parent . '" from skin "' . $this->oSkin->slug . '"'
                 );
             }
         }

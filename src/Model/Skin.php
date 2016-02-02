@@ -19,6 +19,7 @@ class Skin
 {
     protected $aAvailable;
     protected $aEnabled;
+    protected $iActiveBlogId;
 
     // --------------------------------------------------------------------------
 
@@ -33,20 +34,32 @@ class Skin
     {
         $this->aAvailable = array();
         $this->aEnabled   = array();
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Setup the model for use with a particular skin
+     */
+    public function init($iBlogId)
+    {
+        $this->iActiveBlogId        = $iBlogId;
+        $this->aAvailable[$iBlogId] = array();
+        $this->aEnabled[$iBlogId]   = array();
 
         //  Get available skins
-        $this->aAvailable = _NAILS_GET_SKINS('nailsapp/module-blog');
+        $this->aAvailable[$iBlogId] = _NAILS_GET_SKINS('nailsapp/module-blog');
 
-        if (empty($this->aAvailable)) {
+        if (empty($this->aAvailable[$iBlogId])) {
             throw new SkinException(
                 'No skins are available.'
             );
         }
 
         //  Get the skin
-        $sSkinSlug      = appSetting('skin', 'blog') ?: self::DEFAULT_SKIN;
-        $this->aEnabled = $this->get($sSkinSlug);
-        if (empty($this->aEnabled)) {
+        $sSkinSlug                = appSetting('skin', 'blog-' . $iBlogId) ?: self::DEFAULT_SKIN;
+        $this->aEnabled[$iBlogId] = $this->get($sSkinSlug);
+        if (empty($this->aEnabled[$iBlogId])) {
             throw new SkinException(
                 'Skin "' . $sSkinSlug . '" does not exist.'
             );
@@ -61,7 +74,13 @@ class Skin
      */
     public function getAll()
     {
-        return $this->aAvailable;
+        if (empty($this->iActiveBlogId)) {
+            throw new SkinException(
+                'No blog selected.'
+            );
+        }
+
+        return $this->aAvailable[$this->iActiveBlogId];
     }
 
     // --------------------------------------------------------------------------
@@ -72,7 +91,13 @@ class Skin
      */
     public function getEnabled()
     {
-        return $this->aEnabled;
+        if (empty($this->iActiveBlogId)) {
+            throw new SkinException(
+                'No blog selected.'
+            );
+        }
+
+        return $this->aEnabled[$this->iActiveBlogId];
     }
 
     // --------------------------------------------------------------------------
@@ -93,18 +118,5 @@ class Skin
         }
 
         return false;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Retrives a skin setting
-     * @param  string $sKey  The key to retrieve
-     * @param  string $sType The skin's type
-     * @return mixed
-     */
-    public function getSetting($sKey)
-    {
-        return appSetting($sKey, $this->aEnabled->slug);
     }
 }
