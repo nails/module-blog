@@ -1,0 +1,270 @@
+/* --------------------------------------------------------------
+   Nails Blog Module Admin Styles
+-------------------------------------------------------------- */
+
+.group-blog {
+    &.manage {
+        table {
+            th.image,
+            td.image {
+                text-align: center;
+                width: 75px;
+                img {
+                    border: 1px solid #EFEFEF;
+                    padding: 3px;
+                    background: #FFFFFF;
+                    border-radius: 3px;
+                }
+            }
+            th.status,
+            td.status {
+                width: 100px;
+                text-align: center;
+                span {
+                    font-size: 1.5em;
+                    display: block;
+                }
+            }
+            th.modified,
+            td.modified,
+            th.actions,
+            td.actions {
+                width: 100px;
+                text-align: center;
+            }
+            th.actions,
+            td.actions {
+                width: 175px;
+            }
+        }
+    }
+    &.edit {
+        height: auto;
+        fieldset.categories-tags {
+            select {
+                width: 100%;
+            }
+        }
+        .tab-page {
+            &.tab-title-body {
+                background-color: #F4F4F4;
+                #post-editor {
+                    border-right: 1px solid #CCCCCC;
+                    padding-right: 0;
+                }
+                #post-type-area {
+                    padding: 7px;
+                    margin-left: -15px;
+                    strong {
+                        display: block;
+                        margin-bottom: 0.5em;
+                    }
+                    .type-fields {
+                        margin-top: 1em;
+                        input {
+                            margin-bottom: 0.5em;
+                            width: 100%;
+                        }
+                    }
+                    #post-type-fields-photo {
+                        img {
+                            width: 100%;
+                            height: auto;
+                            border-radius: 2px;
+                            cursor: pointer;
+                            border: 1px solid #CCCCCC;
+                            margin-bottom: 0.2em;
+                            &[src=''] {
+                                display: none;
+                            }
+                        }
+                        a {
+                            display: block;
+                            width: 100%;
+                        }
+                    }
+                    .alert {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+        #gallery-items {
+            margin-top: 1em;
+            border: 1px dashed #EFEFEF;
+            padding: 5px;
+            padding-bottom: 0;
+            line-height: 1em;
+            min-height: 107px;
+            overflow: auto;
+            li.empty {
+                display: none !important;
+            }
+            .gallery-item {
+                cursor: move;
+                float: left;
+                display: block;
+                width: 100px;
+                height: 100px;
+                margin: 0;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                border: 1px solid #CCCCCC;
+                background: #EFEFEF url(../img/upload-icon.png) center no-repeat;
+                position: relative;
+                padding: 0;
+                overflow: hidden;
+                box-sizing: border-box;
+                border-radius: 3px;
+                a.remove,
+                a.delete {
+                    display: block;
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    right: 2px;
+                    top: 2px;
+                    background: rgba(219, 218, 220,0.8);
+                    z-index: 1;
+                    cursor: pointer;
+                    border-radius: 2px;
+                    &:hover {
+                        background: rgba(219, 218, 220,0.8) url(../img/stop-icon.png) center no-repeat;
+                    }
+                }
+                .progress {
+                    background: #888888;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 0;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                    transition: all;
+                    background-size: 30px 30px;
+                    background-image: linear-gradient(
+                    45deg,
+                    rgba(0,0,0,0.1) 25%,
+                    transparent     25%,
+                    transparent     50%,
+                    rgba(0,0,0,0.1) 50%,
+                    rgba(0,0,0,0.1) 75%,
+                    transparent     75%,
+                    transparent
+                    );
+                    -webkit-animation: barberpole 0.5s linear infinite;
+                    -moz-animation: barberpole 0.5s linear infinite;
+                    animation: barberpole 0.5s linear infinite;
+                }
+                .data-cancel {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    line-height: 102px;
+                    background: #EEEEEE;
+                    font-weight: bold;
+                    color: #777777;
+                    z-index: 1;
+                    opacity: 0.9;
+                    display: none;
+                    text-transform: uppercase;
+                }
+                .crunching {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: rgba(255, 255, 255, 0.9) url(../img/60PX-TRANS.gif) center no-repeat;
+                    display: none;
+                }
+                &.placeholder {
+                    border: 1px dashed #CCCCCC;
+                    background: #FEFEFE;
+                }
+                &.crunching {
+                    .crunching {
+                        display: block;
+                    }
+                }
+                &.error {
+                    background: #FFEBE8;
+                    border-color: #CA0300;
+                    p {
+                        text-align: center;
+                        margin: 5px;
+                        color: #CA0300;
+                        font-size: 0.9em;
+                    }
+                    p.filename {
+                        font-weight: bold;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 90px;
+                        overflow: hidden;
+                    }
+                }
+            }
+            &:after {
+                content: '\0020';
+                display: block;
+                overflow: hidden;
+                visibility: hidden;
+                width: 0;
+                height: 0;
+                clear: both;
+            }
+            &.empty {
+                position: relative;
+                li.empty {
+                    display: block !important;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    text-align: center;
+                    font-size: 2em;
+                    font-weight: bold;
+                    color: #CCCCCC;
+                    padding-top: 30px;
+                    line-height: 1.25em;
+                }
+            }
+        }
+    }
+}
+.group-settings {
+    &.blog {
+        &.index {
+            th.actions,
+            td.actions {
+                width: 130px;
+            }
+        }
+        &.configure {
+            th.selected,
+            td.selected {
+                width: 50px;
+                text-align: center;
+            }
+            th.configure,
+            td.configure {
+                width: 80px;
+                text-align: center;
+            }
+        }
+    }
+}
+#post-help-audio,
+#post-help-video {
+    ol {
+        li {
+            list-style-type: decimal;
+            margin-left: 1.5em;
+        }
+    }
+}

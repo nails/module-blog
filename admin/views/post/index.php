@@ -43,7 +43,7 @@
 
                                     } else {
 
-                                        echo img(NAILS_ASSETS_URL . 'img/admin/modules/blog/image-icon.png');
+                                        echo img(NAILS_PATH . 'module-blog/assets/img/image-icon.png');
                                     }
                                     break;
 

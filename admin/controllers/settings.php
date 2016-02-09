@@ -228,7 +228,7 @@ class Settings extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->load('nails.admin.blog.settings.min.js', 'NAILS');
+        $this->asset->load('admin.settings.min.js', 'nailsapp/module-blog');
 
         // --------------------------------------------------------------------------
 

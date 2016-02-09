@@ -447,7 +447,7 @@ class Post extends BaseAdmin
         $this->asset->library('uploadify');
         $this->asset->library('MUSTACHE');
         $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
+        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -770,7 +770,7 @@ class Post extends BaseAdmin
         $this->asset->library('uploadify');
         $this->asset->library('MUSTACHE');
         $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('nails.admin.blog.createEdit.min.js', 'NAILS');
+        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         if ($this->data['post']->is_published) {
 
