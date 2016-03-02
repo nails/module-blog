@@ -45,6 +45,7 @@
         {
             "moduleName": "blog",
             "type": "module",
+            "namespace": "Nails\\Blog\\",
             "autoload": {
                 "helpers": ["blog"]
             }
