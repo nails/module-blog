@@ -172,7 +172,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $sTablePrefix = $this->blog_post_model->getTablePrefix();
+        $sTablePrefix = $this->blog_post_model->getTableAlias();
 
         // --------------------------------------------------------------------------
 
