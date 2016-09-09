@@ -172,14 +172,14 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $sTablePrefix = $this->blog_post_model->getTableAlias();
+        $sTableAlias = $this->blog_post_model->getTableAlias();
 
         // --------------------------------------------------------------------------
 
         //  Get pagination and search/sort variables
         $iPage      = (int) $this->input->get('page') ? (int) $this->input->get('page') : 0;
         $iPerPage   = (int) $this->input->get('perPage') ? (int) $this->input->get('perPage') : 50;
-        $sSortOn    = $this->input->get('sortOn') ? $this->input->get('sortOn') : $sTablePrefix . '.published';
+        $sSortOn    = $this->input->get('sortOn') ? $this->input->get('sortOn') : $sTableAlias . '.published';
         $sSortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
         $sKeywords  = $this->input->get('keywords') ? $this->input->get('keywords') : '';
 
@@ -187,9 +187,9 @@ class Post extends BaseAdmin
 
         //  Define the sortable columns
         $aSortColumns = array(
-            $sTablePrefix . '.published' => 'Published Date',
-            $sTablePrefix . '.modified'  => 'Modified Date',
-            $sTablePrefix . '.title'     => 'Title'
+            $sTableAlias . '.published' => 'Published Date',
+            $sTableAlias . '.modified'  => 'Modified Date',
+            $sTableAlias . '.title'     => 'Title'
         );
 
         // --------------------------------------------------------------------------
@@ -197,7 +197,7 @@ class Post extends BaseAdmin
         //  Checkbox filters
         $aCbFilters   = array();
         $aCbFilters[] = Helper::searchFilterObject(
-            $sTablePrefix . '.is_published',
+            $sTableAlias . '.is_published',
             'State',
             array(
                 array('Published', true, true),
@@ -212,7 +212,7 @@ class Post extends BaseAdmin
         }
 
         $aCbFilters[] = Helper::searchFilterObject(
-            $sTablePrefix . '.type',
+            $sTableAlias . '.type',
             'Type',
             $filterOpts
         );

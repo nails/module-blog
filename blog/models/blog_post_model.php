@@ -58,7 +58,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->isPreviewMode  = true;
 
             $this->table          = NAILS_DB_PREFIX . 'blog_post_preview';
-            $this->tablePrefix    = 'bp';
+            $this->tableAlias    = 'bp';
 
             $this->tableCat       = NAILS_DB_PREFIX . 'blog_post_preview_category';
             $this->tableCatPrefix = 'bpc';
@@ -74,7 +74,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $this->isPreviewMode  = false;
 
             $this->table          = NAILS_DB_PREFIX . 'blog_post';
-            $this->tablePrefix    = 'bp';
+            $this->tableAlias    = 'bp';
 
             $this->tableCat       = NAILS_DB_PREFIX . 'blog_post_category';
             $this->tableCatPrefix = 'bpc';
@@ -761,12 +761,12 @@ class NAILS_Blog_post_model extends NAILS_Model
             if (!empty($data['include_siblings'])) {
 
                 $aSiblingData = array(
-                    'sort' => array($this->tablePrefix . '.published', 'desc'),
+                    'sort' => array($this->tableAlias . '.published', 'desc'),
                     'where' => array(
-                        array('column' => $this->tablePrefix . '.published >', 'value' => $post->published),
-                        array('column' => $this->tablePrefix . '.blog_id', 'value' => $post->blog->id),
-                        array('column' => $this->tablePrefix . '.is_published', 'value' => true),
-                        array('column' => $this->tablePrefix . '.published <=', 'value' => 'NOW()', 'escape' => false)
+                        array('column' => $this->tableAlias . '.published >', 'value' => $post->published),
+                        array('column' => $this->tableAlias . '.blog_id', 'value' => $post->blog->id),
+                        array('column' => $this->tableAlias . '.is_published', 'value' => true),
+                        array('column' => $this->tableAlias . '.published <=', 'value' => 'NOW()', 'escape' => false)
                     )
                 );
                 $aResult = $this->getAll(0, 1, $aSiblingData);
@@ -775,7 +775,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                     $post->siblings->next = $aResult[0];
                 }
 
-                $aSiblingData['where'][0]['column'] = $this->tablePrefix . '.published <';
+                $aSiblingData['where'][0]['column'] = $this->tableAlias . '.published <';
                 $aResult = $this->getAll(0, 1, $aSiblingData);
 
                 if (!empty($aResult)) {
@@ -852,28 +852,28 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         $this->db->select(
             array(
-                $this->tablePrefix . '.id',
-                $this->tablePrefix . '.blog_id',
+                $this->tableAlias . '.id',
+                $this->tableAlias . '.blog_id',
                 'b.label blog_label',
-                $this->tablePrefix . '.slug',
-                $this->tablePrefix . '.title',
-                $this->tablePrefix . '.image_id',
-                $this->tablePrefix . '.excerpt',
-                $this->tablePrefix . '.seo_title',
-                $this->tablePrefix . '.seo_description',
-                $this->tablePrefix . '.seo_keywords',
-                $this->tablePrefix . '.is_published',
-                $this->tablePrefix . '.is_deleted',
-                $this->tablePrefix . '.created',
-                $this->tablePrefix . '.created_by',
-                $this->tablePrefix . '.modified',
-                $this->tablePrefix . '.modified_by',
-                $this->tablePrefix . '.published',
-                $this->tablePrefix . '.comments_enabled',
-                $this->tablePrefix . '.comments_expire',
-                $this->tablePrefix . '.type',
-                $this->tablePrefix . '.audio_url',
-                $this->tablePrefix . '.video_url',
+                $this->tableAlias . '.slug',
+                $this->tableAlias . '.title',
+                $this->tableAlias . '.image_id',
+                $this->tableAlias . '.excerpt',
+                $this->tableAlias . '.seo_title',
+                $this->tableAlias . '.seo_description',
+                $this->tableAlias . '.seo_keywords',
+                $this->tableAlias . '.is_published',
+                $this->tableAlias . '.is_deleted',
+                $this->tableAlias . '.created',
+                $this->tableAlias . '.created_by',
+                $this->tableAlias . '.modified',
+                $this->tableAlias . '.modified_by',
+                $this->tableAlias . '.published',
+                $this->tableAlias . '.comments_enabled',
+                $this->tableAlias . '.comments_expire',
+                $this->tableAlias . '.type',
+                $this->tableAlias . '.audio_url',
+                $this->tableAlias . '.video_url',
                 'u.first_name',
                 'u.last_name',
                 'ue.email',
@@ -882,15 +882,15 @@ class NAILS_Blog_post_model extends NAILS_Model
             )
         );
 
-        $this->db->join(NAILS_DB_PREFIX . 'blog b', $this->tablePrefix . '.blog_id = b.id', 'LEFT');
-        $this->db->join(NAILS_DB_PREFIX . 'user u', $this->tablePrefix . '.modified_by = u.id', 'LEFT');
+        $this->db->join(NAILS_DB_PREFIX . 'blog b', $this->tableAlias . '.blog_id = b.id', 'LEFT');
+        $this->db->join(NAILS_DB_PREFIX . 'user u', $this->tableAlias . '.modified_by = u.id', 'LEFT');
         $this->db->join(NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT');
 
         // --------------------------------------------------------------------------
 
         if (!empty($data['include_body'])) {
 
-            $this->db->select($this->tablePrefix . '.body');
+            $this->db->select($this->tableAlias . '.body');
         }
 
         // --------------------------------------------------------------------------
@@ -903,23 +903,23 @@ class NAILS_Blog_post_model extends NAILS_Model
             }
 
             $data['or_like'][] = array(
-                'column' => $this->tablePrefix . '.title',
+                'column' => $this->tableAlias . '.title',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->tablePrefix . '.excerpt',
+                'column' => $this->tableAlias . '.excerpt',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->tablePrefix . '.body',
+                'column' => $this->tableAlias . '.body',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->tablePrefix . '.seo_description',
+                'column' => $this->tableAlias . '.seo_description',
                 'value'  => $data['keywords']
             );
             $data['or_like'][] = array(
-                'column' => $this->tablePrefix . '.seo_keywords',
+                'column' => $this->tableAlias . '.seo_keywords',
                 'value'  => $data['keywords']
             );
         }
@@ -994,7 +994,7 @@ class NAILS_Blog_post_model extends NAILS_Model
     public function getLatest($limit = 9, $data = null, $includeDeleted = false)
     {
         $this->db->limit($limit);
-        $this->db->order_by($this->tablePrefix . '.published', 'DESC');
+        $this->db->order_by($this->tableAlias . '.published', 'DESC');
         return $this->getAll(null, null, $data, $includeDeleted, 'GET_LATEST');
     }
 
@@ -1012,14 +1012,14 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         if ($year) {
 
-            $this->db->where('YEAR(' . $this->tablePrefix . '.published) = ', (int) $year);
+            $this->db->where('YEAR(' . $this->tableAlias . '.published) = ', (int) $year);
         }
 
         // --------------------------------------------------------------------------
 
         if ($month) {
 
-            $this->db->where('MONTH(' . $this->tablePrefix . '.published) = ', (int) $month);
+            $this->db->where('MONTH(' . $this->tableAlias . '.published) = ', (int) $month);
         }
 
         // --------------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Join the $this->tableCat table so we can WHERE on it.
         $this->db->join(
             $this->tableCat . ' ' . $this->tableCatPrefix,
-            $this->tableCatPrefix . '.post_id = ' . $this->tablePrefix . '.id'
+            $this->tableCatPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
         $this->db->join(
             NAILS_DB_PREFIX . 'blog_category bc',
@@ -1070,7 +1070,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
         }
 
-        $this->db->group_by($this->tablePrefix . '.id');
+        $this->db->group_by($this->tableAlias . '.id');
 
         return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
@@ -1089,7 +1089,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Join the $this->tableCat table so we can WHERE on it.
         $this->db->join(
             $this->tableCat . ' ' . $this->tableCatPrefix,
-            $this->tableCatPrefix . '.post_id = ' . $this->tablePrefix . '.id'
+            $this->tableCatPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
         $this->db->join(
             NAILS_DB_PREFIX . 'blog_category bc',
@@ -1130,7 +1130,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Join the $this->tableTag table so we can WHERE on it.
         $this->db->join(
             $this->tableTag . ' ' . $this->tableTagPrefix,
-            $this->tableTagPrefix . '.post_id = ' . $this->tablePrefix . '.id'
+            $this->tableTagPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
         $this->db->join(
             NAILS_DB_PREFIX . 'blog_tag bt',
@@ -1152,7 +1152,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
         }
 
-        $this->db->group_by($this->tablePrefix . '.id');
+        $this->db->group_by($this->tableAlias . '.id');
 
         return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
@@ -1171,7 +1171,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Join the $this->tableTag table so we can WHERE on it.
         $this->db->join(
             $this->tableTag . ' ' . $this->tableTagPrefix,
-            $this->tableTagPrefix . '.post_id = ' . $this->tablePrefix . '.id'
+            $this->tableTagPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
         $this->db->join(
             NAILS_DB_PREFIX . 'blog_tag bt',
@@ -1244,7 +1244,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             return array();
         }
 
-        $this->db->where_in($this->tablePrefix . '.id', $ids);
+        $this->db->where_in($this->tableAlias . '.id', $ids);
 
         return $this->getAll();
     }
