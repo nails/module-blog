@@ -148,6 +148,11 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
+        //  Get associations
+        $this->blog_model->getAssociations($this->data['post']->id);
+
+        // --------------------------------------------------------------------------
+
         //  Correct URL?
         if (!$bIsPreview && site_url(uri_string()) !== $this->data['post']->url) {
 
