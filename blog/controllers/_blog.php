@@ -11,10 +11,10 @@
  */
 
 use Nails\Factory;
-
+use App\Controller\Base;
 use Nails\Blog\Exception\SkinException;
 
-class NAILS_Blog_Controller extends NAILS_Controller
+class NAILS_Blog_Controller extends Base
 {
     protected $blog;
     protected $oSkin;
