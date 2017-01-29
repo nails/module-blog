@@ -12,7 +12,9 @@
 
 namespace Nails\Routes\Blog;
 
-class Routes
+use Nails\Common\Model\BaseRoutes;
+
+class Routes extends BaseRoutes
 {
     /**
      * Returns an array of routes for this module
@@ -21,15 +23,15 @@ class Routes
     public function getRoutes()
     {
         get_instance()->load->model('blog/blog_model');
-        $blogs  = get_instance()->blog_model->getAll();
-        $routes = array();
+        $aBlogs  = get_instance()->blog_model->getAll();
+        $aRoutes = [];
 
-        foreach ($blogs as $blog) {
+        foreach ($aBlogs as $oBlog) {
 
-            $blogUrl = str_replace(site_url(), '', $blog->url);
-            $routes[$blogUrl . '(/(.+))?'] = 'blog/' . $blog->id . '/$2';
+            $sBlogUrl                        = str_replace(site_url(), '', $oBlog->url);
+            $aRoutes[$sBlogUrl . '(/(.+))?'] = 'blog/' . $oBlog->id . '/$2';
         }
 
-        return $routes;
+        return $aRoutes;
     }
 }
