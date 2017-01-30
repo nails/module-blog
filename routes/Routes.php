@@ -13,6 +13,8 @@
 namespace Nails\Routes\Blog;
 
 use Nails\Common\Model\BaseRoutes;
+use Nails\Factory;
+use PDO;
 
 class Routes extends BaseRoutes
 {
@@ -22,14 +24,31 @@ class Routes extends BaseRoutes
      */
     public function getRoutes()
     {
-        get_instance()->load->model('blog/blog_model');
-        $aBlogs  = get_instance()->blog_model->getAll();
-        $aRoutes = [];
+        $oDb            = Factory::service('ConsoleDatabase', 'nailsapp/module-console');
+        $oModel         = Factory::model('Blog', 'nailsapp/module-blog');
+        $oSettingsModel = Factory::model('AppSetting');
+        $aRoutes        = [];
 
-        foreach ($aBlogs as $oBlog) {
+        $oRows = $oDb->query('SELECT id FROM ' . $oModel->getTableName());
+        if (!$oRows->rowCount()) {
+            return [];
+        }
 
-            $sBlogUrl                        = str_replace(site_url(), '', $oBlog->url);
-            $aRoutes[$sBlogUrl . '(/(.+))?'] = 'blog/' . $oBlog->id . '/$2';
+        while ($oRow = $oRows->fetch(PDO::FETCH_OBJ)) {
+
+            //  Look up the setting
+            $oSettings = $oDb->query('
+              SELECT * FROM ' . $oSettingsModel->getTableName() . '
+              WHERE `grouping` = "blog-' . $oRow->id . '"
+              AND `key` = "url"
+              
+            ');
+
+            $sUrl = json_decode($oSettings->fetch(PDO::FETCH_OBJ)->value) ?: 'blog';
+            $sUrl = preg_replace('/^\//', '', $sUrl);
+            $sUrl = preg_replace('/\/$/', '', $sUrl);
+
+            $aRoutes[$sUrl . '(/(.+))?'] = 'blog/' . $oRow->id . '/$2';
         }
 
         return $aRoutes;

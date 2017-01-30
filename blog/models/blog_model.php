@@ -2,8 +2,8 @@
 
 /**
  * This model allows for the management of blogs.
- *
- * @TODO: On deletion of blog, wipe blog settings
+ * @todo: Move the logic from here into a Factory loaded models
+ * @todo: On deletion of blog, wipe blog settings
  *
  * @package     Nails
  * @subpackage  module-blog

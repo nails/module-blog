@@ -2,6 +2,7 @@
 
 /**
  * This model handles everything to do with blog posts.
+ * @todo: Move the logic from here into a Factory loaded models
  *
  * @package     Nails
  * @subpackage  module-blog
