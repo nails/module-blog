@@ -1275,7 +1275,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         $hitData['created']    = $oDate->format('Y-m-d H:i:s');
         $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 
-        if ($hitData['user_id'] && $this->user_model->isAdmin($hitData['user_id'])) {
+        if ($hitData['user_id'] && isAdmin($hitData['user_id'])) {
 
             $this->setError('Administrators cannot affect the post\'s popularity.');
             return false;
