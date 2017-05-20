@@ -10,19 +10,17 @@
  * @link
  */
 
-namespace Nails\Routes\Blog;
+namespace Nails\Blog;
 
-use Nails\Common\Model\BaseRoutes;
-use Nails\Factory;
-use PDO;
+use Nails\Common\Interfaces\RouteGenerator;
 
-class Routes extends BaseRoutes
+class Routes implements RouteGenerator
 {
     /**
      * Returns an array of routes for this module
      * @return array
      */
-    public function getRoutes()
+    public static function generate()
     {
         $oDb            = Factory::service('ConsoleDatabase', 'nailsapp/module-console');
         $oModel         = Factory::model('Blog', 'nailsapp/module-blog');
@@ -41,7 +39,7 @@ class Routes extends BaseRoutes
               SELECT * FROM ' . $oSettingsModel->getTableName() . '
               WHERE `grouping` = "blog-' . $oRow->id . '"
               AND `key` = "url"
-              
+
             ');
 
             $sUrl = json_decode($oSettings->fetch(PDO::FETCH_OBJ)->value) ?: 'blog';
