@@ -444,10 +444,11 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->library('uploadify');
-        $this->asset->library('MUSTACHE');
-        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset = Factory::service('Asset');
+        $oAsset->library('uploadify');
+        $oAsset->library('MUSTACHE');
+        $oAsset->load('moment/moment.js', 'NAILS-BOWER');
+        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -458,7 +459,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
-        $this->asset->inline($sInlineJs, 'JS');
+        $oAsset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 
@@ -767,10 +768,11 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->library('uploadify');
-        $this->asset->library('MUSTACHE');
-        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset = Factory::service('Asset');
+        $oAsset->library('uploadify');
+        $oAsset->library('MUSTACHE');
+        $oAsset->load('moment/moment.js', 'NAILS-BOWER');
+        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         if ($this->data['post']->is_published) {
 
@@ -794,7 +796,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
-        $this->asset->inline($sInlineJs, 'JS');
+        $oAsset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 
