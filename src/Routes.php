@@ -13,6 +13,7 @@
 namespace Nails\Blog;
 
 use Nails\Common\Interfaces\RouteGenerator;
+use Nails\Factory;
 
 class Routes implements RouteGenerator
 {
