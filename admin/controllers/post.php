@@ -438,8 +438,9 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
+        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations();
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
+        $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
@@ -456,7 +457,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'CREATE\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $oCdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
         $oAsset->inline($sInlineJs, 'JS');
@@ -762,8 +763,9 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
+        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
+        $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
@@ -793,7 +795,7 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'EDIT\', \'' . $sInitalPublishState . '\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $oCdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
         $oAsset->inline($sInlineJs, 'JS');
