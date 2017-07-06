@@ -2,7 +2,7 @@
 
 /**
  * This model handles everything to do with blog posts.
- * @todo: Move the logic from here into a Factory loaded models
+ * @todo        : Move the logic from here into a Factory loaded models
  *
  * @package     Nails
  * @subpackage  module-blog
@@ -33,33 +33,35 @@ class NAILS_Blog_post_model extends NAILS_Model
         $this->tableHit       = NAILS_DB_PREFIX . 'blog_post_hit';
         $this->tableHitPrefix = 'bph';
 
-        $this->tableLabelColumn = 'title';
+        $this->tableLabelColumn  = 'title';
         $this->destructiveDelete = false;
 
-        $this->defaultSortColumn  = 'published';
-        $this->defaultSortOrder   = 'DESC';
+        $this->defaultSortColumn = 'published';
+        $this->defaultSortOrder  = 'DESC';
 
         // --------------------------------------------------------------------------
 
         //  Define reserved words (for slugs, basically just controller methods)
-        $this->reservedWords = array('index', 'single', 'category','tag', 'archive', 'preview');
+        $this->reservedWords = ['index', 'single', 'category', 'tag', 'archive', 'preview'];
     }
 
     // --------------------------------------------------------------------------
 
     /**
      * Sets the table names to use, either the normal tables, or the preview tables.
+     *
      * @param  boolean $bEnabled Whether to use the preview tables or not
+     *
      * @return void
      */
     public function usePreviewTables($bEnabled)
     {
         if (!empty($bEnabled)) {
 
-            $this->isPreviewMode  = true;
+            $this->isPreviewMode = true;
 
-            $this->table          = NAILS_DB_PREFIX . 'blog_post_preview';
-            $this->tableAlias    = 'bp';
+            $this->table      = NAILS_DB_PREFIX . 'blog_post_preview';
+            $this->tableAlias = 'bp';
 
             $this->tableCat       = NAILS_DB_PREFIX . 'blog_post_preview_category';
             $this->tableCatPrefix = 'bpc';
@@ -72,10 +74,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         } else {
 
-            $this->isPreviewMode  = false;
+            $this->isPreviewMode = false;
 
-            $this->table          = NAILS_DB_PREFIX . 'blog_post';
-            $this->tableAlias    = 'bp';
+            $this->table      = NAILS_DB_PREFIX . 'blog_post';
+            $this->tableAlias = 'bp';
 
             $this->tableCat       = NAILS_DB_PREFIX . 'blog_post_category';
             $this->tableCatPrefix = 'bpc';
@@ -92,22 +94,22 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Creates a new object
-     * @param  array $data The data to create the object with
+     *
+     * @param  array $aData The data to create the object with
+     *
      * @return mixed
      **/
-    public function create($data = array())
+    public function create($aData = [], $bReturnObject = false)
     {
         //  Prepare slug
         $counter = 0;
 
-        if (!$this->isPreviewMode && empty($data['title'])) {
-
+        if (!$this->isPreviewMode && empty($aData['title'])) {
             $this->setError('Title missing');
             return false;
         }
 
-        if (empty($data['blog_id'])) {
-
+        if (empty($aData['blog_id'])) {
             $this->setError('Blog ID missing');
             return false;
         }
@@ -117,12 +119,12 @@ class NAILS_Blog_post_model extends NAILS_Model
         /**
          * Validate or generate a slug
          */
-        $sSlug = !empty($data['slug']) ? $data['slug'] : '';
-        $sTitle = !empty($data['title']) ? $data['title'] : '';
+        $sSlug  = !empty($aData['slug']) ? $aData['slug'] : '';
+        $sTitle = !empty($aData['title']) ? $aData['title'] : '';
 
-        $data['slug'] = $this->validateSlug($sSlug, $sTitle);
+        $aData['slug'] = $this->validateSlug($sSlug, $sTitle);
 
-        if (!$data['slug']) {
+        if (!$aData['slug']) {
 
             return false;
         }
@@ -130,78 +132,67 @@ class NAILS_Blog_post_model extends NAILS_Model
         // --------------------------------------------------------------------------
 
         //  Set data
-        $this->db->set('blog_id', $data['blog_id']);
-        $this->db->set('title', $data['title']);
-        $this->db->set('slug', $data['slug']);
+        $this->db->set('blog_id', $aData['blog_id']);
+        $this->db->set('title', $aData['title']);
+        $this->db->set('slug', $aData['slug']);
 
-        if (isset($data['type'])) {
-
-            $this->db->set('type', $data['type']);
+        if (isset($aData['type'])) {
+            $this->db->set('type', $aData['type']);
         }
 
-        if (isset($data['body'])) {
-
-            $this->db->set('body', $data['body']);
+        if (isset($aData['body'])) {
+            $this->db->set('body', $aData['body']);
         }
 
-        if (isset($data['seo_title'])) {
-
-            $this->db->set('seo_title', $data['title']);
+        if (isset($aData['seo_title'])) {
+            $this->db->set('seo_title', $aData['title']);
         }
 
-        if (isset($data['seo_description'])) {
-
-            $this->db->set('seo_description', $data['seo_description']);
+        if (isset($aData['seo_description'])) {
+            $this->db->set('seo_description', $aData['seo_description']);
         }
 
-        if (isset($data['seo_keywords'])) {
-
-            $this->db->set('seo_keywords', $data['seo_keywords']);
+        if (isset($aData['seo_keywords'])) {
+            $this->db->set('seo_keywords', $aData['seo_keywords']);
         }
 
-        if (isset($data['is_published'])) {
-
-            $this->db->set('is_published', $data['is_published']);
+        if (isset($aData['is_published'])) {
+            $this->db->set('is_published', $aData['is_published']);
         }
 
         //  Safety first!
-        if (array_key_exists('image_id', $data)) {
+        if (array_key_exists('image_id', $aData)) {
 
-            $imageId = (int) $data['image_id'];
+            $imageId = (int) $aData['image_id'];
             $imageId = !$imageId ? null : $imageId;
 
             $this->db->set('image_id', $imageId);
         }
 
-        if (isset($data['video_url'])) {
-
-            $this->db->set('video_url', $data['video_url']);
+        if (isset($aData['video_url'])) {
+            $this->db->set('video_url', $aData['video_url']);
         }
 
-        if (isset($data['audio_url'])) {
-
-            $this->db->set('audio_url', $data['audio_url']);
+        if (isset($aData['audio_url'])) {
+            $this->db->set('audio_url', $aData['audio_url']);
         }
 
         //  Excerpt
-        if (!empty($data['excerpt'])) {
-
-            $this->db->set('excerpt', trim($data['excerpt']));
-
-        } elseif (!empty($data['body'])) {
-
-            $this->db->set('excerpt', word_limiter(trim(strip_tags($data['body']))), 50);
+        if (!empty($aData['excerpt'])) {
+            $this->db->set('excerpt', trim($aData['excerpt']));
+        } elseif (!empty($aData['body'])) {
+            $this->db->set('excerpt', word_limiter(trim(strip_tags($aData['body']))), 50);
         }
 
         //  Publish date
-        if (!empty($data['is_published']) && isset($data['published'])) {
+        if (!empty($aData['is_published']) && isset($aData['published'])) {
 
             //  Published with date set
-            $published = strtotime($data['published']);
+            $published = strtotime($aData['published']);
 
             if ($published) {
 
-                $published = toNailsDatetime($data['published']);
+                $published = toNailsDatetime($aData['published']);
                 $this->db->set('published', $published);
 
             } else {
@@ -211,22 +202,19 @@ class NAILS_Blog_post_model extends NAILS_Model
             }
 
         } else {
-
             //  No date set, use NOW()
             $this->db->set('published', 'NOW()', false);
         }
 
-        if (isset($data['comments_enabled'])) {
-
-            $this->db->set('comments_enabled', (bool) $data['comments_enabled']);
+        if (isset($aData['comments_enabled'])) {
+            $this->db->set('comments_enabled', (bool) $aData['comments_enabled']);
         }
 
-        if (isset($data['comments_expire'])) {
-
-            if (empty($data['comments_expire'])) {
+        if (isset($aData['comments_expire'])) {
+            if (empty($aData['comments_expire'])) {
                 $this->db->set('comments_expire', null);
             } else {
-                $this->db->set('comments_expire', $data['comments_expire']);
+                $this->db->set('comments_expire', $aData['comments_expire']);
             }
         }
 
@@ -242,20 +230,17 @@ class NAILS_Blog_post_model extends NAILS_Model
             $id = $this->db->insert_id();
 
             //  Add Gallery items, if any
-            if (!empty($data['gallery'])) {
+            if (!empty($aData['gallery'])) {
 
-                $galleryData = array();
+                $galleryData = [];
 
-                foreach ($data['gallery'] as $order => $imageId) {
-
+                foreach ($aData['gallery'] as $order => $imageId) {
                     if ((int) $imageId) {
-
-                        $galleryData[] = array('post_id' => $id, 'image_id' => $imageId, 'order' => $order);
+                        $galleryData[] = ['post_id' => $id, 'image_id' => $imageId, 'order' => $order];
                     }
                 }
 
                 if ($galleryData) {
-
                     $this->db->insert_batch($this->tableImg, $galleryData);
                 }
             }
@@ -263,25 +248,23 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Add Categories and tags, if any
-            if (!empty($data['categories'])) {
+            if (!empty($aData['categories'])) {
 
-                $categoryData = array();
+                $categoryData = [];
 
-                foreach ($data['categories'] as $catId) {
-
-                    $categoryData[] = array('post_id' => $id, 'category_id' => $catId);
+                foreach ($aData['categories'] as $catId) {
+                    $categoryData[] = ['post_id' => $id, 'category_id' => $catId];
                 }
 
                 $this->db->insert_batch($this->tableCat, $categoryData);
             }
 
-            if (!empty($data['tags'])) {
+            if (!empty($aData['tags'])) {
 
-                $tagData = array();
+                $tagData = [];
 
-                foreach ($data['tags'] as $tagId) {
-
-                    $tagData[] = array('post_id' => $id, 'tag_id' => $tagId);
+                foreach ($aData['tags'] as $tagId) {
+                    $tagData[] = ['post_id' => $id, 'tag_id' => $tagId];
                 }
 
                 $this->db->insert_batch($this->tableTag, $tagData);
@@ -290,28 +273,25 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Add associations, if any
-            if (!empty($data['associations'])) {
+            if (!empty($aData['associations'])) {
 
                 //  Fetch associations config
                 $oConfig      = Factory::service('Config');
                 $associations = $oConfig->item('blog_post_associations');
 
-                foreach ($data['associations'] as $index => $association) {
+                foreach ($aData['associations'] as $index => $association) {
 
                     if (!isset($associations[$index])) {
-
                         continue;
                     }
 
-                    $associationData = array();
+                    $associationData = [];
 
                     foreach ($association as $associationId) {
-
-                        $associationData[] = array('post_id' => $id, 'associated_id' => $associationId);
+                        $associationData[] = ['post_id' => $id, 'associated_id' => $associationId];
                     }
 
                     if ($associationData) {
-
                         $this->db->insert_batch($associations[$index]->target, $associationData);
                     }
                 }
@@ -319,10 +299,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             // --------------------------------------------------------------------------
 
-            return $id;
+            return $bReturnObject ? $this->getById($id) : $id;
 
         } else {
-
             return false;
         }
     }
@@ -331,11 +310,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Updates an existing object
+     *
      * @param  int   $id   The ID of the object to update
      * @param  array $data The data to update the object with
+     *
      * @return bool
      **/
-    public function update($id, $data = array())
+    public function update($id, $data = [])
     {
         //  If we're deleting a post, skip all the rest
         if (!empty($data['is_deleted'])) {
@@ -346,7 +327,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         /**
          * Validate or generate a slug
          */
-        $sSlug = !empty($data['slug']) ? $data['slug'] : '';
+        $sSlug  = !empty($data['slug']) ? $data['slug'] : '';
         $sTitle = !empty($data['title']) ? $data['title'] : '';
 
         $sSlug = $this->validateSlug($sSlug, $sTitle, $id);
@@ -495,13 +476,13 @@ class NAILS_Blog_post_model extends NAILS_Model
             //  Recreate new ones
             if ($data['gallery']) {
 
-                $galleryData = array();
+                $galleryData = [];
 
                 foreach ($data['gallery'] as $order => $imageId) {
 
                     if ((int) $imageId) {
 
-                        $galleryData[] = array('post_id' => $id, 'image_id' => $imageId, 'order' => $order);
+                        $galleryData[] = ['post_id' => $id, 'image_id' => $imageId, 'order' => $order];
                     }
                 }
 
@@ -524,11 +505,11 @@ class NAILS_Blog_post_model extends NAILS_Model
             //  Recreate new ones
             if ($data['categories']) {
 
-                $categoryData = array();
+                $categoryData = [];
 
                 foreach ($data['categories'] as $catId) {
 
-                    $categoryData[] = array('post_id' => $id, 'category_id' => $catId);
+                    $categoryData[] = ['post_id' => $id, 'category_id' => $catId];
                 }
 
                 $this->db->insert_batch($this->tableCat, $categoryData);
@@ -544,11 +525,11 @@ class NAILS_Blog_post_model extends NAILS_Model
             //  Recreate new ones
             if ($data['tags']) {
 
-                $tagData = array();
+                $tagData = [];
 
                 foreach ($data['tags'] as $tagId) {
 
-                    $tagData[] = array('post_id' => $id, 'tag_id' => $tagId);
+                    $tagData[] = ['post_id' => $id, 'tag_id' => $tagId];
                 }
 
                 $this->db->insert_batch($this->tableTag, $tagData);
@@ -576,11 +557,11 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $this->db->delete($associations[$index]->target);
 
                 //  Add new ones
-                $associationData = array();
+                $associationData = [];
 
                 foreach ($association as $associationId) {
 
-                    $associationData[] = array('post_id' => $id, 'associated_id' => $associationId);
+                    $associationData[] = ['post_id' => $id, 'associated_id' => $associationId];
                 }
 
                 if ($associationData) {
@@ -599,9 +580,11 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Validates a slug, if supplied, generates one from the title, if not
+     *
      * @param  string  $sSlug  The slug to test
      * @param  string  $sTitle The title to generate a slug from if no slug available
      * @param  integer $siId   The ID of the post to ignore from a comparison, if any
+     *
      * @return string
      */
     private function validateSlug($sSlug, $sTitle, $iId = null)
@@ -624,7 +607,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (empty($sSlug)) {
 
             $prefix = array_search($sSlug, $this->reservedWords) !== false ? 'post-' : '';
-            $sSlug = $this->generateSlug($sTitle, $prefix);
+            $sSlug  = $this->generateSlug($sTitle, $prefix);
 
         } else {
 
@@ -652,10 +635,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetches all posts
-     * @param int    $page           The page number of the results, if null then no pagination
-     * @param int    $perPage        How many items per page of paginated results
-     * @param mixed  $data           Any data to pass to getCountCommon()
-     * @param bool   $includeDeleted If non-destructive delete is enabled then include deleted items
+     *
+     * @param int   $page           The page number of the results, if null then no pagination
+     * @param int   $perPage        How many items per page of paginated results
+     * @param mixed $data           Any data to pass to getCountCommon()
+     * @param bool  $includeDeleted If non-destructive delete is enabled then include deleted items
+     *
      * @return array
      **/
     public function getAll($page = null, $perPage = null, $data = null, $includeDeleted = false)
@@ -668,7 +653,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         foreach ($posts as $post) {
 
             //  Fetch associated categories
-            $post->categories = array();
+            $post->categories = [];
 
             if (!empty($data['include_categories'])) {
 
@@ -693,7 +678,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Fetch associated tags
-            $post->tags = array();
+            $post->tags = [];
 
             if (!empty($data['include_tags'])) {
 
@@ -716,7 +701,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Fetch other associations
-            $post->associations = array();
+            $post->associations = [];
 
             if (!empty($data['include_associations']) && $associations) {
 
@@ -743,7 +728,7 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Fetch associated images
-            $post->gallery = array();
+            $post->gallery = [];
             if (!empty($data['include_gallery'])) {
 
                 $this->db->where('post_id', $post->id);
@@ -755,29 +740,29 @@ class NAILS_Blog_post_model extends NAILS_Model
             // --------------------------------------------------------------------------
 
             //  Fetch siblings
-            $post->siblings = new \stdClass();
+            $post->siblings       = new \stdClass();
             $post->siblings->next = null;
             $post->siblings->prev = null;
 
             if (!empty($data['include_siblings'])) {
 
-                $aSiblingData = array(
-                    'sort' => array($this->tableAlias . '.published', 'desc'),
-                    'where' => array(
-                        array('column' => $this->tableAlias . '.published >', 'value' => $post->published),
-                        array('column' => $this->tableAlias . '.blog_id', 'value' => $post->blog->id),
-                        array('column' => $this->tableAlias . '.is_published', 'value' => true),
-                        array('column' => $this->tableAlias . '.published <=', 'value' => 'NOW()', 'escape' => false)
-                    )
-                );
-                $aResult = $this->getAll(0, 1, $aSiblingData);
+                $aSiblingData = [
+                    'sort'  => [$this->tableAlias . '.published', 'desc'],
+                    'where' => [
+                        ['column' => $this->tableAlias . '.published >', 'value' => $post->published],
+                        ['column' => $this->tableAlias . '.blog_id', 'value' => $post->blog->id],
+                        ['column' => $this->tableAlias . '.is_published', 'value' => true],
+                        ['column' => $this->tableAlias . '.published <=', 'value' => 'NOW()', 'escape' => false],
+                    ],
+                ];
+                $aResult      = $this->getAll(0, 1, $aSiblingData);
 
                 if (!empty($aResult)) {
                     $post->siblings->next = $aResult[0];
                 }
 
                 $aSiblingData['where'][0]['column'] = $this->tableAlias . '.published <';
-                $aResult = $this->getAll(0, 1, $aSiblingData);
+                $aResult                            = $this->getAll(0, 1, $aSiblingData);
 
                 if (!empty($aResult)) {
                     $post->siblings->prev = $aResult[0];
@@ -794,8 +779,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetch a pst by it's ID
-     * @param  int   $id The ID of the object to fetch
+     *
+     * @param  int   $id   The ID of the object to fetch
      * @param  mixed $data Any data to pass to getCountCommon()
+     *
      * @return stdClass
      **/
     public function getById($id, $data = null)
@@ -808,8 +795,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetch a post by it's slug
+     *
      * @param  int   $slug The slug of the object to fetch
      * @param  mixed $data Any data to pass to getCountCommon()
+     *
      * @return stdClass
      **/
     public function getBySlug($id, $data = null)
@@ -829,7 +818,8 @@ class NAILS_Blog_post_model extends NAILS_Model
      * Nails style guidelines) will be interpreted incorrectly.
      *
      * @param  mixed $id_slug The ID or slug of the object to fetch
-     * @param  mixed $data Any data to pass to getCountCommon()
+     * @param  mixed $data    Any data to pass to getCountCommon()
+     *
      * @return stdClass
      **/
     public function getByIdOrSlug($id, $data = null)
@@ -847,12 +837,13 @@ class NAILS_Blog_post_model extends NAILS_Model
      * methods and the count() method.
      *
      * @param array $data Data passed from the calling method
+     *
      * @return void
      **/
-    protected function getCountCommon($data = array())
+    protected function getCountCommon($data = [])
     {
         $this->db->select(
-            array(
+            [
                 $this->tableAlias . '.id',
                 $this->tableAlias . '.blog_id',
                 'b.label blog_label',
@@ -879,8 +870,8 @@ class NAILS_Blog_post_model extends NAILS_Model
                 'u.last_name',
                 'ue.email',
                 'u.profile_img',
-                'u.gender'
-            )
+                'u.gender',
+            ]
         );
 
         $this->db->join(NAILS_DB_PREFIX . 'blog b', $this->tableAlias . '.blog_id = b.id', 'LEFT');
@@ -900,29 +891,29 @@ class NAILS_Blog_post_model extends NAILS_Model
 
             if (empty($data['or_like'])) {
 
-                $data['or_like'] = array();
+                $data['or_like'] = [];
             }
 
-            $data['or_like'][] = array(
+            $data['or_like'][] = [
                 'column' => $this->tableAlias . '.title',
-                'value'  => $data['keywords']
-            );
-            $data['or_like'][] = array(
+                'value'  => $data['keywords'],
+            ];
+            $data['or_like'][] = [
                 'column' => $this->tableAlias . '.excerpt',
-                'value'  => $data['keywords']
-            );
-            $data['or_like'][] = array(
+                'value'  => $data['keywords'],
+            ];
+            $data['or_like'][] = [
                 'column' => $this->tableAlias . '.body',
-                'value'  => $data['keywords']
-            );
-            $data['or_like'][] = array(
+                'value'  => $data['keywords'],
+            ];
+            $data['or_like'][] = [
                 'column' => $this->tableAlias . '.seo_description',
-                'value'  => $data['keywords']
-            );
-            $data['or_like'][] = array(
+                'value'  => $data['keywords'],
+            ];
+            $data['or_like'][] = [
                 'column' => $this->tableAlias . '.seo_keywords',
-                'value'  => $data['keywords']
-            );
+                'value'  => $data['keywords'],
+            ];
         }
 
         // --------------------------------------------------------------------------
@@ -939,13 +930,14 @@ class NAILS_Blog_post_model extends NAILS_Model
      * will alter the $data array so that all the include_* parameters are set.
      *
      * @param string $data Data passed from the calling method
+     *
      * @return void
      **/
     protected function includeEverything($data)
     {
         if (is_null($data)) {
 
-            $data = array();
+            $data = [];
         }
 
         if (!isset($data['include_body'])) {
@@ -987,9 +979,11 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetches latest posts
-     * @param  int   $limit The number of posts to return
-     * @param  mixed $data Any data to pass to getCountCommon()
+     *
+     * @param  int   $limit          The number of posts to return
+     * @param  mixed $data           Any data to pass to getCountCommon()
      * @param  bool  $includeDeleted If non-destructive delete is enabled then include deleted items
+     *
      * @return array
      **/
     public function getLatest($limit = 9, $data = null, $includeDeleted = false)
@@ -1003,10 +997,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Fetches posts published within a certain year and/or month
-     * @param  int $year The year to restrict the search to
-     * @param  int $month The month to restrict the search to
-     * @param  mixed $data Any data to pass to getCountCommon()
-     * @param  bool $includeDeleted If non-destructive delete is enabled then include deleted items
+     *
+     * @param  int   $year           The year to restrict the search to
+     * @param  int   $month          The month to restrict the search to
+     * @param  mixed $data           Any data to pass to getCountCommon()
+     * @param  bool  $includeDeleted If non-destructive delete is enabled then include deleted items
+     *
      * @return array
      **/
     public function getArchive($year = null, $month = null, $data = null, $includeDeleted = false)
@@ -1032,11 +1028,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Gets posts which are in a particular category
+     *
      * @param  mixed   $categoryIdSlug The category's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
      * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     *
      * @return array
      */
     public function getWithCategory($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
@@ -1054,21 +1052,21 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Set the where
         if (is_null($data)) {
 
-            $data = array('where' => array());
+            $data = ['where' => []];
         }
 
         if (!isset($data['where'])) {
 
-            $data['where'] = array();
+            $data['where'] = [];
         }
 
         if (is_numeric($categoryIdSlug)) {
 
-            $data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
+            $data['where'][] = ['column' => 'bc.id', 'value' => (int) $categoryIdSlug];
 
         } else {
 
-            $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+            $data['where'][] = ['column' => 'bc.slug', 'value' => $categoryIdSlug];
         }
 
         $this->db->group_by($this->tableAlias . '.id');
@@ -1080,9 +1078,11 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Count the number of posts in a particular category
+     *
      * @param  mixed   $categoryIdSlug The category's ID or slug
      * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     *
      * @return int
      */
     public function countWithCategory($categoryIdSlug, $data = null, $includeDeleted = false)
@@ -1100,16 +1100,16 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Set the where
         if (is_null($data)) {
 
-            $data = array('where' => array());
+            $data = ['where' => []];
         }
 
         if (is_numeric($categoryIdSlug)) {
 
-            $data['where'][] = array('column' => 'bc.id', 'value' => (int) $categoryIdSlug);
+            $data['where'][] = ['column' => 'bc.id', 'value' => (int) $categoryIdSlug];
 
         } else {
 
-            $data['where'][] = array('column' => 'bc.slug', 'value' => $categoryIdSlug);
+            $data['where'][] = ['column' => 'bc.slug', 'value' => $categoryIdSlug];
         }
 
         return $this->countAll($data, $includeDeleted);
@@ -1119,11 +1119,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Gets posts which are in a particular tag
+     *
      * @param  mixed   $tagIdSlug      The tag's ID or slug
      * @param  int     $page           The page to render
      * @param  int     $perPage        The number of posts per page
      * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     *
      * @return array
      */
     public function getWithTag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
@@ -1141,16 +1143,16 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Set the where
         if (is_null($data)) {
 
-            $data = array('where' => array());
+            $data = ['where' => []];
         }
 
         if (is_numeric($tagIdSlug)) {
 
-            $data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
+            $data['where'][] = ['column' => 'bt.id', 'value' => (int) $tagIdSlug];
 
         } else {
 
-            $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+            $data['where'][] = ['column' => 'bt.slug', 'value' => $tagIdSlug];
         }
 
         $this->db->group_by($this->tableAlias . '.id');
@@ -1162,9 +1164,11 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Count the number of posts in a particular tag
+     *
      * @param  mixed   $tagIdSlug      The tag's ID or slug
      * @param  array   $data           Data to pass to getCountCommon()
      * @param  boolean $includeDeleted Whether to include deleted posts in the result
+     *
      * @return int
      */
     public function countWithTag($tagIdSlug, $data = null, $includeDeleted = false)
@@ -1182,16 +1186,16 @@ class NAILS_Blog_post_model extends NAILS_Model
         //  Set the where
         if (is_null($data)) {
 
-            $data = array('where' => array());
+            $data = ['where' => []];
         }
 
         if (is_numeric($tagIdSlug)) {
 
-            $data['where'][] = array('column' => 'bt.id', 'value' => (int) $tagIdSlug);
+            $data['where'][] = ['column' => 'bt.id', 'value' => (int) $tagIdSlug];
 
         } else {
 
-            $data['where'][] = array('column' => 'bt.slug', 'value' => $tagIdSlug);
+            $data['where'][] = ['column' => 'bt.slug', 'value' => $tagIdSlug];
         }
 
         return $this->countAll($data, $includeDeleted);
@@ -1199,12 +1203,12 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     // --------------------------------------------------------------------------
 
-    public function countDrafts($blogId, $data = array(), $includeDeleted = false)
+    public function countDrafts($blogId, $data = [], $includeDeleted = false)
     {
-        $data['where'] = array(
-            array('blog_id', $blogId),
-            array('is_published', false)
-        );
+        $data['where'] = [
+            ['blog_id', $blogId],
+            ['is_published', false],
+        ];
 
         return $this->countAll($data, $includeDeleted);
     }
@@ -1213,8 +1217,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Get posts with a particular association
+     *
      * @param  int $associationIndex The association's index
      * @param  int $associatedId     The Id of the item to be associated with
+     *
      * @return array
      */
     public function getWithAssociation($associationIndex, $associatedId)
@@ -1226,14 +1232,14 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if (!isset($associations[$associationIndex])) {
 
-            return array();
+            return [];
         }
 
         $this->db->select('post_id');
         $this->db->where('associated_id', $associatedId);
         $posts = $this->db->get($associations[$associationIndex]->target)->result();
 
-        $ids = array();
+        $ids = [];
         foreach ($posts as $post) {
 
             $ids[] = $post->post_id;
@@ -1242,7 +1248,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (empty($ids)) {
 
             //  No IDs? No posts.
-            return array();
+            return [];
         }
 
         $this->db->where_in($this->tableAlias . '.id', $ids);
@@ -1254,10 +1260,11 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Add a hit to a post
-     * @param int    $id   The post's ID
-     * @param array  $data Details about the hit
+     *
+     * @param int   $id   The post's ID
+     * @param array $data Details about the hit
      */
-    public function addHit($id, $data = array())
+    public function addHit($id, $data = [])
     {
         if (!$id) {
 
@@ -1268,7 +1275,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         // --------------------------------------------------------------------------
 
         $oDate                 = Factory::factory('DateTime');
-        $hitData               = array();
+        $hitData               = [];
         $hitData['post_id']    = $id;
         $hitData['user_id']    = empty($data['user_id']) ? null : $data['user_id'];
         $hitData['ip_address'] = $this->input->ipAddress();
@@ -1322,13 +1329,13 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function getTypes()
     {
-        $oResult = $this->db->query('SHOW COLUMNS FROM `' . $this->table. '` LIKE "type"')->row();
-        $sTypes = $oResult->Type;
-        $sTypes = preg_replace('/enum\((.*)\)/', '$1', $sTypes);
-        $sTypes = str_replace("'", '', $sTypes);
-        $aTypes = explode(',', $sTypes);
+        $oResult = $this->db->query('SHOW COLUMNS FROM `' . $this->table . '` LIKE "type"')->row();
+        $sTypes  = $oResult->Type;
+        $sTypes  = preg_replace('/enum\((.*)\)/', '$1', $sTypes);
+        $sTypes  = str_replace("'", '', $sTypes);
+        $aTypes  = explode(',', $sTypes);
 
-        $aOut = array();
+        $aOut = [];
 
         foreach ($aTypes as $sType) {
             $aOut[$sType] = ucwords(strtolower($sType));
@@ -1341,8 +1348,10 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Format a posts's URL
+     *
      * @param  string $slug   The post's slug
      * @param  int    $blogId The blog's ID
+     *
      * @return string
      */
     public function formatUrl($slug, $blogId)
@@ -1364,14 +1373,15 @@ class NAILS_Blog_post_model extends NAILS_Model
      * @param  array  $aIntegers Fields which should be cast as integers if numerical and not null
      * @param  array  $aBools    Fields which should be cast as booleans if not null
      * @param  array  $aFloats   Fields which should be cast as floats if not null
+     *
      * @return void
      */
     protected function formatObject(
         &$oObj,
-        $aData = array(),
-        $aIntegers = array(),
-        $aBools = array(),
-        $aFloats = array()
+        $aData = [],
+        $aIntegers = [],
+        $aBools = [],
+        $aFloats = []
     ) {
 
         parent::formatObject($oObj, $aData, $aIntegers, $aBools, $aFloats);
@@ -1408,10 +1418,10 @@ class NAILS_Blog_post_model extends NAILS_Model
         switch ($oObj->type) {
 
             case 'VIDEO':
-                $oObj->video = new \stdClass();
-                $oObj->video->id = $this->extractYoutubeId($oObj->video_url);
+                $oObj->video       = new \stdClass();
+                $oObj->video->id   = $this->extractYoutubeId($oObj->video_url);
                 $oObj->video->type = null;
-                $oObj->video->url = null;
+                $oObj->video->url  = null;
 
                 if (!empty($oObj->video->id)) {
                     $oObj->video->type = 'YOUTUBE';
@@ -1426,10 +1436,10 @@ class NAILS_Blog_post_model extends NAILS_Model
                 break;
 
             case 'AUDIO':
-                $oObj->audio = new \stdClass();
-                $oObj->audio->id = $this->extractSpotifyId($oObj->audio_url);
+                $oObj->audio       = new \stdClass();
+                $oObj->audio->id   = $this->extractSpotifyId($oObj->audio_url);
                 $oObj->audio->type = null;
-                $oObj->audio->url = null;
+                $oObj->audio->url  = null;
 
                 if (!empty($oObj->audio->id)) {
                     $oObj->audio->type = 'SPOTIFY';
@@ -1438,7 +1448,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                 break;
 
             case 'PHOTO':
-                $oObj->photo = new \stdClass();
+                $oObj->photo     = new \stdClass();
                 $oObj->photo->id = (int) $oObj->image_id ? (int) $oObj->image_id : null;
                 break;
         }
@@ -1452,7 +1462,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Extracts the ID from a YouTube URL
+     *
      * @param  string $sUrl The YouTube URL
+     *
      * @return string
      */
     public function extractYoutubeId($sUrl)
@@ -1480,7 +1492,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Extracts the ID from a Vimeo URL
+     *
      * @param  string $sUrl The Vimeo URL
+     *
      * @return string
      */
     public function extractVimeoId($sUrl)
@@ -1501,7 +1515,9 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Extracts the ID from a Spotify URL
+     *
      * @param  string $sUrl The Spotify URL
+     *
      * @return string
      */
     public function extractSpotifyId($sUrl)
@@ -1522,11 +1538,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
     /**
      * Returns the siblings of a post (i.e the posts before and after it)
+     *
      * @param  integer $iPostId The post's ID
      * @param  array   $aData   Any data to pass to getAll()
+     *
      * @return stdClass
      */
-    public function getSiblings($iPostId, $aData = array())
+    public function getSiblings($iPostId, $aData = [])
     {
         $oOut = new \stdClass();
     }
