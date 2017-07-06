@@ -438,16 +438,18 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
+        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations();
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
+        $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->library('uploadify');
-        $this->asset->library('MUSTACHE');
-        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset = Factory::service('Asset');
+        $oAsset->library('uploadify');
+        $oAsset->library('MUSTACHE');
+        $oAsset->load('moment/moment.js', 'NAILS-BOWER');
+        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -455,10 +457,10 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'CREATE\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $oCdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
-        $this->asset->inline($sInlineJs, 'JS');
+        $oAsset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 
@@ -761,16 +763,18 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
+        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
-        $this->data['cdnUrlScaleScheme'] = $this->cdn->urlScaleScheme();
+        $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->library('uploadify');
-        $this->asset->library('MUSTACHE');
-        $this->asset->load('moment/moment.js', 'NAILS-BOWER');
-        $this->asset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset = Factory::service('Asset');
+        $oAsset->library('uploadify');
+        $oAsset->library('MUSTACHE');
+        $oAsset->load('moment/moment.js', 'NAILS-BOWER');
+        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
 
         if ($this->data['post']->is_published) {
 
@@ -791,10 +795,10 @@ class Post extends BaseAdmin
         $sInlineJs .= '$(function()';
         $sInlineJs .= '{';
         $sInlineJs .= '    _EDIT = new NAILS_Admin_Blog_Create_Edit(\'EDIT\', \'' . $sInitalPublishState . '\');';
-        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $this->cdn->generateApiUploadToken() . '");';
+        $sInlineJs .= '    _EDIT.init(' . $this->blog->id . ', "' . $oCdn->generateApiUploadToken() . '");';
         $sInlineJs .= '});';
 
-        $this->asset->inline($sInlineJs, 'JS');
+        $oAsset->inline($sInlineJs, 'JS');
 
         // --------------------------------------------------------------------------
 

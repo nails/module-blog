@@ -99,7 +99,8 @@ class Settings extends BaseAdmin
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
-                $this->session->set_flashdata($status, $message);
+                $oSession = Factory::service('Session', 'nailsapp/module-auth');
+                $oSession->set_flashdata($status, $message);
                 redirect('admin/blog/blog/create');
 
             } else {
@@ -228,7 +229,8 @@ class Settings extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load assets
-        $this->asset->load('admin.settings.min.js', 'nailsapp/module-blog');
+        $oAsset = Factory::service('Asset');
+        $oAsset->load('admin.settings.min.js', 'nailsapp/module-blog');
 
         // --------------------------------------------------------------------------
 

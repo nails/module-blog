@@ -13,6 +13,8 @@
 //  Include _blog.php; executes common functionality
 require_once '_blog.php';
 
+use Nails\Factory;
+
 class NAILS_Blog extends NAILS_Blog_Controller
 {
     public function __construct()
@@ -89,9 +91,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Load views
-        $this->load->view('structure/header', $this->data);
+        $oView = Factory::service('View');
+        $oView->load('structure/header', $this->data);
         $this->loadView('browse', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        $oView->load('structure/footer', $this->data);
     }
 
     // --------------------------------------------------------------------------
@@ -177,24 +180,22 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Assets
         if (appSetting('social_enabled', 'blog-' . $this->oBlog->id)) {
 
-            $this->asset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
+            $oAsset = Factory::service('Asset');
+            $oAsset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
 
             switch (appSetting('social_skin', 'blog-' . $this->oBlog->id)) {
 
                 case 'FLAT':
-
-                    $this->asset->load('social-likes/social-likes_flat.css', 'NAILS-BOWER');
+                    $oAsset->load('social-likes/social-likes_flat.css', 'NAILS-BOWER');
                     break;
 
                 case 'BIRMAN':
-
-                    $this->asset->load('social-likes/social-likes_birman.css', 'NAILS-BOWER');
+                    $oAsset->load('social-likes/social-likes_birman.css', 'NAILS-BOWER');
                     break;
 
                 case 'CLASSIC':
                 default:
-
-                    $this->asset->load('social-likes/social-likes_classic.css', 'NAILS-BOWER');
+                    $oAsset->load('social-likes/social-likes_classic.css', 'NAILS-BOWER');
                     break;
             }
         }
@@ -206,9 +207,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Load views
-        $this->load->view('structure/header', $this->data);
+        $oView = Factory::service('View');
+        $oView->load('structure/header', $this->data);
         $this->loadView('single', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        $oView->load('structure/footer', $this->data);
 
         // --------------------------------------------------------------------------
 
@@ -321,9 +323,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
-        $this->load->view('structure/header', $this->data);
+        $oView = Factory::service('View');
+        $oView->load('structure/header', $this->data);
         $this->loadView('browse', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        $oView->load('structure/footer', $this->data);
     }
 
     // --------------------------------------------------------------------------
@@ -419,9 +422,10 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
-        $this->load->view('structure/header', $this->data);
+        $oView = Factory::service('View');
+        $oView->load('structure/header', $this->data);
         $this->loadView('browse', $this->data);
-        $this->load->view('structure/footer', $this->data);
+        $oView->load('structure/footer', $this->data);
     }
 
     // --------------------------------------------------------------------------
@@ -455,7 +459,9 @@ class NAILS_Blog extends NAILS_Blog_Controller
         $this->data['isRss'] = true;
 
         //  Set Output
-        $this->output->set_content_type('text/xml; charset=UTF-8');
+        $oOutput = Factory::service('Output');
+        $oOutput->set_content_type('text/xml; charset=UTF-8');
+
         $this->loadView('rss', $this->data);
     }
 
@@ -522,11 +528,12 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     private function loadView($sView, $aData = array())
     {
+        $oView = Factory::service('View');
         $sFile = $this->oSkin->path . 'views/' . $sView;
 
         if (is_file($sFile . '.php')) {
 
-            $this->load->view($sFile, $aData);
+            $oView->load($sFile, $aData);
 
         } elseif (!empty($this->oSkinParent)) {
 
@@ -534,7 +541,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
             if (is_file($sFile . '.php')) {
 
-                $this->load->view($sFile, $aData);
+                $oView->load($sFile, $aData);
 
             } else {
 
