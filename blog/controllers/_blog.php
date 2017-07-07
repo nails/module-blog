@@ -164,18 +164,15 @@ class NAILS_Blog_Controller extends Base
      */
     protected function loadSkinAssets($aAssets, $aCssInline, $aJsInline, $sUrl)
     {
+        $oAsset = Factory::service('Asset');
+
         //  CSS and JS
         if (!empty($aAssets) && is_array($aAssets)) {
-
             foreach ($aAssets as $asset) {
-
                 if (is_string($asset)) {
-
-                    $this->asset->load($asset);
-
+                    $oAsset->load($asset);
                 } else {
-
-                    $this->asset->load($asset[0], $asset[1]);
+                    $oAsset->load($asset[0], $asset[1]);
                 }
             }
         }
@@ -184,10 +181,8 @@ class NAILS_Blog_Controller extends Base
 
         //  CSS - Inline
         if (!empty($aCssInline) && is_array($aCssInline)) {
-
             foreach ($aCssInline as $asset) {
-
-                $this->asset->inline($asset, 'CSS-INLINE');
+                $oAsset->inline($asset, 'CSS-INLINE');
             }
         }
 
@@ -198,7 +193,7 @@ class NAILS_Blog_Controller extends Base
 
             foreach ($aJsInline as $asset) {
 
-                $this->asset->inline($asset, 'JS-INLINE');
+                $oAsset->inline($asset, 'JS-INLINE');
             }
         }
     }
