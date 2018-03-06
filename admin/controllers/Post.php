@@ -287,17 +287,17 @@ class Post extends BaseAdmin
 
                 $oFormValidation = Factory::service('FormValidation');
 
-                $oFormValidation->set_rules('is_published', '', 'xss_clean');
-                $oFormValidation->set_rules('published', '', 'xss_clean');
-                $oFormValidation->set_rules('title', '', 'xss_clean|required');
-                $oFormValidation->set_rules('type', '', 'xss_clean|required');
-                $oFormValidation->set_rules('body', '', 'xss_clean|required');
-                $oFormValidation->set_rules('excerpt', '', 'xss_clean');
-                $oFormValidation->set_rules('image_id', '', 'xss_clean');
-                $oFormValidation->set_rules('video_url', '', 'xss_clean');
-                $oFormValidation->set_rules('audio_url', '', 'xss_clean');
-                $oFormValidation->set_rules('seo_description', '', 'xss_clean');
-                $oFormValidation->set_rules('seo_keywords', '', 'xss_clean');
+                $oFormValidation->set_rules('is_published', '', '');
+                $oFormValidation->set_rules('published', '', '');
+                $oFormValidation->set_rules('title', '', 'required');
+                $oFormValidation->set_rules('type', '', 'required');
+                $oFormValidation->set_rules('body', '', 'required');
+                $oFormValidation->set_rules('excerpt', '', '');
+                $oFormValidation->set_rules('image_id', '', '');
+                $oFormValidation->set_rules('video_url', '', '');
+                $oFormValidation->set_rules('audio_url', '', '');
+                $oFormValidation->set_rules('seo_description', '', '');
+                $oFormValidation->set_rules('seo_keywords', '', '');
 
                 if ($this->input->post('slug')) {
 
@@ -305,21 +305,21 @@ class Post extends BaseAdmin
                     $oFormValidation->set_rules(
                         'slug',
                         '',
-                        'xss_clean|trim|alpha_dash|is_unique[' . $sTable . '.slug]'
+                        'trim|alpha_dash|is_unique[' . $sTable . '.slug]'
                     );
                 }
 
                 if ($this->input->post('type') === 'PHOTO') {
 
-                    $oFormValidation->set_rules('image_id', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('image_id', '', 'required');
 
                 } elseif ($this->input->post('type') === 'VIDEO') {
 
-                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('video_url', '', 'required');
 
                 } elseif ($this->input->post('type') === 'AUDIO') {
 
-                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('audio_url', '', 'required');
                 }
 
                 $oFormValidation->set_message('required', lang('fv_required'));
@@ -510,16 +510,16 @@ class Post extends BaseAdmin
 
                 $oFormValidation = Factory::service('FormValidation');
 
-                $oFormValidation->set_rules('is_published', '', 'xss_clean');
-                $oFormValidation->set_rules('published', '', 'xss_clean');
-                $oFormValidation->set_rules('title', '', 'xss_clean|required');
-                $oFormValidation->set_rules('type', '', 'xss_clean|required');
-                $oFormValidation->set_rules('body', '', 'xss_clean|required');
-                $oFormValidation->set_rules('excerpt', '', 'xss_clean');
-                $oFormValidation->set_rules('image_id', '', 'xss_clean');
-                $oFormValidation->set_rules('video_url', '', 'xss_clean');
-                $oFormValidation->set_rules('audio_url', '', 'xss_clean');
-                $oFormValidation->set_rules('seo_keywords', '', 'xss_clean');
+                $oFormValidation->set_rules('is_published', '', '');
+                $oFormValidation->set_rules('published', '', '');
+                $oFormValidation->set_rules('title', '', 'required');
+                $oFormValidation->set_rules('type', '', 'required');
+                $oFormValidation->set_rules('body', '', 'required');
+                $oFormValidation->set_rules('excerpt', '', '');
+                $oFormValidation->set_rules('image_id', '', '');
+                $oFormValidation->set_rules('video_url', '', '');
+                $oFormValidation->set_rules('audio_url', '', '');
+                $oFormValidation->set_rules('seo_keywords', '', '');
 
                 if ($this->input->post('slug')) {
 
@@ -527,21 +527,21 @@ class Post extends BaseAdmin
                     $oFormValidation->set_rules(
                         'slug',
                         '',
-                        'xss_clean|alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']'
+                        'alpha_dash|unique_if_diff[' . $sTable . '.slug.' . $this->data['post']->slug . ']'
                     );
                 }
 
                 if ($this->input->post('type') === 'PHOTO') {
 
-                    $oFormValidation->set_rules('image_id', '', 'xss_clean|required');
+                    $oFormValidation->set_rules('image_id', '', 'required');
 
                 } elseif ($this->input->post('type') === 'VIDEO') {
 
-                    $oFormValidation->set_rules('video_url', '', 'xss_clean|required|callback_callbackValidVideoUrl');
+                    $oFormValidation->set_rules('video_url', '', 'required|callback_callbackValidVideoUrl');
 
                 } elseif ($this->input->post('type') === 'AUDIO') {
 
-                    $oFormValidation->set_rules('audio_url', '', 'xss_clean|required|callback_callbackValidAudioUrl');
+                    $oFormValidation->set_rules('audio_url', '', 'required|callback_callbackValidAudioUrl');
                 }
 
                 $oFormValidation->set_message('required', lang('fv_required'));

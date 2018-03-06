@@ -155,8 +155,8 @@ class Blog extends BaseAdmin
         if ($this->input->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
-            $oFormValidation->set_rules('label', '', 'xss_clean|required');
-            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_rules('label', '', 'required');
+            $oFormValidation->set_rules('description', '', '');
             $oFormValidation->set_message('required', lang('fv_required'));
 
             if ($oFormValidation->run()) {
@@ -225,8 +225,8 @@ class Blog extends BaseAdmin
         if ($this->input->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
-            $oFormValidation->set_rules('label', '', 'xss_clean|required');
-            $oFormValidation->set_rules('description', '', 'xss_clean');
+            $oFormValidation->set_rules('label', '', 'required');
+            $oFormValidation->set_rules('description', '', '');
             $oFormValidation->set_message('required', lang('fv_required'));
 
             if ($oFormValidation->run()) {

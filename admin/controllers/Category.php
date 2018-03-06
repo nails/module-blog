@@ -190,11 +190,11 @@ class Category extends BaseAdmin
         if ($this->input->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
-            $oFormValidation->set_rules('label', '', 'xss_clean|required');
-            $oFormValidation->set_rules('description', '', 'xss_clean');
-            $oFormValidation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
-            $oFormValidation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
-            $oFormValidation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_rules('label', '', 'required');
+            $oFormValidation->set_rules('description', '', '');
+            $oFormValidation->set_rules('seo_title', '', 'max_length[150]');
+            $oFormValidation->set_rules('seo_description', '', 'max_length[300]');
+            $oFormValidation->set_rules('seo_keywords', '', 'max_length[150]');
 
             $oFormValidation->set_message('required', lang('fv_required'));
             $oFormValidation->set_message('max_length', lang('fv_max_length'));
@@ -271,11 +271,11 @@ class Category extends BaseAdmin
         if ($this->input->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
-            $oFormValidation->set_rules('label', '', 'xss_clean|required');
-            $oFormValidation->set_rules('description', '', 'xss_clean');
-            $oFormValidation->set_rules('seo_title', '', 'xss_clean|max_length[150]');
-            $oFormValidation->set_rules('seo_description', '', 'xss_clean|max_length[300]');
-            $oFormValidation->set_rules('seo_keywords', '', 'xss_clean|max_length[150]');
+            $oFormValidation->set_rules('label', '', 'required');
+            $oFormValidation->set_rules('description', '', '');
+            $oFormValidation->set_rules('seo_title', '', 'max_length[150]');
+            $oFormValidation->set_rules('seo_description', '', 'max_length[300]');
+            $oFormValidation->set_rules('seo_keywords', '', 'max_length[150]');
 
             $oFormValidation->set_message('required', lang('fv_required'));
             $oFormValidation->set_message('max_length', lang('fv_max_length'));
