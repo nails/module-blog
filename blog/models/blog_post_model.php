@@ -645,6 +645,13 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     public function getAll($page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
+        //  If the first value is an array then treat as if called with getAll(null, null, $aData);
+        //  @todo (Pablo - 2017-11-09) - Convert these to expandable fields
+        if (is_array($page)) {
+            $data = $page;
+            $page = null;
+        }
+
         $posts = parent::getAll($page, $perPage, $data, $includeDeleted);
 
         $this->load->model('blog/blog_model');
