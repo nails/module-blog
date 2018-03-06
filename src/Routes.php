@@ -33,7 +33,7 @@ class Routes implements RouteGenerator
             return [];
         }
 
-        while ($oRow = $oRows->fetch(PDO::FETCH_OBJ)) {
+        while ($oRow = $oRows->fetch(\PDO::FETCH_OBJ)) {
 
             //  Look up the setting
             $oSettings = $oDb->query('
@@ -43,7 +43,7 @@ class Routes implements RouteGenerator
 
             ');
 
-            $sUrl = json_decode($oSettings->fetch(PDO::FETCH_OBJ)->value) ?: 'blog';
+            $sUrl = json_decode($oSettings->fetch(\PDO::FETCH_OBJ)->value) ?: 'blog';
             $sUrl = preg_replace('/^\//', '', $sUrl);
             $sUrl = preg_replace('/\/$/', '', $sUrl);
 
