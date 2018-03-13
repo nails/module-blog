@@ -48,6 +48,15 @@
             "namespace": "Nails\\Blog\\",
             "autoload": {
                 "helpers": ["blog"]
+            },
+            "data": {
+                "nailsapp/module-cdn": {
+                    "permitted-image-dimensions": [
+                        "75x75",
+                        "100x100",
+                        "500x500"
+                    ]
+                }
             }
         }
     }
