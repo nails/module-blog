@@ -132,32 +132,33 @@ class NAILS_Blog_post_model extends NAILS_Model
         // --------------------------------------------------------------------------
 
         //  Set data
-        $this->db->set('blog_id', $aData['blog_id']);
-        $this->db->set('title', $aData['title']);
-        $this->db->set('slug', $aData['slug']);
+        $oDb = Factory::service('Database');
+        $oDb->set('blog_id', $aData['blog_id']);
+        $oDb->set('title', $aData['title']);
+        $oDb->set('slug', $aData['slug']);
 
         if (isset($aData['type'])) {
-            $this->db->set('type', $aData['type']);
+            $oDb->set('type', $aData['type']);
         }
 
         if (isset($aData['body'])) {
-            $this->db->set('body', $aData['body']);
+            $oDb->set('body', $aData['body']);
         }
 
         if (isset($aData['seo_title'])) {
-            $this->db->set('seo_title', $aData['title']);
+            $oDb->set('seo_title', $aData['title']);
         }
 
         if (isset($aData['seo_description'])) {
-            $this->db->set('seo_description', $aData['seo_description']);
+            $oDb->set('seo_description', $aData['seo_description']);
         }
 
         if (isset($aData['seo_keywords'])) {
-            $this->db->set('seo_keywords', $aData['seo_keywords']);
+            $oDb->set('seo_keywords', $aData['seo_keywords']);
         }
 
         if (isset($aData['is_published'])) {
-            $this->db->set('is_published', $aData['is_published']);
+            $oDb->set('is_published', $aData['is_published']);
         }
 
         //  Safety first!
@@ -166,22 +167,22 @@ class NAILS_Blog_post_model extends NAILS_Model
             $imageId = (int) $aData['image_id'];
             $imageId = !$imageId ? null : $imageId;
 
-            $this->db->set('image_id', $imageId);
+            $oDb->set('image_id', $imageId);
         }
 
         if (isset($aData['video_url'])) {
-            $this->db->set('video_url', $aData['video_url']);
+            $oDb->set('video_url', $aData['video_url']);
         }
 
         if (isset($aData['audio_url'])) {
-            $this->db->set('audio_url', $aData['audio_url']);
+            $oDb->set('audio_url', $aData['audio_url']);
         }
 
         //  Excerpt
         if (!empty($aData['excerpt'])) {
-            $this->db->set('excerpt', trim($aData['excerpt']));
+            $oDb->set('excerpt', trim($aData['excerpt']));
         } elseif (!empty($aData['body'])) {
-            $this->db->set('excerpt', word_limiter(trim(strip_tags($aData['body']))), 50);
+            $oDb->set('excerpt', word_limiter(trim(strip_tags($aData['body']))), 50);
         }
 
         //  Publish date
@@ -193,41 +194,41 @@ class NAILS_Blog_post_model extends NAILS_Model
             if ($published) {
 
                 $published = toNailsDatetime($aData['published']);
-                $this->db->set('published', $published);
+                $oDb->set('published', $published);
 
             } else {
 
                 //  Failed, use NOW();
-                $this->db->set('published', 'NOW()', false);
+                $oDb->set('published', 'NOW()', false);
             }
 
         } else {
             //  No date set, use NOW()
-            $this->db->set('published', 'NOW()', false);
+            $oDb->set('published', 'NOW()', false);
         }
 
         if (isset($aData['comments_enabled'])) {
-            $this->db->set('comments_enabled', (bool) $aData['comments_enabled']);
+            $oDb->set('comments_enabled', (bool) $aData['comments_enabled']);
         }
 
         if (isset($aData['comments_expire'])) {
             if (empty($aData['comments_expire'])) {
-                $this->db->set('comments_expire', null);
+                $oDb->set('comments_expire', null);
             } else {
-                $this->db->set('comments_expire', $aData['comments_expire']);
+                $oDb->set('comments_expire', $aData['comments_expire']);
             }
         }
 
-        $this->db->set('created', 'NOW()', false);
-        $this->db->set('modified', 'NOW()', false);
-        $this->db->set('created_by', activeUser('id'));
-        $this->db->set('modified_by', activeUser('id'));
+        $oDb->set('created', 'NOW()', false);
+        $oDb->set('modified', 'NOW()', false);
+        $oDb->set('created_by', activeUser('id'));
+        $oDb->set('modified_by', activeUser('id'));
 
-        $this->db->insert($this->table);
+        $oDb->insert($this->table);
 
-        if ($this->db->affected_rows()) {
+        if ($oDb->affected_rows()) {
 
-            $id = $this->db->insert_id();
+            $id = $oDb->insert_id();
 
             //  Add Gallery items, if any
             if (!empty($aData['gallery'])) {
@@ -241,7 +242,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                 }
 
                 if ($galleryData) {
-                    $this->db->insert_batch($this->tableImg, $galleryData);
+                    $oDb->insert_batch($this->tableImg, $galleryData);
                 }
             }
 
@@ -256,7 +257,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                     $categoryData[] = ['post_id' => $id, 'category_id' => $catId];
                 }
 
-                $this->db->insert_batch($this->tableCat, $categoryData);
+                $oDb->insert_batch($this->tableCat, $categoryData);
             }
 
             if (!empty($aData['tags'])) {
@@ -267,7 +268,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                     $tagData[] = ['post_id' => $id, 'tag_id' => $tagId];
                 }
 
-                $this->db->insert_batch($this->tableTag, $tagData);
+                $oDb->insert_batch($this->tableTag, $tagData);
             }
 
             // --------------------------------------------------------------------------
@@ -292,7 +293,7 @@ class NAILS_Blog_post_model extends NAILS_Model
                     }
 
                     if ($associationData) {
-                        $this->db->insert_batch($associations[$index]->target, $associationData);
+                        $oDb->insert_batch($associations[$index]->target, $associationData);
                     }
                 }
             }
@@ -320,7 +321,6 @@ class NAILS_Blog_post_model extends NAILS_Model
     {
         //  If we're deleting a post, skip all the rest
         if (!empty($data['is_deleted'])) {
-
             return parent::update($id, $data);
         }
 
@@ -329,62 +329,51 @@ class NAILS_Blog_post_model extends NAILS_Model
          */
         $sSlug  = !empty($data['slug']) ? $data['slug'] : '';
         $sTitle = !empty($data['title']) ? $data['title'] : '';
+        $sSlug  = $this->validateSlug($sSlug, $sTitle, $id);
 
-        $sSlug = $this->validateSlug($sSlug, $sTitle, $id);
+        $oDb = Factory::service('Database');
 
         if (!$sSlug) {
-
             return false;
-
         } else {
-
-            $this->db->set('slug', $sSlug);
+            $oDb->set('slug', $sSlug);
         }
 
         //  Set data
         if (isset($data['blog_id'])) {
-
-            $this->db->set('blog_id', $data['blog_id']);
+            $oDb->set('blog_id', $data['blog_id']);
         }
 
         if (isset($data['title'])) {
-
-            $this->db->set('title', $data['title']);
+            $oDb->set('title', $data['title']);
         }
 
         if (isset($data['body'])) {
-
-            $this->db->set('body', $data['body']);
+            $oDb->set('body', $data['body']);
         }
 
         if (isset($data['type'])) {
-
-            $this->db->set('type', $data['type']);
+            $oDb->set('type', $data['type']);
         }
 
         if (isset($data['seo_title'])) {
-
-            $this->db->set('seo_title', $data['title']);
+            $oDb->set('seo_title', $data['title']);
         }
 
         if (isset($data['seo_description'])) {
-
-            $this->db->set('seo_description', $data['seo_description']);
+            $oDb->set('seo_description', $data['seo_description']);
         }
 
         if (isset($data['seo_keywords'])) {
-
-            $this->db->set('seo_keywords', $data['seo_keywords']);
+            $oDb->set('seo_keywords', $data['seo_keywords']);
         }
 
         if (isset($data['is_published'])) {
-
-            $this->db->set('is_published', $data['is_published']);
+            $oDb->set('is_published', $data['is_published']);
         }
 
         if (isset($data['is_deleted'])) {
-
-            $this->db->set('is_deleted', $data['is_deleted']);
+            $oDb->set('is_deleted', $data['is_deleted']);
         }
 
         //  Safety first!
@@ -393,27 +382,22 @@ class NAILS_Blog_post_model extends NAILS_Model
             $imageId = (int) $data['image_id'];
             $imageId = !$imageId ? null : $imageId;
 
-            $this->db->set('image_id', $imageId);
+            $oDb->set('image_id', $imageId);
         }
 
         if (isset($data['video_url'])) {
-
-            $this->db->set('video_url', $data['video_url']);
+            $oDb->set('video_url', $data['video_url']);
         }
 
         if (isset($data['audio_url'])) {
-
-            $this->db->set('audio_url', $data['audio_url']);
+            $oDb->set('audio_url', $data['audio_url']);
         }
 
         //  Excerpt
         if (!empty($data['excerpt'])) {
-
-            $this->db->set('excerpt', trim($data['excerpt']));
-
+            $oDb->set('excerpt', trim($data['excerpt']));
         } elseif (!empty($data['body'])) {
-
-            $this->db->set('excerpt', word_limiter(trim(strip_tags($data['body']))), 50);
+            $oDb->set('excerpt', word_limiter(trim(strip_tags($data['body']))), 50);
         }
 
         //  Publish date
@@ -426,43 +410,41 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                 $published = toNailsDatetime($data['published']);
 
-                $this->db->set('published', $published);
+                $oDb->set('published', $published);
 
             } else {
-
                 //  Failed, use NOW();
-                $this->db->set('published', 'NOW()', false);
+                $oDb->set('published', 'NOW()', false);
             }
 
         } else {
 
             //  No date set, use NOW();
-            $this->db->set('published', 'NOW()', false);
+            $oDb->set('published', 'NOW()', false);
         }
 
         if (isset($data['comments_enabled'])) {
-
-            $this->db->set('comments_enabled', (bool) $data['comments_enabled']);
+            $oDb->set('comments_enabled', (bool) $data['comments_enabled']);
         }
 
         if (isset($data['comments_expire'])) {
 
             if (empty($data['comments_expire'])) {
-                $this->db->set('comments_expire', null);
+                $oDb->set('comments_expire', null);
             } else {
-                $this->db->set('comments_expire', $data['comments_expire']);
+                $oDb->set('comments_expire', $data['comments_expire']);
             }
         }
 
-        $this->db->set('modified', 'NOW()', false);
+        $oDb->set('modified', 'NOW()', false);
 
         if (activeUser('id')) {
 
-            $this->db->set('modified_by', activeUser('id'));
+            $oDb->set('modified_by', activeUser('id'));
         }
 
-        $this->db->where('id', $id);
-        $this->db->update($this->table);
+        $oDb->where('id', $id);
+        $oDb->update($this->table);
 
         // --------------------------------------------------------------------------
 
@@ -470,8 +452,8 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (isset($data['gallery'])) {
 
             //  Delete all categories
-            $this->db->where('post_id', $id);
-            $this->db->delete($this->tableImg);
+            $oDb->where('post_id', $id);
+            $oDb->delete($this->tableImg);
 
             //  Recreate new ones
             if ($data['gallery']) {
@@ -479,16 +461,14 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $galleryData = [];
 
                 foreach ($data['gallery'] as $order => $imageId) {
-
                     if ((int) $imageId) {
-
                         $galleryData[] = ['post_id' => $id, 'image_id' => $imageId, 'order' => $order];
                     }
                 }
 
                 if ($galleryData) {
 
-                    $this->db->insert_batch($this->tableImg, $galleryData);
+                    $oDb->insert_batch($this->tableImg, $galleryData);
                 }
             }
         }
@@ -499,8 +479,8 @@ class NAILS_Blog_post_model extends NAILS_Model
         if (isset($data['categories'])) {
 
             //  Delete all categories
-            $this->db->where('post_id', $id);
-            $this->db->delete($this->tableCat);
+            $oDb->where('post_id', $id);
+            $oDb->delete($this->tableCat);
 
             //  Recreate new ones
             if ($data['categories']) {
@@ -508,19 +488,18 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $categoryData = [];
 
                 foreach ($data['categories'] as $catId) {
-
                     $categoryData[] = ['post_id' => $id, 'category_id' => $catId];
                 }
 
-                $this->db->insert_batch($this->tableCat, $categoryData);
+                $oDb->insert_batch($this->tableCat, $categoryData);
             }
         }
 
         if (isset($data['tags'])) {
 
             //  Delete all tags
-            $this->db->where('post_id', $id);
-            $this->db->delete($this->tableTag);
+            $oDb->where('post_id', $id);
+            $oDb->delete($this->tableTag);
 
             //  Recreate new ones
             if ($data['tags']) {
@@ -528,11 +507,10 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $tagData = [];
 
                 foreach ($data['tags'] as $tagId) {
-
                     $tagData[] = ['post_id' => $id, 'tag_id' => $tagId];
                 }
 
-                $this->db->insert_batch($this->tableTag, $tagData);
+                $oDb->insert_batch($this->tableTag, $tagData);
             }
         }
 
@@ -553,8 +531,8 @@ class NAILS_Blog_post_model extends NAILS_Model
                 }
 
                 //  Clear old associations
-                $this->db->where('post_id', $id);
-                $this->db->delete($associations[$index]->target);
+                $oDb->where('post_id', $id);
+                $oDb->delete($associations[$index]->target);
 
                 //  Add new ones
                 $associationData = [];
@@ -566,7 +544,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                 if ($associationData) {
 
-                    $this->db->insert_batch($associations[$index]->target, $associationData);
+                    $oDb->insert_batch($associations[$index]->target, $associationData);
                 }
             }
         }
@@ -611,11 +589,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         } else {
 
+            $oDb = Factory::service('Database');
+
             if (!empty($iId)) {
-                $this->db->where('id !=', $iId);
+                $oDb->where('id !=', $iId);
             }
-            $this->db->where('slug', $sSlug);
-            if ($this->db->count_all_results($this->table)) {
+            $oDb->where('slug', $sSlug);
+            if ($oDb->count_all_results($this->table)) {
                 $this->setError('Slug "' . $sSlug . '" is already in use by another post.');
                 return false;
             }
@@ -655,6 +635,7 @@ class NAILS_Blog_post_model extends NAILS_Model
         $posts = parent::getAll($page, $perPage, $data, $includeDeleted);
 
         $this->load->model('blog/blog_model');
+        $oDb          = Factory::service('Database');
         $associations = $this->blog_model->getAssociations();
 
         foreach ($posts as $post) {
@@ -666,15 +647,15 @@ class NAILS_Blog_post_model extends NAILS_Model
 
                 $this->load->model('blog/blog_category_model');
 
-                $this->db->select('c.id,c.blog_id,c.slug,c.label');
-                $this->db->join(
+                $oDb->select('c.id,c.blog_id,c.slug,c.label');
+                $oDb->join(
                     NAILS_DB_PREFIX . 'blog_category c',
                     'c.id = ' . $this->tableCatPrefix . '.category_id'
                 );
-                $this->db->where($this->tableCatPrefix . '.post_id', $post->id);
-                $this->db->group_by('c.id');
-                $this->db->order_by('c.label');
-                $post->categories = $this->db->get($this->tableCat . ' ' . $this->tableCatPrefix)->result();
+                $oDb->where($this->tableCatPrefix . '.post_id', $post->id);
+                $oDb->group_by('c.id');
+                $oDb->order_by('c.label');
+                $post->categories = $oDb->get($this->tableCat . ' ' . $this->tableCatPrefix)->result();
 
                 foreach ($post->categories as $c) {
 
@@ -692,12 +673,12 @@ class NAILS_Blog_post_model extends NAILS_Model
                 $this->load->model('blog/blog_tag_model');
 
                 //  Fetch associated tags
-                $this->db->select('t.id,t.blog_id,t.slug,t.label');
-                $this->db->join(NAILS_DB_PREFIX . 'blog_tag t', 't.id = ' . $this->tableTagPrefix . '.tag_id');
-                $this->db->where($this->tableTagPrefix . '.post_id', $post->id);
-                $this->db->group_by('t.id');
-                $this->db->order_by('t.label');
-                $post->tags = $this->db->get($this->tableTag . ' ' . $this->tableTagPrefix)->result();
+                $oDb->select('t.id,t.blog_id,t.slug,t.label');
+                $oDb->join(NAILS_DB_PREFIX . 'blog_tag t', 't.id = ' . $this->tableTagPrefix . '.tag_id');
+                $oDb->where($this->tableTagPrefix . '.post_id', $post->id);
+                $oDb->group_by('t.id');
+                $oDb->order_by('t.label');
+                $post->tags = $oDb->get($this->tableTag . ' ' . $this->tableTagPrefix)->result();
 
                 foreach ($post->tags as $t) {
 
@@ -721,14 +702,14 @@ class NAILS_Blog_post_model extends NAILS_Model
                      * dev should have this configured correctly.
                      */
 
-                    $this->db->select('src.' . $assoc->source->id . ' id, src.' . $assoc->source->label . ' label');
-                    $this->db->join(
+                    $oDb->select('src.' . $assoc->source->id . ' id, src.' . $assoc->source->label . ' label');
+                    $oDb->join(
                         $assoc->source->table . ' src',
                         'src.' . $assoc->source->id . '=target.associated_id',
                         'LEFT'
                     );
-                    $this->db->where('target.post_id', $post->id);
-                    $post->associations[$index]->current = $this->db->get($assoc->target . ' target')->result();
+                    $oDb->where('target.post_id', $post->id);
+                    $post->associations[$index]->current = $oDb->get($assoc->target . ' target')->result();
                 }
             }
 
@@ -738,9 +719,9 @@ class NAILS_Blog_post_model extends NAILS_Model
             $post->gallery = [];
             if (!empty($data['include_gallery'])) {
 
-                $this->db->where('post_id', $post->id);
-                $this->db->order_by('order');
-                $post->gallery = $this->db->get($this->tableImg)->result();
+                $oDb->where('post_id', $post->id);
+                $oDb->order_by('order');
+                $post->gallery = $oDb->get($this->tableImg)->result();
 
             }
 
@@ -849,7 +830,8 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     protected function getCountCommon($data = [])
     {
-        $this->db->select(
+        $oDb = Factory::service('Database');
+        $oDb->select(
             [
                 $this->tableAlias . '.id',
                 $this->tableAlias . '.blog_id',
@@ -881,15 +863,14 @@ class NAILS_Blog_post_model extends NAILS_Model
             ]
         );
 
-        $this->db->join(NAILS_DB_PREFIX . 'blog b', $this->tableAlias . '.blog_id = b.id', 'LEFT');
-        $this->db->join(NAILS_DB_PREFIX . 'user u', $this->tableAlias . '.modified_by = u.id', 'LEFT');
-        $this->db->join(NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT');
+        $oDb->join(NAILS_DB_PREFIX . 'blog b', $this->tableAlias . '.blog_id = b.id', 'LEFT');
+        $oDb->join(NAILS_DB_PREFIX . 'user u', $this->tableAlias . '.modified_by = u.id', 'LEFT');
+        $oDb->join(NAILS_DB_PREFIX . 'user_email ue', 'ue.user_id = u.id AND ue.is_primary = 1', 'LEFT');
 
         // --------------------------------------------------------------------------
 
         if (!empty($data['include_body'])) {
-
-            $this->db->select($this->tableAlias . '.body');
+            $oDb->select($this->tableAlias . '.body');
         }
 
         // --------------------------------------------------------------------------
@@ -995,8 +976,9 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     public function getLatest($limit = 9, $data = null, $includeDeleted = false)
     {
-        $this->db->limit($limit);
-        $this->db->order_by($this->tableAlias . '.published', 'DESC');
+        $oDb = Factory::service('Database');
+        $oDb->limit($limit);
+        $oDb->order_by($this->tableAlias . '.published', 'DESC');
         return $this->getAll(null, null, $data, $includeDeleted, 'GET_LATEST');
     }
 
@@ -1014,16 +996,16 @@ class NAILS_Blog_post_model extends NAILS_Model
      **/
     public function getArchive($year = null, $month = null, $data = null, $includeDeleted = false)
     {
-        if ($year) {
+        $oDb = Factory::service('Database');
 
-            $this->db->where('YEAR(' . $this->tableAlias . '.published) = ', (int) $year);
+        if ($year) {
+            $oDb->where('YEAR(' . $this->tableAlias . '.published) = ', (int) $year);
         }
 
         // --------------------------------------------------------------------------
 
         if ($month) {
-
-            $this->db->where('MONTH(' . $this->tableAlias . '.published) = ', (int) $month);
+            $oDb->where('MONTH(' . $this->tableAlias . '.published) = ', (int) $month);
         }
 
         // --------------------------------------------------------------------------
@@ -1046,37 +1028,34 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function getWithCategory($categoryIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
+        $oDb = Factory::service('Database');
+
         //  Join the $this->tableCat table so we can WHERE on it.
-        $this->db->join(
+        $oDb->join(
             $this->tableCat . ' ' . $this->tableCatPrefix,
             $this->tableCatPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
-        $this->db->join(
+        $oDb->join(
             NAILS_DB_PREFIX . 'blog_category bc',
             'bc.id = ' . $this->tableCatPrefix . '.category_id'
         );
 
         //  Set the where
         if (is_null($data)) {
-
             $data = ['where' => []];
         }
 
         if (!isset($data['where'])) {
-
             $data['where'] = [];
         }
 
         if (is_numeric($categoryIdSlug)) {
-
             $data['where'][] = ['column' => 'bc.id', 'value' => (int) $categoryIdSlug];
-
         } else {
-
             $data['where'][] = ['column' => 'bc.slug', 'value' => $categoryIdSlug];
         }
 
-        $this->db->group_by($this->tableAlias . '.id');
+        $oDb->group_by($this->tableAlias . '.id');
 
         return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
@@ -1094,28 +1073,26 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function countWithCategory($categoryIdSlug, $data = null, $includeDeleted = false)
     {
+        $oDb = Factory::service('Database');
+
         //  Join the $this->tableCat table so we can WHERE on it.
-        $this->db->join(
+        $oDb->join(
             $this->tableCat . ' ' . $this->tableCatPrefix,
             $this->tableCatPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
-        $this->db->join(
+        $oDb->join(
             NAILS_DB_PREFIX . 'blog_category bc',
             'bc.id = ' . $this->tableCatPrefix . '.category_id'
         );
 
         //  Set the where
         if (is_null($data)) {
-
             $data = ['where' => []];
         }
 
         if (is_numeric($categoryIdSlug)) {
-
             $data['where'][] = ['column' => 'bc.id', 'value' => (int) $categoryIdSlug];
-
         } else {
-
             $data['where'][] = ['column' => 'bc.slug', 'value' => $categoryIdSlug];
         }
 
@@ -1137,32 +1114,30 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function getWithTag($tagIdSlug, $page = null, $perPage = null, $data = null, $includeDeleted = false)
     {
+        $oDb = Factory::service('Database');
+
         //  Join the $this->tableTag table so we can WHERE on it.
-        $this->db->join(
+        $oDb->join(
             $this->tableTag . ' ' . $this->tableTagPrefix,
             $this->tableTagPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
-        $this->db->join(
+        $oDb->join(
             NAILS_DB_PREFIX . 'blog_tag bt',
             'bt.id = ' . $this->tableTagPrefix . '.tag_id'
         );
 
         //  Set the where
         if (is_null($data)) {
-
             $data = ['where' => []];
         }
 
         if (is_numeric($tagIdSlug)) {
-
             $data['where'][] = ['column' => 'bt.id', 'value' => (int) $tagIdSlug];
-
         } else {
-
             $data['where'][] = ['column' => 'bt.slug', 'value' => $tagIdSlug];
         }
 
-        $this->db->group_by($this->tableAlias . '.id');
+        $oDb->group_by($this->tableAlias . '.id');
 
         return $this->getAll($page, $perPage, $data, $includeDeleted);
     }
@@ -1180,12 +1155,14 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function countWithTag($tagIdSlug, $data = null, $includeDeleted = false)
     {
+        $oDb = Factory::service('Database');
+
         //  Join the $this->tableTag table so we can WHERE on it.
-        $this->db->join(
+        $oDb->join(
             $this->tableTag . ' ' . $this->tableTagPrefix,
             $this->tableTagPrefix . '.post_id = ' . $this->tableAlias . '.id'
         );
-        $this->db->join(
+        $oDb->join(
             NAILS_DB_PREFIX . 'blog_tag bt',
             'bt.id = ' . $this->tableTagPrefix . '.tag_id'
         );
@@ -1238,27 +1215,25 @@ class NAILS_Blog_post_model extends NAILS_Model
         $associations = $oConfig->item('blog_post_associations');
 
         if (!isset($associations[$associationIndex])) {
-
             return [];
         }
 
-        $this->db->select('post_id');
-        $this->db->where('associated_id', $associatedId);
-        $posts = $this->db->get($associations[$associationIndex]->target)->result();
+        $oDb = Factory::service('Database');
+        $oDb->select('post_id');
+        $oDb->where('associated_id', $associatedId);
+        $posts = $oDb->get($associations[$associationIndex]->target)->result();
 
         $ids = [];
         foreach ($posts as $post) {
-
             $ids[] = $post->post_id;
         }
 
         if (empty($ids)) {
-
             //  No IDs? No posts.
             return [];
         }
 
-        $this->db->where_in($this->tableAlias . '.id', $ids);
+        $oDb->where_in($this->tableAlias . '.id', $ids);
 
         return $this->getAll();
     }
@@ -1274,7 +1249,6 @@ class NAILS_Blog_post_model extends NAILS_Model
     public function addHit($id, $data = [])
     {
         if (!$id) {
-
             $this->setError('Post ID is required.');
             return false;
         }
@@ -1290,7 +1264,6 @@ class NAILS_Blog_post_model extends NAILS_Model
         $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 
         if ($hitData['user_id'] && isAdmin($hitData['user_id'])) {
-
             $this->setError('Administrators cannot affect the post\'s popularity.');
             return false;
         }
@@ -1302,27 +1275,24 @@ class NAILS_Blog_post_model extends NAILS_Model
          * of the popularity system.
          */
 
-        $this->db->where('post_id', $hitData['post_id']);
-        $this->db->where('user_id', $hitData['user_id']);
-        $this->db->where('ip_address', $hitData['ip_address']);
-        $this->db->where('created > "' . $oDate->sub(new \DateInterval('PT5M'))->format('Y-m-d H:i:s') . '"');
+        $oDb = Factory::service('Database');
+        $oDb->where('post_id', $hitData['post_id']);
+        $oDb->where('user_id', $hitData['user_id']);
+        $oDb->where('ip_address', $hitData['ip_address']);
+        $oDb->where('created > "' . $oDate->sub(new \DateInterval('PT5M'))->format('Y-m-d H:i:s') . '"');
 
-        if ($this->db->count_all_results($this->tableHit)) {
-
+        if ($oDb->count_all_results($this->tableHit)) {
             $this->setError('Hit timeout in effect.');
             return false;
         }
 
         // --------------------------------------------------------------------------
 
-        $this->db->set($hitData);
+        $oDb->set($hitData);
 
-        if ($this->db->insert($this->tableHit)) {
-
+        if ($oDb->insert($this->tableHit)) {
             return true;
-
         } else {
-
             $this->setError('Failed to add hit.');
             return false;
         }
@@ -1336,7 +1306,8 @@ class NAILS_Blog_post_model extends NAILS_Model
      */
     public function getTypes()
     {
-        $oResult = $this->db->query('SHOW COLUMNS FROM `' . $this->table . '` LIKE "type"')->row();
+        $oDb     = Factory::service('Database');
+        $oResult = $oDb->query('SHOW COLUMNS FROM `' . $this->table . '` LIKE "type"')->row();
         $sTypes  = $oResult->Type;
         $sTypes  = preg_replace('/enum\((.*)\)/', '$1', $sTypes);
         $sTypes  = str_replace("'", '', $sTypes);

@@ -11,6 +11,8 @@
  * @link
  */
 
+use Nails\Factory;
+
 class NAILS_Blog_widget_model extends NAILS_Model
 {
     /**
@@ -21,14 +23,15 @@ class NAILS_Blog_widget_model extends NAILS_Model
      */
     public function latestPosts($blogId, $limit = 5)
     {
-        $this->db->select('id,blog_id,slug,title,published');
-        $this->db->where('is_published', true);
-        $this->db->where('published <=', 'NOW()', false);
-        $this->db->where('is_deleted', false);
-        $this->db->where('blog_id', $blogId);
-        $this->db->limit($limit);
-        $this->db->order_by('published', 'DESC');
-        $posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post')->result();
+        $oDb = Factory::service('Database');
+        $oDb->select('id,blog_id,slug,title,published');
+        $oDb->where('is_published', true);
+        $oDb->where('published <=', 'NOW()', false);
+        $oDb->where('is_deleted', false);
+        $oDb->where('blog_id', $blogId);
+        $oDb->limit($limit);
+        $oDb->order_by('published', 'DESC');
+        $posts = $oDb->get(NAILS_DB_PREFIX . 'blog_post')->result();
 
         if (!$this->load->isModelLoaded('blog_post_model')) {
 
@@ -53,18 +56,19 @@ class NAILS_Blog_widget_model extends NAILS_Model
      */
     public function popularPosts($blogId, $limit = 5)
     {
-        $this->db->select('bp.id,bp.blog_id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits');
-        $this->db->join(NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id');
-        $this->db->where('bp.is_published', true);
-        $this->db->where('bp.published <=', 'NOW()', false);
-        $this->db->where('bp.is_deleted', false);
-        $this->db->where('blog_id', $blogId);
-        $this->db->group_by('bp.id');
-        $this->db->order_by('hits', 'DESC');
-        $this->db->order_by('bp.published', 'DESC');
-        $this->db->limit($limit);
+        $oDb = Factory::service('Database');
+        $oDb->select('bp.id,bp.blog_id,bp.slug,bp.title,bp.published,COUNT(bph.id) hits');
+        $oDb->join(NAILS_DB_PREFIX . 'blog_post bp', 'bp.id = bph.post_id');
+        $oDb->where('bp.is_published', true);
+        $oDb->where('bp.published <=', 'NOW()', false);
+        $oDb->where('bp.is_deleted', false);
+        $oDb->where('blog_id', $blogId);
+        $oDb->group_by('bp.id');
+        $oDb->order_by('hits', 'DESC');
+        $oDb->order_by('bp.published', 'DESC');
+        $oDb->limit($limit);
 
-        $posts = $this->db->get(NAILS_DB_PREFIX . 'blog_post_hit bph')->result();
+        $posts = $oDb->get(NAILS_DB_PREFIX . 'blog_post_hit bph')->result();
 
         if (!$this->load->isModelLoaded('blog_post_model')) {
 
@@ -90,7 +94,8 @@ class NAILS_Blog_widget_model extends NAILS_Model
      */
     public function categories($blogId, $includeCount = true, $onlyPopulated = true)
     {
-        $this->db->select('c.id,c.blog_id,c.slug,c.label');
+        $oDb = Factory::service('Database');
+        $oDb->select('c.id,c.blog_id,c.slug,c.label');
 
         if ($includeCount) {
 
@@ -98,18 +103,18 @@ class NAILS_Blog_widget_model extends NAILS_Model
             $sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpc.post_id = bp.id WHERE bpc.category_id = c.id AND ';
             $sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
 
-            $this->db->select($sql);
+            $oDb->select($sql);
         }
 
         if ($onlyPopulated) {
 
-            $this->db->having('post_count > ', 0);
+            $oDb->having('post_count > ', 0);
         }
 
-        $this->db->where('c.blog_id', $blogId);
-        $this->db->order_by('c.label');
+        $oDb->where('c.blog_id', $blogId);
+        $oDb->order_by('c.label');
 
-        $categories = $this->db->get(NAILS_DB_PREFIX . 'blog_category c')->result();
+        $categories = $oDb->get(NAILS_DB_PREFIX . 'blog_category c')->result();
 
         $this->load->model('blog/blog_category_model');
 
@@ -132,7 +137,8 @@ class NAILS_Blog_widget_model extends NAILS_Model
      */
     public function tags($blogId, $includeCount = true, $onlyPopulated = true)
     {
-        $this->db->select('t.id,t.blog_id,t.slug,t.label');
+        $oDb = Factory::service('Database');
+        $oDb->select('t.id,t.blog_id,t.slug,t.label');
 
         if ($includeCount) {
 
@@ -140,18 +146,18 @@ class NAILS_Blog_widget_model extends NAILS_Model
             $sql .= NAILS_DB_PREFIX . 'blog_post bp ON bpt.post_id = bp.id WHERE bpt.tag_id = t.id AND ';
             $sql .= 'bp.is_published = 1 AND bp.is_deleted = 0 AND bp.published <= NOW()) post_count';
 
-            $this->db->select($sql);
+            $oDb->select($sql);
         }
 
         if ($onlyPopulated) {
 
-            $this->db->having('post_count > ', 0);
+            $oDb->having('post_count > ', 0);
         }
 
-        $this->db->where('t.blog_id', $blogId);
-        $this->db->order_by('t.label');
+        $oDb->where('t.blog_id', $blogId);
+        $oDb->order_by('t.label');
 
-        $tags = $this->db->get(NAILS_DB_PREFIX . 'blog_tag t')->result();
+        $tags = $oDb->get(NAILS_DB_PREFIX . 'blog_tag t')->result();
 
         $this->load->model('blog/blog_tag_model');
 

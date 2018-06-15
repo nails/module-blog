@@ -11,6 +11,8 @@
  * @link
  */
 
+use Nails\Factory;
+
 class NAILS_Blog_tag_model extends NAILS_Model
 {
     /**
@@ -39,7 +41,8 @@ class NAILS_Blog_tag_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $this->db->select($this->tableAlias . '.*');
+        $oDb = Factory::service('Database');
+        $oDb->select($this->tableAlias . '.*');
 
         if (!empty($data['include_count'])) {
 
@@ -50,13 +53,13 @@ class NAILS_Blog_tag_model extends NAILS_Model
                 WHERE
                 tag_id = ' . $this->tableAlias . '.id';
 
-            $this->db->select('(' . $subQuery . ') post_count');
+            $oDb->select('(' . $subQuery . ') post_count');
         }
 
         //  Default sort
         if (empty($data['sort'])) {
 
-            $this->db->order_by($this->tableAlias . '.label');
+            $oDb->order_by($this->tableAlias . '.label');
         }
     }
 

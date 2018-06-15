@@ -76,7 +76,8 @@ class NAILS_Blog_model extends NAILS_Model
      */
     public function getAssociations($post_id = null)
     {
-        $oConfig = Factory::service('Config');
+        $oConfig       = Factory::service('Config');
+        $oDb           = Factory::service('Database');
         $_associations = $oConfig->item('blog_post_associations');
 
         if (!$_associations) {
@@ -96,8 +97,8 @@ class NAILS_Blog_model extends NAILS_Model
 
             if ($post_id) {
 
-                $this->db->where('post_id', $post_id);
-                $assoc->current = $this->db->get($assoc->target)->result();
+                $oDb->where('post_id', $post_id);
+                $assoc->current = $oDb->get($assoc->target)->result();
 
             } else {
 
@@ -105,15 +106,15 @@ class NAILS_Blog_model extends NAILS_Model
             }
 
             //  Fetch the raw data
-            $this->db->select($assoc->source->id . ' id, ' . $assoc->source->label . ' label');
-            $this->db->order_by('label');
+            $oDb->select($assoc->source->id . ' id, ' . $assoc->source->label . ' label');
+            $oDb->order_by('label');
 
             if (isset($assoc->source->where) && $assoc->source->where) {
 
-                $this->db->where($assoc->source->where);
+                $oDb->where($assoc->source->where);
             }
 
-            $assoc->data = $this->db->get($assoc->source->table)->result();
+            $assoc->data = $oDb->get($assoc->source->table)->result();
         }
 
         return $_associations;
