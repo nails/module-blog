@@ -100,7 +100,7 @@ class Settings extends BaseAdmin
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
                 $oSession = Factory::service('Session', 'nailsapp/module-auth');
-                $oSession->set_flashdata($status, $message);
+                $oSession->setFlashData($status, $message);
                 redirect('admin/blog/blog/create');
 
             } else {
