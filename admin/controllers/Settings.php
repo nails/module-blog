@@ -201,9 +201,9 @@ class Settings extends BaseAdmin
 
                 $this->data['success'] = 'Blog settings have been saved.';
 
-                $oRoutesModel = Factory::model('Routes');
+                $oRoutesService = Factory::service('Routes');
 
-                if (!$oRoutesModel->update()) {
+                if (!$oRoutesService->update()) {
 
                     $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the ';
                     $this->data['warning'] .= 'routes file could not be updated. The blog may not behave as expected,';
