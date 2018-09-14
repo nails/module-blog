@@ -30,7 +30,7 @@ class Settings extends BaseAdmin
 
         if (!empty($blogs)) {
 
-            $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+            $oNavGroup = Factory::factory('Nav', 'nails/module-admin');
             $oNavGroup->setLabel('Settings');
             $oNavGroup->setIcon('fa-wrench');
 
@@ -86,7 +86,7 @@ class Settings extends BaseAdmin
 
         //  Load models
         $this->load->model('blog/blog_model');
-        $oSkinModel = Factory::model('Skin', 'nailsapp/module-blog');
+        $oSkinModel = Factory::model('Skin', 'nails/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ class Settings extends BaseAdmin
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
-                $oSession = Factory::service('Session', 'nailsapp/module-auth');
+                $oSession = Factory::service('Session', 'nails/module-auth');
                 $oSession->setFlashData($status, $message);
                 redirect('admin/blog/blog/create');
 
@@ -230,7 +230,7 @@ class Settings extends BaseAdmin
 
         //  Load assets
         $oAsset = Factory::service('Asset');
-        $oAsset->load('admin.settings.min.js', 'nailsapp/module-blog');
+        $oAsset->load('admin.settings.min.js', 'nails/module-blog');
 
         // --------------------------------------------------------------------------
 

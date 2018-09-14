@@ -52,7 +52,7 @@ class NAILS_Blog_Controller extends Base
         //  Load the other models
         $this->load->model('blog/blog_post_model');
         $this->load->model('blog/blog_widget_model');
-        $oSkinModel = Factory::model('Skin', 'nailsapp/module-blog');
+        $oSkinModel = Factory::model('Skin', 'nails/module-blog');
         //  @todo; work out a cleaner way of handling this
         $oSkinModel->init($this->oBlog->id);
 

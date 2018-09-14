@@ -23,7 +23,7 @@ class Skin
 
     // --------------------------------------------------------------------------
 
-    const DEFAULT_SKIN = 'nailsapp/skin-blog-classic';
+    const DEFAULT_SKIN = 'nails/skin-blog-classic';
 
     // --------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ class Skin
         $this->aEnabled[$iBlogId]   = array();
 
         //  Get available skins
-        $this->aAvailable[$iBlogId] = _NAILS_GET_SKINS('nailsapp/module-blog');
+        $this->aAvailable[$iBlogId] = _NAILS_GET_SKINS('nails/module-blog');
 
         if (empty($this->aAvailable[$iBlogId])) {
             throw new SkinException(

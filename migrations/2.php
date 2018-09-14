@@ -6,7 +6,7 @@
  * Finalised:   21/07/2015
  */
 
-namespace Nails\Database\Migration\Nailsapp\ModuleBlog;
+namespace Nails\Database\Migration\Nails\ModuleBlog;
 
 use Nails\Common\Console\Migrate\Base;
 

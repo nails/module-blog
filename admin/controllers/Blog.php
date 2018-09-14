@@ -28,7 +28,7 @@ class Blog extends BaseAdmin
         $ci->load->model('blog/blog_model');
         $blogs = $ci->blog_model->getAll();
 
-        $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+        $oNavGroup = Factory::factory('Nav', 'nails/module-admin');
         $oNavGroup->setLabel('Settings');
 
         if (!empty($blogs)) {

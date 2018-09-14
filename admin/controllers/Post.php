@@ -46,7 +46,7 @@ class Post extends BaseAdmin
 
                 //  Any draft posts?
                 $iNumDrafts = $oCi->blog_post_model->countDrafts($oBlog->id);
-                $oAlert = Factory::factory('NavAlert', 'nailsapp/module-admin');
+                $oAlert = Factory::factory('NavAlert', 'nails/module-admin');
                 $oAlert->setValue($iNumDrafts);
                 $oAlert->setLabel('Drafts');
 
@@ -57,7 +57,7 @@ class Post extends BaseAdmin
                 }
 
                 //  Create the navGrouping
-                $oNavGroup = Factory::factory('Nav', 'nailsapp/module-admin');
+                $oNavGroup = Factory::factory('Nav', 'nails/module-admin');
                 $oNavGroup->setLabel($sGroupLabel);
                 $oNavGroup->setIcon('fa-pencil-square-o');
                 $oNavGroup->addAction(
@@ -126,7 +126,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->oChangeLogModel = Factory::model('ChangeLog', 'nailsapp/module-admin');
+        $this->oChangeLogModel = Factory::model('ChangeLog', 'nails/module-admin');
 
         // --------------------------------------------------------------------------
 
@@ -438,7 +438,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
+        $oCdn                            = Factory::service('Cdn', 'nails/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations();
         $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
@@ -449,7 +449,7 @@ class Post extends BaseAdmin
         $oAsset->library('uploadify');
         $oAsset->library('MUSTACHE');
         $oAsset->load('moment/moment.js', 'NAILS-BOWER');
-        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset->load('admin.post.edit.min.js', 'nails/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -763,7 +763,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $oCdn                            = Factory::service('Cdn', 'nailsapp/module-cdn');
+        $oCdn                            = Factory::service('Cdn', 'nails/module-cdn');
         $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
         $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
@@ -774,7 +774,7 @@ class Post extends BaseAdmin
         $oAsset->library('uploadify');
         $oAsset->library('MUSTACHE');
         $oAsset->load('moment/moment.js', 'NAILS-BOWER');
-        $oAsset->load('admin.post.edit.min.js', 'nailsapp/module-blog');
+        $oAsset->load('admin.post.edit.min.js', 'nails/module-blog');
 
         if ($this->data['post']->is_published) {
 

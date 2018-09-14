@@ -6,7 +6,7 @@
  * Finalised:   25/07/2015
  */
 
-namespace Nails\Database\Migration\Nailsapp\ModuleBlog;
+namespace Nails\Database\Migration\Nails\ModuleBlog;
 
 use Nails\Common\Console\Migrate\Base;
 
@@ -18,7 +18,7 @@ class Migration3 extends Base
      */
     public function execute()
     {
-        $this->query("    
+        $this->query("
             CREATE TABLE `{{NAILS_DB_PREFIX}}blog_post_preview` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `blog_id` int(11) unsigned NOT NULL,
@@ -53,7 +53,7 @@ class Migration3 extends Base
                 CONSTRAINT `{{NAILS_DB_PREFIX}}blog_post_preview_ibfk_4` FOREIGN KEY (`modified_by`) REFERENCES `user` (`id`) ON DELETE SET NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     ");
-        $this->query("    
+        $this->query("
             CREATE TABLE `{{NAILS_DB_PREFIX}}blog_post_preview_category` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `post_id` int(11) unsigned NOT NULL,
@@ -65,7 +65,7 @@ class Migration3 extends Base
                 CONSTRAINT `{{NAILS_DB_PREFIX}}blog_post_preview_category_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `blog_category` (`id`) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         ");
-        $this->query("    
+        $this->query("
             CREATE TABLE `{{NAILS_DB_PREFIX}}blog_post_preview_image` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `post_id` int(11) unsigned NOT NULL,
@@ -78,7 +78,7 @@ class Migration3 extends Base
                 CONSTRAINT `{{NAILS_DB_PREFIX}}blog_post_preview_image_ibfk_2` FOREIGN KEY (`image_id`) REFERENCES `cdn_object` (`id`) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         ");
-        $this->query("    
+        $this->query("
             CREATE TABLE `{{NAILS_DB_PREFIX}}blog_post_preview_tag` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `post_id` int(11) unsigned NOT NULL,

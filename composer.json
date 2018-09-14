@@ -1,5 +1,5 @@
 {
-    "name": "nailsapp/module-blog",
+    "name": "nails/module-blog",
     "keywords": ["Nails", "Shed Collective", "CodeIgniter", "Blog Module"],
     "homepage": "http://nailsapp.co.uk/modules/blog",
     "description": "This is the \"Blog\" module for Nails.",
@@ -27,9 +27,9 @@
     "prefer-stable": true,
     "require":
     {
-        "nailsapp/common": "dev-develop",
-        "nailsapp/module-cdn": "dev-develop",
-        "nailsapp/skin-blog-classic": "dev-develop"
+        "nails/common": "dev-develop",
+        "nails/module-cdn": "dev-develop",
+        "nails/skin-blog-classic": "dev-develop"
     },
     "require-dev":
     {
@@ -50,7 +50,7 @@
                 "helpers": ["blog"]
             },
             "data": {
-                "nailsapp/module-cdn": {
+                "nails/module-cdn": {
                     "permitted-image-dimensions": [
                         "75x75",
                         "100x100",
