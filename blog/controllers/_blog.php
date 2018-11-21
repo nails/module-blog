@@ -39,7 +39,7 @@ class NAILS_Blog_Controller extends Base
 
         if (empty($this->oBlog)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

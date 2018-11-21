@@ -105,7 +105,7 @@ class Settings extends BaseAdmin
 
             } else {
 
-                show_404();
+                show404();
             }
         }
 

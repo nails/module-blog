@@ -136,7 +136,7 @@ class Post extends BaseAdmin
 
         if (empty($this->blog)) {
 
-            show_404();
+            show404();
         }
 
         $this->data['blog'] = $this->blog;
@@ -489,7 +489,7 @@ class Post extends BaseAdmin
 
         if (!$this->data['post']) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

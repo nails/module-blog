@@ -128,7 +128,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         //  Check we have something to show, otherwise, bail out
         if (!$this->data['post']) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -145,7 +145,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
              */
             if (!userHasPermission('admin:blog:post:' . $this->oBlog->id . ':manage')) {
 
-                show_404();
+                show404();
             }
         }
 
@@ -232,7 +232,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         if (!appSetting('categories_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -242,7 +242,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         if (!$this->data['category']) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -339,7 +339,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         if (!appSetting('tags_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -349,7 +349,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         if (!$this->data['tag']) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -438,7 +438,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
     {
         if (!appSetting('rss_enabled', 'blog-' . $this->oBlog->id)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

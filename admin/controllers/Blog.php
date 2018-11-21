@@ -212,7 +212,7 @@ class Blog extends BaseAdmin
 
         if (empty($this->data['blog'])) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

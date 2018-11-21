@@ -114,7 +114,7 @@ class Tag extends BaseAdmin
 
         if (empty($this->blog)) {
 
-            show_404();
+            show404();
         }
 
         $this->data['blog'] = $this->blog;
@@ -124,7 +124,7 @@ class Tag extends BaseAdmin
         //  Tags enabled?
         if (!appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -262,7 +262,7 @@ class Tag extends BaseAdmin
 
         if (empty($this->data['tag'])) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

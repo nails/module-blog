@@ -116,7 +116,7 @@ class Category extends BaseAdmin
 
         if (empty($this->blog)) {
 
-            show_404();
+            show404();
         }
 
         $this->data['blog'] = $this->blog;
@@ -126,7 +126,7 @@ class Category extends BaseAdmin
         //  Categories enabled?
         if (!appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------
@@ -263,7 +263,7 @@ class Category extends BaseAdmin
 
         if (empty($this->data['category'])) {
 
-            show_404();
+            show404();
         }
 
         // --------------------------------------------------------------------------

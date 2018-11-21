@@ -13,6 +13,7 @@
 
 namespace Nails\Blog\Model;
 
+use Nails\Components;
 use Nails\Blog\Exception\SkinException;
 
 class Skin
@@ -48,7 +49,7 @@ class Skin
         $this->aEnabled[$iBlogId]   = array();
 
         //  Get available skins
-        $this->aAvailable[$iBlogId] = _NAILS_GET_SKINS('nails/module-blog');
+        $this->aAvailable[$iBlogId] = Components::skins('nails/module-blog');
 
         if (empty($this->aAvailable[$iBlogId])) {
             throw new SkinException(
