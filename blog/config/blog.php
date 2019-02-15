@@ -115,7 +115,7 @@ $config = array();
  * module scope then CI ignores the app's version.
  */
 
-if (file_exists(APPPATH . 'config/blog.php')) {
+if (file_exists(NAILS_APP_PATH . 'application/config/blog.php')) {
 
-    require APPPATH . 'config/blog.php';
+    require NAILS_APP_PATH . 'application/config/blog.php';
 }
