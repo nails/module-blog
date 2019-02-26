@@ -13,6 +13,7 @@
 //  Include _blog.php; executes common functionality
 require_once '_blog.php';
 
+use Nails\Common\Exception\NailsException;
 use Nails\Factory;
 
 class NAILS_Blog extends NAILS_Blog_Controller
@@ -540,23 +541,13 @@ class NAILS_Blog extends NAILS_Blog_Controller
             $sFile = $this->oSkinParent->path . 'views/' . $sView;
 
             if (is_file($sFile . '.php')) {
-
                 $oView->load($sFile, $aData);
-
             } else {
-
-                $sSubject = 'Failed to load blog view "' . $sView . '"';
-                $sMessage = 'Failed to load blog view "' . $sView . '" (parent skin) at ' . APP_NAME;
-
-                showFatalError($sSubject, $sMessage);
+                throw new NailsException('Failed to load blog view "' . $sView . '"');
             }
 
         } else {
-
-            $sSubject = 'Failed to load blog view "' . $sView . '"';
-            $sMessage = 'Failed to load blog view "' . $sView . '" at ' . APP_NAME;
-
-            showFatalError($sSubject, $sMessage);
+            throw new NailsException('Failed to load blog view "' . $sView . '"');
         }
     }
 
