@@ -53,7 +53,7 @@ class Blog extends BaseAdmin
      * Returns an array of extra permissions for this controller
      * @return array
      */
-    public static function permissions()
+    public static function permissions(): array
     {
         $permissions = parent::permissions();
 
