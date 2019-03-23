@@ -195,9 +195,9 @@ class Settings extends BaseAdmin
             // --------------------------------------------------------------------------
 
             //  Save
-            $oAppSettingModel = Factory::model('AppSetting');
+            $oAppSettingService = Factory::service('AppSetting');
 
-            if ($oAppSettingModel->set($settings, 'blog-' . $this->input->get('blog_id'))) {
+            if ($oAppSettingService->set($settings, 'blog-' . $this->input->get('blog_id'))) {
 
                 $this->data['success'] = 'Blog settings have been saved.';
 

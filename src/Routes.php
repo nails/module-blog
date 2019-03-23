@@ -23,10 +23,10 @@ class Routes implements RouteGenerator
      */
     public static function generate()
     {
-        $oDb            = Factory::service('PDODatabase');
-        $oModel         = Factory::model('Blog', 'nails/module-blog');
-        $oSettingsModel = Factory::model('AppSetting');
-        $aRoutes        = [];
+        $oDb              = Factory::service('PDODatabase');
+        $oSettingsService = Factory::service('AppSetting');
+        $oModel           = Factory::model('Blog', 'nails/module-blog');
+        $aRoutes          = [];
 
         $oRows = $oDb->query('SELECT id FROM ' . $oModel->getTableName());
         if (!$oRows->rowCount()) {
@@ -37,7 +37,7 @@ class Routes implements RouteGenerator
 
             //  Look up the setting
             $oSettings = $oDb->query('
-              SELECT * FROM ' . $oSettingsModel->getTableName() . '
+              SELECT * FROM ' . $oSettingsService->getTableName() . '
               WHERE `grouping` = "blog-' . $oRow->id . '"
               AND `key` = "url"
 
