@@ -584,8 +584,7 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         if (empty($sSlug)) {
 
-            $prefix = array_search($sSlug, $this->reservedWords) !== false ? 'post-' : '';
-            $sSlug  = $this->generateSlug($sTitle, $prefix);
+            $sSlug  = $this->generateSlug($sTitle);
 
         } else {
 

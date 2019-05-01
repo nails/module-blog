@@ -152,7 +152,7 @@ class NAILS_Blog_category_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $aCategoryData['slug'] = $this->generateSlug($aData['label'], '', '', null, null, $iId);
+        $aCategoryData['slug'] = $this->generateSlug($aData['label'], $iId);
 
         if (isset($aData['description'])) {
 
