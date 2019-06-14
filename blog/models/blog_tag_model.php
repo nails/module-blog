@@ -35,7 +35,7 @@ class NAILS_Blog_tag_model extends NAILS_Model
      * @param  array $data Data passed from the calling method
      * @return void
      */
-    protected function getCountCommon($data = array())
+    protected function getCountCommon($data = array()): void
     {
         parent::getCountCommon($data);
 

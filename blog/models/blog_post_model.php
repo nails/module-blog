@@ -827,7 +827,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      *
      * @return void
      **/
-    protected function getCountCommon($data = [])
+    protected function getCountCommon($data = []): void
     {
         $oDb = Factory::service('Database');
         $oDb->select(
