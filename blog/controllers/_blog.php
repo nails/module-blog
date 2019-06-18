@@ -34,7 +34,8 @@ class NAILS_Blog_Controller extends Base
         //  Check the blog is valid
         $this->load->model('blog/blog_model');
 
-        $iBlogId = (int) $this->uri->rsegment(2);
+        $oUri    = Factory::service('Uri');
+        $iBlogId = (int) $oUri->rsegment(2);
         $this->oBlog = $this->blog_model->getById($iBlogId);
 
         if (empty($this->oBlog)) {

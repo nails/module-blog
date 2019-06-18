@@ -1,3 +1,6 @@
+<?php
+$oInput = \Nails\Factory::service('Input');
+?>
 <div class="group-blog manage tags edit">
     <p>
         Use tags to group specific <?=$postName?> topics together. For example, a tag might be 'New Year <?=date('Y')?>', or 'Coursework'.
@@ -20,7 +23,7 @@
     </ul>
     <section class="tabs pages">
         <div class="tab-page active">
-            <?=form_open(uri_string() . '?' . $this->input->server('QUERY_STRING'))?>
+            <?=form_open(uri_string() . '?' . $oInput->server('QUERY_STRING'))?>
             <fieldset>
                 <legend>Basic Details</legend>
                 <?php

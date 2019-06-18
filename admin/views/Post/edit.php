@@ -1,3 +1,6 @@
+<?php
+$oInput = \Nails\Factory::service('Input');
+?>
 <div class="group-blog edit">
     <?php
 
@@ -9,7 +12,7 @@
     <ul class="tabs">
     <?php
 
-        $sActive = $this->input->post('activeTab') == 'tab-title-body' || !$this->input->post('activeTab') ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-title-body' || !$oInput->post('activeTab') ? 'active' : '';
 
         ?>
         <li class="tab <?=$sActive?>">
@@ -17,7 +20,7 @@
         </li>
         <?php
 
-        $sActive = $this->input->post('activeTab') == 'tab-meta' ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-meta' ? 'active' : '';
 
         ?>
         <li class="tab <?=$sActive?>">
@@ -27,7 +30,7 @@
 
         if (appSetting('categories_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-categories' ? 'active' : '';
 
             ?>
             <li class="tab <?=$sActive?>">
@@ -39,7 +42,7 @@
 
         if (appSetting('tags_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-tags' ? 'active' : '';
 
             ?>
             <li class="tab <?=$sActive?>">
@@ -51,7 +54,7 @@
 
         if ($associations) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-associations' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-associations' ? 'active' : '';
 
             ?>
             <li class="tab <?=$sActive?>">
@@ -63,7 +66,7 @@
 
         if (appSetting('gallery_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-gallery' ? 'active' : '';
 
             ?>
             <li class="tab <?=$sActive?>">
@@ -73,7 +76,7 @@
 
         }
 
-        $sActive = $this->input->post('activeTab') == 'tab-seo' ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-seo' ? 'active' : '';
 
         ?>
         <li class="tab <?=$sActive?>">
@@ -83,7 +86,7 @@
     <section class="tabs">
     <?php
 
-        $sActive = $this->input->post('activeTab') == 'tab-title-body' || !$this->input->post('activeTab') ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-title-body' || !$oInput->post('activeTab') ? 'active' : '';
 
         ?>
         <div class="tab-page tab-title-body <?=$sActive?> fieldset">
@@ -242,11 +245,11 @@
                             <strong>Featured Image</strong>
                             <?php
 
-                            if ($this->input->post()) {
+                            if ($oInput->post()) {
 
-                                if ($this->input->post('image_id')) {
+                                if ($oInput->post('image_id')) {
 
-                                    $sSrc = cdnScale($this->input->post('image_id'), 500, 500);
+                                    $sSrc = cdnScale($oInput->post('image_id'), 500, 500);
 
                                 } else {
 
@@ -285,7 +288,7 @@
         </div>
         <?php
 
-        $sActive = $this->input->post('activeTab') == 'tab-meta' ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-meta' ? 'active' : '';
 
         ?>
         <div class="tab-page tab-meta <?=$sActive?> fieldset">
@@ -346,7 +349,7 @@
 
         if (appSetting('categories_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-categories' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-categories' ? 'active' : '';
 
             ?>
             <div class="tab-page tab-categories <?=$sActive?>">
@@ -367,7 +370,7 @@
                             }
                         }
 
-                        $aPostRaw = $this->input->post('categories') ? $this->input->post('categories') : $aPostCats;
+                        $aPostRaw = $oInput->post('categories') ? $oInput->post('categories') : $aPostCats;
                         $aPost    = array();
 
                         foreach ($aPostRaw as $key => $value) {
@@ -396,7 +399,7 @@
 
         if (appSetting('tags_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-tags' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-tags' ? 'active' : '';
 
             ?>
             <div class="tab-page tab-tags <?=$sActive?>">
@@ -416,7 +419,7 @@
                             }
                         }
 
-                        $aPostRaw = $this->input->post('tags') ? $this->input->post('tags') : $aPostTags;
+                        $aPostRaw = $oInput->post('tags') ? $oInput->post('tags') : $aPostTags;
                         $aPost    = array();
 
                         foreach ($aPostRaw as $key => $value) {
@@ -443,7 +446,7 @@
 
         if ($associations) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-associations' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-associations' ? 'active' : '';
 
             ?>
             <div class="tab-page tab-associations <?=$sActive?> fieldset">
@@ -461,9 +464,9 @@
 
                         $_multiple = isset($assoc->multiple) && $assoc->multiple ? 'multiple="multiple"' : '';
 
-                        if ($this->input->post()) {
+                        if ($oInput->post()) {
 
-                            $aSelected = $this->input->post('associations');
+                            $aSelected = $oInput->post('associations');
                             if (!empty($aSelected)) {
                                 $aSelected = $aSelected[$index];
                             } else {
@@ -498,7 +501,7 @@
 
         if (appSetting('gallery_enabled', 'blog-' . $blog->id)) {
 
-            $sActive = $this->input->post('activeTab') == 'tab-gallery' ? 'active' : '';
+            $sActive = $oInput->post('activeTab') == 'tab-gallery' ? 'active' : '';
 
             ?>
             <div class="tab-page tab-gallery <?=$sActive?>">
@@ -534,9 +537,9 @@
                 <?php
 
                     //  Determine gallery items to render
-                    if ($this->input->post('gallery')) {
+                    if ($oInput->post('gallery')) {
 
-                        $aGalleryItems = (array) $this->input->post('gallery');
+                        $aGalleryItems = (array) $oInput->post('gallery');
 
                     } elseif (!empty($post->gallery)) {
 
@@ -574,7 +577,7 @@
             <?php
         }
 
-        $sActive = $this->input->post('activeTab') == 'tab-seo' ? 'active' : '';
+        $sActive = $oInput->post('activeTab') == 'tab-seo' ? 'active' : '';
 
         ?>
         <div class="tab-page tab-seo <?=$sActive?> fieldset">

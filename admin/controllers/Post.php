@@ -131,7 +131,8 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Are we working with a valid blog?
-        $iBlogId = (int) $this->uri->segment(5);
+        $oUri       = Factory::service('Uri');
+        $iBlogId    = (int) $oUri->segment(5);
         $this->blog = $this->blog_model->getById($iBlogId);
 
         if (empty($this->blog)) {
@@ -167,6 +168,10 @@ class Post extends BaseAdmin
      */
     public function index()
     {
+        $oInput = Factory::service('Input');
+
+        // --------------------------------------------------------------------------
+
         //  Set method info
         $this->data['page']->title = 'Manage ' . ucfirst($this->data['postNamePlural']);
 
@@ -177,11 +182,11 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Get pagination and search/sort variables
-        $iPage      = (int) $this->input->get('page') ? (int) $this->input->get('page') : 0;
-        $iPerPage   = (int) $this->input->get('perPage') ? (int) $this->input->get('perPage') : 50;
-        $sSortOn    = $this->input->get('sortOn') ? $this->input->get('sortOn') : $sTableAlias . '.published';
-        $sSortOrder = $this->input->get('sortOrder') ? $this->input->get('sortOrder') : 'desc';
-        $sKeywords  = $this->input->get('keywords') ? $this->input->get('keywords') : '';
+        $iPage      = (int) $oInput->get('page') ? (int) $oInput->get('page') : 0;
+        $iPerPage   = (int) $oInput->get('perPage') ? (int) $oInput->get('perPage') : 50;
+        $sSortOn    = $oInput->get('sortOn') ? $oInput->get('sortOn') : $sTableAlias . '.published';
+        $sSortOrder = $oInput->get('sortOrder') ? $oInput->get('sortOrder') : 'desc';
+        $sKeywords  = $oInput->get('keywords') ? $oInput->get('keywords') : '';
 
         // --------------------------------------------------------------------------
 
@@ -277,10 +282,11 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Process POST
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             //  Are we running in preview mode?
-            $bIsPreview = (bool) $this->input->post('isPreview');
+            $bIsPreview = (bool) $oInput->post('isPreview');
 
             //  Only validate non-previews
             if (empty($bIsPreview)) {
@@ -299,7 +305,7 @@ class Post extends BaseAdmin
                 $oFormValidation->set_rules('seo_description', '', '');
                 $oFormValidation->set_rules('seo_keywords', '', '');
 
-                if ($this->input->post('slug')) {
+                if ($oInput->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
                     $oFormValidation->set_rules(
@@ -309,15 +315,15 @@ class Post extends BaseAdmin
                     );
                 }
 
-                if ($this->input->post('type') === 'PHOTO') {
+                if ($oInput->post('type') === 'PHOTO') {
 
                     $oFormValidation->set_rules('image_id', '', 'required');
 
-                } elseif ($this->input->post('type') === 'VIDEO') {
+                } elseif ($oInput->post('type') === 'VIDEO') {
 
                     $oFormValidation->set_rules('video_url', '', 'required');
 
-                } elseif ($this->input->post('type') === 'AUDIO') {
+                } elseif ($oInput->post('type') === 'AUDIO') {
 
                     $oFormValidation->set_rules('audio_url', '', 'required');
                 }
@@ -333,34 +339,34 @@ class Post extends BaseAdmin
                 //  Prepare data
                 $aData                     = array();
                 $aData['blog_id']          = $this->blog->id;
-                $aData['title']            = $this->input->post('title');
-                $aData['type']             = $this->input->post('type');
-                $aData['slug']             = $this->input->post('slug');
-                $aData['excerpt']          = $this->input->post('excerpt');
-                $aData['image_id']         = (int) $this->input->post('image_id');
+                $aData['title']            = $oInput->post('title');
+                $aData['type']             = $oInput->post('type');
+                $aData['slug']             = $oInput->post('slug');
+                $aData['excerpt']          = $oInput->post('excerpt');
+                $aData['image_id']         = (int) $oInput->post('image_id');
                 $aData['image_id']         = $aData['image_id'] ? $aData['image_id'] : null;
-                $aData['video_url']        = trim($this->input->post('video_url'));
+                $aData['video_url']        = trim($oInput->post('video_url'));
                 $aData['video_url']        = $aData['video_url'] ? $aData['video_url'] : null;
-                $aData['audio_url']        = trim($this->input->post('audio_url'));
+                $aData['audio_url']        = trim($oInput->post('audio_url'));
                 $aData['audio_url']        = $aData['audio_url'] ? $aData['audio_url'] : null;
-                $aData['body']             = $this->input->post('body');
-                $aData['seo_description']  = $this->input->post('seo_description');
-                $aData['seo_keywords']     = $this->input->post('seo_keywords');
-                $aData['is_published']     = (bool) $this->input->post('is_published');
-                $aData['published']        = $this->input->post('published');
-                $aData['associations']     = $this->input->post('associations');
-                $aData['gallery']          = $this->input->post('gallery');
-                $aData['comments_enabled'] = $this->input->post('comments_enabled');
-                $aData['comments_expire']  = $this->input->post('comments_expire');
+                $aData['body']             = $oInput->post('body');
+                $aData['seo_description']  = $oInput->post('seo_description');
+                $aData['seo_keywords']     = $oInput->post('seo_keywords');
+                $aData['is_published']     = (bool) $oInput->post('is_published');
+                $aData['published']        = $oInput->post('published');
+                $aData['associations']     = $oInput->post('associations');
+                $aData['gallery']          = $oInput->post('gallery');
+                $aData['comments_enabled'] = $oInput->post('comments_enabled');
+                $aData['comments_expire']  = $oInput->post('comments_expire');
 
                 if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-                    $aData['categories'] = $this->input->post('categories');
+                    $aData['categories'] = $oInput->post('categories');
                 }
 
                 if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-                    $aData['tags'] = $this->input->post('tags');
+                    $aData['tags'] = $oInput->post('tags');
                 }
 
                 //  Are we running in preview mode?
@@ -392,7 +398,9 @@ class Post extends BaseAdmin
                             'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
                         );
 
-                        $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was created.');
+                        $oSession = Factory::service('Session', 'nails/module-auth');
+                        $oSession->setFlashData('success', ucfirst($this->data['postName']) . ' was created.');
+
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
                     } else {
@@ -483,7 +491,8 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $iPostId = (int) $this->uri->segment(6);
+        $oUri    = Factory::service('Uri');
+        $iPostId = (int) $oUri->segment(6);
 
         $this->data['post'] = $this->blog_post_model->getById($iPostId);
 
@@ -499,11 +508,11 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        //  Process POST
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             //  Are we running in preview mode?
-            $bIsPreview = (bool) $this->input->post('isPreview');
+            $bIsPreview = (bool) $oInput->post('isPreview');
 
             //  Only validate non-previews
             if (empty($bIsPreview)) {
@@ -521,7 +530,7 @@ class Post extends BaseAdmin
                 $oFormValidation->set_rules('audio_url', '', '');
                 $oFormValidation->set_rules('seo_keywords', '', '');
 
-                if ($this->input->post('slug')) {
+                if ($oInput->post('slug')) {
 
                     $sTable = $this->blog_post_model->getTableName();
                     $oFormValidation->set_rules(
@@ -531,15 +540,15 @@ class Post extends BaseAdmin
                     );
                 }
 
-                if ($this->input->post('type') === 'PHOTO') {
+                if ($oInput->post('type') === 'PHOTO') {
 
                     $oFormValidation->set_rules('image_id', '', 'required');
 
-                } elseif ($this->input->post('type') === 'VIDEO') {
+                } elseif ($oInput->post('type') === 'VIDEO') {
 
                     $oFormValidation->set_rules('video_url', '', 'required|callback_callbackValidVideoUrl');
 
-                } elseif ($this->input->post('type') === 'AUDIO') {
+                } elseif ($oInput->post('type') === 'AUDIO') {
 
                     $oFormValidation->set_rules('audio_url', '', 'required|callback_callbackValidAudioUrl');
                 }
@@ -553,34 +562,34 @@ class Post extends BaseAdmin
 
                 //  Prepare data
                 $aData                     = array();
-                $aData['title']            = $this->input->post('title');
-                $aData['type']             = $this->input->post('type');
-                $aData['slug']             = $this->input->post('slug');
-                $aData['excerpt']          = $this->input->post('excerpt');
-                $aData['image_id']         = (int) $this->input->post('image_id');
+                $aData['title']            = $oInput->post('title');
+                $aData['type']             = $oInput->post('type');
+                $aData['slug']             = $oInput->post('slug');
+                $aData['excerpt']          = $oInput->post('excerpt');
+                $aData['image_id']         = (int) $oInput->post('image_id');
                 $aData['image_id']         = $aData['image_id'] ? $aData['image_id'] : null;
-                $aData['video_url']        = trim($this->input->post('video_url'));
+                $aData['video_url']        = trim($oInput->post('video_url'));
                 $aData['video_url']        = $aData['video_url'] ? $aData['video_url'] : null;
-                $aData['audio_url']        = trim($this->input->post('audio_url'));
+                $aData['audio_url']        = trim($oInput->post('audio_url'));
                 $aData['audio_url']        = $aData['audio_url'] ? $aData['audio_url'] : null;
-                $aData['body']             = $this->input->post('body');
-                $aData['seo_description']  = $this->input->post('seo_description');
-                $aData['seo_keywords']     = $this->input->post('seo_keywords');
-                $aData['is_published']     = (bool) $this->input->post('is_published');
-                $aData['published']        = $this->input->post('published');
-                $aData['associations']     = $this->input->post('associations');
-                $aData['gallery']          = $this->input->post('gallery');
-                $aData['comments_enabled'] = $this->input->post('comments_enabled');
-                $aData['comments_expire']  = $this->input->post('comments_expire');
+                $aData['body']             = $oInput->post('body');
+                $aData['seo_description']  = $oInput->post('seo_description');
+                $aData['seo_keywords']     = $oInput->post('seo_keywords');
+                $aData['is_published']     = (bool) $oInput->post('is_published');
+                $aData['published']        = $oInput->post('published');
+                $aData['associations']     = $oInput->post('associations');
+                $aData['gallery']          = $oInput->post('gallery');
+                $aData['comments_enabled'] = $oInput->post('comments_enabled');
+                $aData['comments_expire']  = $oInput->post('comments_expire');
 
                 if (appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
 
-                    $aData['categories'] = $this->input->post('categories');
+                    $aData['categories'] = $oInput->post('categories');
                 }
 
                 if (appSetting('tags_enabled', 'blog-' . $this->blog->id)) {
 
-                    $aData['tags'] = $this->input->post('tags');
+                    $aData['tags'] = $oInput->post('tags');
                 }
 
                 //  Are we running in preview mode?
@@ -719,7 +728,9 @@ class Post extends BaseAdmin
                             }
                         }
 
-                        $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was updated.');
+                        $oSession = Factory::service('Session', 'nails/module-auth');
+                        $oSession->setFlashData('success', ucfirst($this->data['postName']) . ' was updated.');
+
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
                     } else {
@@ -821,12 +832,15 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $iPostId = (int) $this->uri->segment(6);
+        $oUri     = Factory::service('Uri');
+        $oSession = Factory::service('Session', 'nails/module-auth');
+
+        $iPostId = (int) $oUri->segment(6);
         $oPost   = $this->blog_post_model->getById($iPostId);
 
         if (!$oPost || $oPost->blog->id != $this->blog->id) {
 
-            $this->session->set_flashdata('error', 'I could\'t find a post by that ID.');
+            $oSession->setFlashData('error', 'I could\'t find a post by that ID.');
             redirect('admin/blog/post/index/' . $this->blog->id);
         }
 
@@ -849,7 +863,7 @@ class Post extends BaseAdmin
             $sMessage = 'I failed to delete that post. ' . $this->blog_post_model->lastError();
         }
 
-        $this->session->set_flashdata($sStatus, $sMessage);
+        $oSession->setFlashData($sStatus, $sMessage);
 
         redirect('admin/blog/post/index/' . $this->blog->id);
     }
@@ -870,7 +884,10 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $iPostId = (int) $this->uri->segment(6);
+        $oUri     = Factory::service('Uri');
+        $oSession = Factory::service('Session', 'nails/module-auth');
+
+        $iPostId = (int) $oUri->segment(6);
 
         // --------------------------------------------------------------------------
 
@@ -878,7 +895,7 @@ class Post extends BaseAdmin
 
             $oPost = $this->blog_post_model->getById($iPostId);
 
-            $this->session->set_flashdata('success', ucfirst($this->data['postName']) . ' was restored successfully.');
+            $oSession->setFlashData('success', ucfirst($this->data['postName']) . ' was restored successfully.');
 
             //  Update admin changelog
             $this->oChangeLogModel->add(
@@ -895,7 +912,7 @@ class Post extends BaseAdmin
             $sStatus   = 'error';
             $sMessage  = 'I failed to restore that ' . $this->data['postName'] . '. ';
             $sMessage .= $this->blog_post_model->lastError();
-            $this->session->set_flashdata($sStatus, $sMessage);
+            $oSession->setFlashData($sStatus, $sMessage);
         }
 
         redirect('admin/blog/post/index/' . $this->blog->id);

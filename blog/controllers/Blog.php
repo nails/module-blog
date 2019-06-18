@@ -52,7 +52,8 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Handle pagination
-        $page      = $this->uri->rsegment(3);
+        $oUri     = Factory::service('Uri');
+        $page     = $oUri->rsegment(3);
         $perPage  = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage  = $perPage ? $perPage : 10;
 
@@ -102,8 +103,9 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
     public function preview()
     {
+        $oUri = Factory::service('Uri');
         $this->blog_post_model->usePreviewTables(true);
-        return $this->single($this->uri->rsegment(4), true);
+        return $this->single($oUri->rsegment(4), true);
     }
 
     // --------------------------------------------------------------------------
@@ -114,21 +116,19 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function single($id = null, $bIsPreview = false)
     {
+        $oUri = Factory::service('Uri');
+
         //  Get the single post by its slug
         if ($id) {
-
             $this->data['post'] = $this->blog_post_model->getById($id);
-
         } else {
-
-            $this->data['post'] = $this->blog_post_model->getBySlug($this->uri->rsegment(3));
+            $this->data['post'] = $this->blog_post_model->getBySlug($oUri->rsegment(3));
         }
 
         // --------------------------------------------------------------------------
 
         //  Check we have something to show, otherwise, bail out
         if (!$this->data['post']) {
-
             show404();
         }
 
@@ -216,9 +216,11 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Register a hit
+        $oInput = Factory::service('Input');
+
         $data             = array();
         $data['user_id']  = activeUser('id');
-        $data['referrer'] = $this->input->server('HTTP_REFERER');
+        $data['referrer'] = $oInput->server('HTTP_REFERER');
 
         $this->blog_post_model->addHit($this->data['post']->id, $data);
     }
@@ -231,7 +233,9 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function category()
     {
-        if (!appSetting('categories_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
+        $oUri = Factory::service('Uri');
+
+        if (!appSetting('categories_enabled', 'blog-' . $this->oBlog->id) || !$oUri->rsegment(4)) {
 
             show404();
         }
@@ -239,7 +243,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Get category
-        $this->data['category'] = $this->blog_category_model->getBySlug($this->uri->rsegment(4));
+        $this->data['category'] = $this->blog_category_model->getBySlug($oUri->rsegment(4));
 
         if (!$this->data['category']) {
 
@@ -261,7 +265,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Handle pagination
-        $page     = $this->uri->rsegment(5);
+        $page     = $oUri->rsegment(5);
         $perPage = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
@@ -338,18 +342,18 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function tag()
     {
-        if (!appSetting('tags_enabled', 'blog-' . $this->oBlog->id) || !$this->uri->rsegment(4)) {
+        $oUri = Factory::service('Uri');
 
+        if (!appSetting('tags_enabled', 'blog-' . $this->oBlog->id) || !$oUri->rsegment(4)) {
             show404();
         }
 
         // --------------------------------------------------------------------------
 
         //  Get tag
-        $this->data['tag'] = $this->blog_tag_model->getBySlug($this->uri->rsegment(4));
+        $this->data['tag'] = $this->blog_tag_model->getBySlug($oUri->rsegment(4));
 
         if (!$this->data['tag']) {
-
             show404();
         }
 
@@ -368,7 +372,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
         // --------------------------------------------------------------------------
 
         //  Handle pagination
-        $page     = $this->uri->rsegment(5);
+        $page    = $oUri->rsegment(5);
         $perPage = appSetting('home_per_page', 'blog-' . $this->oBlog->id);
         $perPage = $perPage ? $perPage : 10;
 
@@ -559,12 +563,15 @@ class NAILS_Blog extends NAILS_Blog_Controller
      */
     public function _remap()
     {
-        $method = $this->uri->rsegment(3) ? $this->uri->rsegment(3) : 'index';
+        $oInput = Factory::service('Input');
+        $oUri   = Factory::service('Uri');
 
-        if (method_exists($this, $method) && substr($method, 0, 1) != '_' && $this->input->get('id')) {
+        $method = $oUri->rsegment(3) ? $oUri->rsegment(3) : 'index';
+
+        if (method_exists($this, $method) && substr($method, 0, 1) != '_' && $oInput->get('id')) {
 
             //  Permalink
-            $this->single($this->input->get('id'));
+            $this->single($oInput->get('id'));
 
         } elseif (method_exists($this, $method) && substr($method, 0, 1) != '_') {
 

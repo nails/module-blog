@@ -1,3 +1,6 @@
+<?php
+$oInput = \Nails\Factory::service('Input');
+?>
 <div class="group-blog manage categories edit">
     <p>
         Use categories to group broad <?=$postName?> topics together. For example, a category might be 'Music', or 'Travel'.
@@ -20,7 +23,7 @@
     </ul>
     <section class="tabs pages">
         <div class="tab-page active">
-            <?=form_open(uri_string() . '?' . $this->input->server('QUERY_STRING'))?>
+            <?=form_open(uri_string() . '?' . $oInput->server('QUERY_STRING'))?>
             <fieldset>
                 <legend>Basic Details</legend>
                 <?php

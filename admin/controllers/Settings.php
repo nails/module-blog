@@ -78,9 +78,12 @@ class Settings extends BaseAdmin
     public function index()
     {
         if (!userHasPermission('admin:blog:settings:\d+:update')) {
-
             unauthorised();
         }
+
+        // --------------------------------------------------------------------------
+
+        $oInput = Factory::service('Input');
 
         // --------------------------------------------------------------------------
 
@@ -114,11 +117,11 @@ class Settings extends BaseAdmin
             reset($this->data['blogs']);
             $this->data['selectedBlogId'] = key($this->data['blogs']);
 
-        } elseif ($this->input->get('blog_id')) {
+        } elseif ($oInput->get('blog_id')) {
 
-            if (!empty($this->data['blogs'][$this->input->get('blog_id')])) {
+            if (!empty($this->data['blogs'][$oInput->get('blog_id')])) {
 
-                $this->data['selectedBlogId'] = $this->input->get('blog_id');
+                $this->data['selectedBlogId'] = $oInput->get('blog_id');
             }
 
             if (empty($this->data['selectedBlogId'])) {
@@ -143,47 +146,47 @@ class Settings extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Process POST
-        if ($this->input->post()) {
+        if ($oInput->post()) {
 
             //  Prepare update
             $settings                       = array();
-            $settings['name']               = $this->input->post('name');
-            $settings['url']                = $this->input->post('url');
-            $settings['postName']           = strtolower($this->input->post('postName'));
-            $settings['postNamePlural']     = strtolower($this->input->post('postNamePlural'));
-            $settings['use_excerpts']       = (bool) $this->input->post('use_excerpts');
-            $settings['gallery_enabled']    = (bool) $this->input->post('gallery_enabled');
-            $settings['categories_enabled'] = (bool) $this->input->post('categories_enabled');
-            $settings['tags_enabled']       = (bool) $this->input->post('tags_enabled');
-            $settings['rss_enabled']        = (bool) $this->input->post('rss_enabled');
+            $settings['name']               = $oInput->post('name');
+            $settings['url']                = $oInput->post('url');
+            $settings['postName']           = strtolower($oInput->post('postName'));
+            $settings['postNamePlural']     = strtolower($oInput->post('postNamePlural'));
+            $settings['use_excerpts']       = (bool) $oInput->post('use_excerpts');
+            $settings['gallery_enabled']    = (bool) $oInput->post('gallery_enabled');
+            $settings['categories_enabled'] = (bool) $oInput->post('categories_enabled');
+            $settings['tags_enabled']       = (bool) $oInput->post('tags_enabled');
+            $settings['rss_enabled']        = (bool) $oInput->post('rss_enabled');
 
             //  Skin settings
-            $settings['skin'] = $this->input->post('skin');
+            $settings['skin'] = $oInput->post('skin');
 
             //  Commenting settings
-            $settings['comments_enabled']          = $this->input->post('comments_enabled');
-            $settings['comments_engine']           = $this->input->post('comments_engine');
-            $settings['comments_disqus_shortname'] = $this->input->post('comments_disqus_shortname');
+            $settings['comments_enabled']          = $oInput->post('comments_enabled');
+            $settings['comments_engine']           = $oInput->post('comments_engine');
+            $settings['comments_disqus_shortname'] = $oInput->post('comments_disqus_shortname');
 
             //  Social settings
-            $settings['social_facebook_enabled']   = (bool) $this->input->post('social_facebook_enabled');
-            $settings['social_twitter_enabled']    = (bool) $this->input->post('social_twitter_enabled');
-            $settings['social_twitter_via']        = $this->input->post('social_twitter_via');
-            $settings['social_googleplus_enabled'] = (bool) $this->input->post('social_googleplus_enabled');
-            $settings['social_pinterest_enabled']  = (bool) $this->input->post('social_pinterest_enabled');
-            $settings['social_skin']               = $this->input->post('social_skin');
-            $settings['social_layout']             = $this->input->post('social_layout');
-            $settings['social_layout_single_text'] = $this->input->post('social_layout_single_text');
-            $settings['social_counters']           = (bool) $this->input->post('social_counters');
+            $settings['social_facebook_enabled']   = (bool) $oInput->post('social_facebook_enabled');
+            $settings['social_twitter_enabled']    = (bool) $oInput->post('social_twitter_enabled');
+            $settings['social_twitter_via']        = $oInput->post('social_twitter_via');
+            $settings['social_googleplus_enabled'] = (bool) $oInput->post('social_googleplus_enabled');
+            $settings['social_pinterest_enabled']  = (bool) $oInput->post('social_pinterest_enabled');
+            $settings['social_skin']               = $oInput->post('social_skin');
+            $settings['social_layout']             = $oInput->post('social_layout');
+            $settings['social_layout_single_text'] = $oInput->post('social_layout_single_text');
+            $settings['social_counters']           = (bool) $oInput->post('social_counters');
 
             //  If any of the above are enabled, then social is enabled.
             $settings['social_enabled'] = $settings['social_facebook_enabled'] || $settings['social_twitter_enabled'] || $settings['social_googleplus_enabled'] || $settings['social_pinterest_enabled'];
 
             //  Sidebar
-            $settings['sidebar_latest_posts']  = (bool) $this->input->post('sidebar_latest_posts');
-            $settings['sidebar_categories']    = (bool) $this->input->post('sidebar_categories');
-            $settings['sidebar_tags']          = (bool) $this->input->post('sidebar_tags');
-            $settings['sidebar_popular_posts'] = (bool) $this->input->post('sidebar_popular_posts');
+            $settings['sidebar_latest_posts']  = (bool) $oInput->post('sidebar_latest_posts');
+            $settings['sidebar_categories']    = (bool) $oInput->post('sidebar_categories');
+            $settings['sidebar_tags']          = (bool) $oInput->post('sidebar_tags');
+            $settings['sidebar_popular_posts'] = (bool) $oInput->post('sidebar_popular_posts');
 
             //  @todo: Associations
 
@@ -197,7 +200,7 @@ class Settings extends BaseAdmin
             //  Save
             $oAppSettingService = Factory::service('AppSetting');
 
-            if ($oAppSettingService->set($settings, 'blog-' . $this->input->get('blog_id'))) {
+            if ($oAppSettingService->set($settings, 'blog-' . $oInput->get('blog_id'))) {
 
                 $this->data['success'] = 'Blog settings have been saved.';
 
@@ -237,9 +240,9 @@ class Settings extends BaseAdmin
         //  Set page title
         $this->data['page']->title = 'Settings &rsaquo; Blog';
 
-        if (!empty($this->data['blogs'][$this->input->get('blog_id')])) {
+        if (!empty($this->data['blogs'][$oInput->get('blog_id')])) {
 
-            $this->data['page']->title .= ' &rsaquo; ' . $this->data['blogs'][$this->input->get('blog_id')];
+            $this->data['page']->title .= ' &rsaquo; ' . $this->data['blogs'][$oInput->get('blog_id')];
         }
 
         // --------------------------------------------------------------------------

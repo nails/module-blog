@@ -111,11 +111,12 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Are we working with a valid blog?
-        $blogId = $this->uri->segment(5);
+        $oUri = Factory::service('Uri');
+
+        $blogId     = $oUri->segment(5);
         $this->blog = $this->blog_model->getById($blogId);
 
         if (empty($this->blog)) {
-
             show404();
         }
 
@@ -125,13 +126,14 @@ class Category extends BaseAdmin
 
         //  Categories enabled?
         if (!appSetting('categories_enabled', 'blog-' . $this->blog->id)) {
-
             show404();
         }
 
         // --------------------------------------------------------------------------
 
-        $this->isModal = $this->input->get('isModal') ? '?isModal=1' : '';
+        $oInput = Factory::service('Input');
+
+        $this->isModal         = $oInput->get('isModal') ? '?isModal=1' : '';
         $this->data['isModal'] = $this->isModal;
 
         // --------------------------------------------------------------------------
@@ -187,7 +189,8 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        if ($this->input->post()) {
+        $oInput = \Nails\Factory::service('Input');
+        if ($oInput->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
             $oFormValidation->set_rules('label', '', 'required');
@@ -203,17 +206,20 @@ class Category extends BaseAdmin
 
                 $aInsertData                    = array();
                 $aInsertData['blog_id']         = $this->blog->id;
-                $aInsertData['label']           = $this->input->post('label');
-                $aInsertData['description']     = $this->input->post('description');
-                $aInsertData['seo_title']       = $this->input->post('seo_title');
-                $aInsertData['seo_description'] = $this->input->post('seo_description');
-                $aInsertData['seo_keywords']    = $this->input->post('seo_keywords');
+                $aInsertData['label']           = $oInput->post('label');
+                $aInsertData['description']     = $oInput->post('description');
+                $aInsertData['seo_title']       = $oInput->post('seo_title');
+                $aInsertData['seo_description'] = $oInput->post('seo_description');
+                $aInsertData['seo_keywords']    = $oInput->post('seo_keywords');
 
                 if ($this->blog_category_model->create($aInsertData)) {
 
                     $status  = 'success';
                     $message = 'Category created successfully.';
-                    $this->session->set_flashdata($status, $message);
+
+                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession->setFlashData($status, $message);
+
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
                 } else {
@@ -259,7 +265,9 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->data['category'] = $this->blog_category_model->getById($this->uri->segment(6));
+        $oUri = Factory::service('Uri');
+
+        $this->data['category'] = $this->blog_category_model->getById($oUri->segment(6));
 
         if (empty($this->data['category'])) {
 
@@ -268,7 +276,8 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
             $oFormValidation->set_rules('label', '', 'required');
@@ -283,15 +292,17 @@ class Category extends BaseAdmin
             if ($oFormValidation->run()) {
 
                 $aUpdateData                    = array();
-                $aUpdateData['label']           = $this->input->post('label');
-                $aUpdateData['description']     = $this->input->post('description');
-                $aUpdateData['seo_title']       = $this->input->post('seo_title');
-                $aUpdateData['seo_description'] = $this->input->post('seo_description');
-                $aUpdateData['seo_keywords']    = $this->input->post('seo_keywords');
+                $aUpdateData['label']           = $oInput->post('label');
+                $aUpdateData['description']     = $oInput->post('description');
+                $aUpdateData['seo_title']       = $oInput->post('seo_title');
+                $aUpdateData['seo_description'] = $oInput->post('seo_description');
+                $aUpdateData['seo_keywords']    = $oInput->post('seo_keywords');
 
                 if ($this->blog_category_model->update($this->data['category']->id, $aUpdateData)) {
 
-                    $this->session->set_flashdata('success', 'Category saved successfully.');
+                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession->setFlashData('success', 'Category saved successfully.');
+
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
                 } else {
@@ -338,18 +349,21 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $id = $this->uri->segment(6);
+        $oUri     = Factory::service('Uri');
+        $oSession = Factory::service('Session', 'nails/module-auth');
+
+        $id = $oUri->segment(6);
 
         if ($this->blog_category_model->delete($id)) {
 
-            $this->session->set_flashdata('success', 'Category was deleted successfully.');
+            $oSession->setFlashData('success', 'Category was deleted successfully.');
 
         } else {
 
             $status   = 'error';
             $message  = 'There was a problem deleting the Category. ';
             $message .= $this->blog_category_model->lastError();
-            $this->session->set_flashdata($status, $message);
+            $oSession->setFlashData($status, $message);
         }
 
         redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);

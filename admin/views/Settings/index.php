@@ -1,3 +1,6 @@
+<?php
+$oInput = \Nails\Factory::service('Input');
+?>
 <div class="group-settings blog configure">
     <?php
 
@@ -55,7 +58,7 @@
     if (!empty($selectedBlogId)) {
 
         echo form_open('admin/blog/settings?blog_id=' . $selectedBlogId);
-        $sActiveTab = $this->input->post('active_tab') ?: 'tab-general';
+        $sActiveTab = $oInput->post('active_tab') ?: 'tab-general';
         echo '<input type="hidden" name="active_tab" value="' . $sActiveTab . '" id="active-tab">';
 
         ?>
@@ -219,9 +222,9 @@
 
                             foreach ($skins as $skin) {
 
-                                if ($this->input->post()) {
+                                if ($oInput->post()) {
 
-                                    $bSelected = $skin->slug == $this->input->post('skin') ? true : false;
+                                    $bSelected = $skin->slug == $oInput->post('skin') ? true : false;
 
                                 } else {
 

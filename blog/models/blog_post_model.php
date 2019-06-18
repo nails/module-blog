@@ -1254,11 +1254,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 
         // --------------------------------------------------------------------------
 
-        $oDate                 = Factory::factory('DateTime');
+        $oDate  = Factory::factory('DateTime');
+        $oInput = Factory::service('Input');
+
         $hitData               = [];
         $hitData['post_id']    = $id;
         $hitData['user_id']    = empty($data['user_id']) ? null : $data['user_id'];
-        $hitData['ip_address'] = $this->input->ipAddress();
+        $hitData['ip_address'] = $oInput->ipAddress();
         $hitData['created']    = $oDate->format('Y-m-d H:i:s');
         $hitData['referrer']   = empty($data['referrer']) ? null : prep_url(trim($data['referrer']));
 

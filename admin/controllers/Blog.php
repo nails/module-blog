@@ -111,7 +111,8 @@ class Blog extends BaseAdmin
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
 
-                $this->session->set_flashdata($status, $message);
+                $oSession = Factory::service('Session', 'nails/module-auth');
+                $oSession->setFlashData($status, $message);
 
                 redirect('admin/blog/blog/create');
 
@@ -152,7 +153,8 @@ class Blog extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Handle POST
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
             $oFormValidation->set_rules('label', '', 'required');
@@ -162,8 +164,8 @@ class Blog extends BaseAdmin
             if ($oFormValidation->run()) {
 
                 $aInsertData                = array();
-                $aInsertData['label']       = $this->input->post('label');
-                $aInsertData['description'] = $this->input->post('description');
+                $aInsertData['label']       = $oInput->post('label');
+                $aInsertData['description'] = $oInput->post('description');
 
                 $iId = $this->blog_model->create($aInsertData);
 
@@ -172,17 +174,18 @@ class Blog extends BaseAdmin
                     $sStatus   = 'success';
                     $sMessage  = 'Blog was created successfully, ';
                     $sMessage .= 'now please confirm blog settings.';
-                    $this->session->set_flashdata($sStatus, $sMessage);
+
+                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession->setFlashData($sStatus, $sMessage);
+
                     redirect('admin/blog/settings?blog_id=' . $iId);
 
                 } else {
-
                     $this->data['error']  = 'Failed to create blog. ';
                     $this->data['error'] .= $this->blog_model->lastError();
                 }
 
             } else {
-
                 $this->data['error'] = lang('fv_there_were_errors');
             }
         }
@@ -202,16 +205,16 @@ class Blog extends BaseAdmin
     public function edit()
     {
         if (!userHasPermission('admin:blog:blog:edit')) {
-
             unauthorised();
         }
 
         // --------------------------------------------------------------------------
 
-        $this->data['blog'] = $this->blog_model->getById($this->uri->segment(5));
+        $oUri = Factory::service('Uri');
+
+        $this->data['blog'] = $this->blog_model->getById($oUri->segment(5));
 
         if (empty($this->data['blog'])) {
-
             show404();
         }
 
@@ -222,7 +225,8 @@ class Blog extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Handle POST
-        if ($this->input->post()) {
+        $oInput = Factory::service('Input');
+        if ($oInput->post()) {
 
             $oFormValidation = Factory::service('FormValidation');
             $oFormValidation->set_rules('label', '', 'required');
@@ -232,14 +236,17 @@ class Blog extends BaseAdmin
             if ($oFormValidation->run()) {
 
                 $aUpdateData                = array();
-                $aUpdateData['label']       = $this->input->post('label');
-                $aUpdateData['description'] = $this->input->post('description');
+                $aUpdateData['label']       = $oInput->post('label');
+                $aUpdateData['description'] = $oInput->post('description');
 
-                if ($this->blog_model->update($this->uri->segment(5), $aUpdateData)) {
+                if ($this->blog_model->update($oUri->segment(5), $aUpdateData)) {
 
                     $status  = 'success';
                     $message = 'Blog was updated successfully.';
-                    $this->session->set_flashdata($status, $message);
+
+                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession->setFlashData($status, $message);
+
                     redirect('admin/blog/blog/index');
 
                 } else {
@@ -275,11 +282,12 @@ class Blog extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $blog = $this->blog_model->getById($this->uri->segment(5));
+        $oSession = Factory::service('Session', 'nails/module-auth');
+        $oUri     = Factory::service('Uri');
+        $blog     = $this->blog_model->getById($oUri->segment(5));
 
         if (empty($blog)) {
-
-            $this->session->set_flashdata('error', 'You specified an invalid Blog ID.');
+            $oSession->setFlashData('error', 'You specified an invalid Blog ID.');
             redirect('admin/blog/blog/index');
         }
 
@@ -287,11 +295,11 @@ class Blog extends BaseAdmin
 
         if ($this->blog_model->delete($blog->id)) {
 
-            $this->session->set_flashdata('success', 'Blog was deleted successfully.');
+            $oSession->setFlashData('success', 'Blog was deleted successfully.');
 
         } else {
 
-            $this->session->set_flashdata('error', 'Failed to delete blog. ' . $this->blog_model->lastError());
+            $oSession->setFlashData('error', 'Failed to delete blog. ' . $this->blog_model->lastError());
         }
 
         redirect('admin/blog/blog/index');
