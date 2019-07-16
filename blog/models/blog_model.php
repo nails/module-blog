@@ -137,7 +137,7 @@ class NAILS_Blog_model extends NAILS_Model
 
             $url = appSetting('url', 'blog-' . $blogId);
             $url = $url ? $url : 'blog/';
-            $url = site_url($url);
+            $url = siteUrl($url);
 
             $this->blogUrl[$blogId] = $url;
 
