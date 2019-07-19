@@ -46,7 +46,7 @@ class NAILS_Blog_Controller extends Base
         // --------------------------------------------------------------------------
 
         //  Load language file
-        $this->lang->load('blog/blog');
+        get_instance()->lang->load('blog/blog');
 
         // --------------------------------------------------------------------------
 
