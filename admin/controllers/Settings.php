@@ -233,7 +233,8 @@ class Settings extends BaseAdmin
 
         //  Load assets
         $oAsset = Factory::service('Asset');
-        $oAsset->load('admin.settings.min.js', 'nails/module-blog');
+        //  @todo (Pablo - 2019-09-12) - Update/Remove/Use minified once JS is refactored to be a module
+        $oAsset->load('admin.settings.js', 'nails/module-blog');
 
         // --------------------------------------------------------------------------
 

@@ -457,7 +457,8 @@ class Post extends BaseAdmin
         $oAsset->library('uploadify');
         $oAsset->library('MUSTACHE');
         $oAsset->load('moment/moment.js', 'NAILS-BOWER');
-        $oAsset->load('admin.post.edit.min.js', 'nails/module-blog');
+        //  @todo (Pablo - 2019-09-12) - Update/Remove/Use minified once JS is refactored to be a module
+        $oAsset->load('admin.post.edit.js', 'nails/module-blog');
 
         // --------------------------------------------------------------------------
 
@@ -785,7 +786,8 @@ class Post extends BaseAdmin
         $oAsset->library('uploadify');
         $oAsset->library('MUSTACHE');
         $oAsset->load('moment/moment.js', 'NAILS-BOWER');
-        $oAsset->load('admin.post.edit.min.js', 'nails/module-blog');
+        //  @todo (Pablo - 2019-09-12) - Update/Remove/Use minified once JS is refactored to be a module
+        $oAsset->load('admin.post.edit.js', 'nails/module-blog');
 
         if ($this->data['post']->is_published) {
 
