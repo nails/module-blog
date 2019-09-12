@@ -14,6 +14,7 @@ namespace Nails\Admin\Blog;
 
 use Nails\Factory;
 use Nails\Admin\Helper;
+use Nails\Auth;
 use Nails\Blog\Controller\BaseAdmin;
 
 class Blog extends BaseAdmin
@@ -111,7 +112,7 @@ class Blog extends BaseAdmin
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
 
-                $oSession = Factory::service('Session', 'nails/module-auth');
+                $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                 $oSession->setFlashData($status, $message);
 
                 redirect('admin/blog/blog/create');
@@ -175,7 +176,7 @@ class Blog extends BaseAdmin
                     $sMessage  = 'Blog was created successfully, ';
                     $sMessage .= 'now please confirm blog settings.';
 
-                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                     $oSession->setFlashData($sStatus, $sMessage);
 
                     redirect('admin/blog/settings?blog_id=' . $iId);
@@ -244,7 +245,7 @@ class Blog extends BaseAdmin
                     $status  = 'success';
                     $message = 'Blog was updated successfully.';
 
-                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                     $oSession->setFlashData($status, $message);
 
                     redirect('admin/blog/blog/index');
@@ -282,7 +283,7 @@ class Blog extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $oSession = Factory::service('Session', 'nails/module-auth');
+        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
         $oUri     = Factory::service('Uri');
         $blog     = $this->blog_model->getById($oUri->segment(5));
 

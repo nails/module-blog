@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Blog;
 
+use Nails\Auth;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
@@ -217,7 +218,7 @@ class Category extends BaseAdmin
                     $status  = 'success';
                     $message = 'Category created successfully.';
 
-                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                     $oSession->setFlashData($status, $message);
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
@@ -300,7 +301,7 @@ class Category extends BaseAdmin
 
                 if ($this->blog_category_model->update($this->data['category']->id, $aUpdateData)) {
 
-                    $oSession = Factory::service('Session', 'nails/module-auth');
+                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
                     $oSession->setFlashData('success', 'Category saved successfully.');
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
@@ -350,7 +351,7 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session', 'nails/module-auth');
+        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
 
         $id = $oUri->segment(6);
 
