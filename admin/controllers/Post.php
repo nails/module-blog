@@ -16,6 +16,7 @@ use Nails\Auth;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
+use Nails\Cdn;
 
 class Post extends BaseAdmin
 {
@@ -447,7 +448,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $oCdn                            = Factory::service('Cdn', 'nails/module-cdn');
+        $oCdn                            = Factory::service('Cdn', Cdn\Constants::MODULE_SLUG);
         $this->data['associations']      = $this->blog_model->getAssociations();
         $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
@@ -776,7 +777,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Load other data
-        $oCdn                            = Factory::service('Cdn', 'nails/module-cdn');
+        $oCdn                            = Factory::service('Cdn', Cdn\Constants::MODULE_SLUG);
         $this->data['associations']      = $this->blog_model->getAssociations($this->data['post']->id);
         $this->data['cdnUrlScaleScheme'] = $oCdn->urlScaleScheme();
 
