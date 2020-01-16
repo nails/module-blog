@@ -117,7 +117,8 @@ NAILS_Admin_Blog_Create_Edit = function(mode, initialPublishState)
             $('#field-publish-date').hide();
         }
 
-        _nails.addStripes();
+
+        window.NAILS.ADMIN.refreshUi();
     };
 
     // --------------------------------------------------------------------------
@@ -154,7 +155,7 @@ NAILS_Admin_Blog_Create_Edit = function(mode, initialPublishState)
             $('#field-comments-expire').hide();
         }
 
-        _nails.addStripes();
+        window.NAILS.ADMIN.refreshUi();
     };
 
     // --------------------------------------------------------------------------
