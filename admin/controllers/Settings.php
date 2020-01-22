@@ -205,12 +205,16 @@ class Settings extends BaseAdmin
 
                 $this->data['success'] = 'Blog settings have been saved.';
 
-                $oRoutesService = Factory::service('Routes');
+                try {
 
-                if (!$oRoutesService->update()) {
+                    /** @var \Nails\Common\Service\Event $oEventService */
+                    $oEventService = Factory::service('Event');
+                    $oEventService->trigger(\Nails\Common\Events::ROUTES_UPDATE);
 
+                } catch (\Exception $e) {
                     $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the ';
                     $this->data['warning'] .= 'routes file could not be updated. The blog may not behave as expected,';
+                    $this->data['warning'] .= 'The following reason was given: ' . $e->getMessage();
                 }
 
             } else {
