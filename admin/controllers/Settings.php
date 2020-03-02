@@ -12,7 +12,6 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
@@ -103,7 +102,7 @@ class Settings extends BaseAdmin
                 $status   = 'message';
                 $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
                 $message .= 'in order to configure blog settings.';
-                $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+                $oSession = Factory::service('Session');
                 $oSession->setFlashData($status, $message);
                 redirect('admin/blog/blog/create');
 

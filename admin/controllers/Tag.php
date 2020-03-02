@@ -12,7 +12,6 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
@@ -218,7 +217,7 @@ class Tag extends BaseAdmin
                     $status  = 'success';
                     $message = 'Tag created successfully.';
 
-                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+                    $oSession = Factory::service('Session');
                     $oSession->setFlashData($status, $message);
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
@@ -302,7 +301,7 @@ class Tag extends BaseAdmin
 
                 if ($this->blog_tag_model->update($this->data['tag']->id, $aUpdateData)) {
 
-                    $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+                    $oSession = Factory::service('Session');
                     $oSession->setFlashData('success', 'Tag saved successfully.');
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
@@ -351,7 +350,7 @@ class Tag extends BaseAdmin
         // --------------------------------------------------------------------------
 
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+        $oSession = Factory::service('Session');
 
         $id = $oUri->segment(6);
 

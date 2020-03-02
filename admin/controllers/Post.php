@@ -12,7 +12,6 @@
 
 namespace Nails\Admin\Blog;
 
-use Nails\Auth;
 use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Blog\Controller\BaseAdmin;
@@ -400,7 +399,7 @@ class Post extends BaseAdmin
                             'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
                         );
 
-                        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+                        $oSession = Factory::service('Session');
                         $oSession->setFlashData('success', ucfirst($this->data['postName']) . ' was created.');
 
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
@@ -731,7 +730,7 @@ class Post extends BaseAdmin
                             }
                         }
 
-                        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+                        $oSession = Factory::service('Session');
                         $oSession->setFlashData('success', ucfirst($this->data['postName']) . ' was updated.');
 
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
@@ -837,7 +836,7 @@ class Post extends BaseAdmin
 
         //  Fetch and check post
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+        $oSession = Factory::service('Session');
 
         $iPostId = (int) $oUri->segment(6);
         $oPost   = $this->blog_post_model->getById($iPostId);
@@ -889,7 +888,7 @@ class Post extends BaseAdmin
 
         //  Fetch and check post
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session', Auth\Constants::MODULE_SLUG);
+        $oSession = Factory::service('Session');
 
         $iPostId = (int) $oUri->segment(6);
 
