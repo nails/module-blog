@@ -14,6 +14,7 @@
 require_once '_blog.php';
 
 use Nails\Common\Exception\NailsException;
+use Nails\Config;
 use Nails\Factory;
 
 class NAILS_Blog extends NAILS_Blog_Controller
@@ -45,7 +46,7 @@ class NAILS_Blog extends NAILS_Blog_Controller
     public function index()
     {
         //  Meta & Breadcrumbs
-        $this->data['page']->title            = APP_NAME . ' Blog';
+        $this->data['page']->title            = Config::get('APP_NAME') . ' Blog';
         $this->data['page']->seo->description = '';
         $this->data['page']->seo->keywords    = '';
 
