@@ -230,7 +230,7 @@ class Settings extends BaseAdmin
 
         if (!empty($this->data['selectedBlogId'])) {
 
-            $this->data['settings'] = appSetting(null, 'blog-' . $this->data['selectedBlogId'], true);
+            $this->data['settings'] = appSetting(null, 'blog-' . $this->data['selectedBlogId'], null, true);
         }
 
         // --------------------------------------------------------------------------
