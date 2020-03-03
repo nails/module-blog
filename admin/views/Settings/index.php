@@ -196,7 +196,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField            = array();
                     $aField['key']     = 'rss_enabled';
                     $aField['label']   = 'RSS Enabled';
-                    $aField['default'] = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default'] = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -224,11 +224,11 @@ $oInput = \Nails\Factory::service('Input');
 
                                 if ($oInput->post()) {
 
-                                    $bSelected = $skin->slug == $oInput->post('skin') ? true : false;
+                                    $bSelected = $skin->slug == $oInput->post('skin');
 
                                 } else {
 
-                                    $bSelected = $skin->slug == $skinSelected->slug ? true : false;
+                                    $bSelected = $skin->slug == $skinSelected->slug;
                                 }
 
                                 ?>
@@ -296,7 +296,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField            = array();
                     $aField['key']     = 'comments_enabled';
                     $aField['label']   = 'Comments Enabled';
-                    $aField['default'] = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default'] = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -367,7 +367,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField['key']      = 'social_facebook_enabled';
                     $aField['label']    = 'Facebook';
                     $aField['id']       = 'social-service-facebook';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -377,7 +377,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField['key']      = 'social_twitter_enabled';
                     $aField['label']    = 'Twitter';
                     $aField['id']       = 'social-service-twitter';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -387,7 +387,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField['key']      = 'social_googleplus_enabled';
                     $aField['label']    = 'Google+';
                     $aField['id']       = 'social-service-googleplus';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -397,7 +397,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField['key']      = 'social_pinterest_enabled';
                     $aField['label']    = 'Pinterest';
                     $aField['id']       = 'social-service-pinterest';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -473,7 +473,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField['key']      = 'social_counters';
                     $aField['label']    = 'Show Counters';
                     $aField['id']       = 'social-counters';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -492,7 +492,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField             = array();
                     $aField['key']      = 'sidebar_latest_posts';
                     $aField['label']    = !empty($settings['postNamePlural']) ? 'Latest ' . ucfirst($settings['postNamePlural']) : 'Latest Posts';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -503,7 +503,7 @@ $oInput = \Nails\Factory::service('Input');
                         $aField             = array();
                         $aField['key']      = 'sidebar_categories';
                         $aField['label']    = 'Categories';
-                        $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                        $aField['default']  = !empty($settings[$aField['key']]);
 
                         echo form_field_boolean($aField);
                     }
@@ -515,7 +515,7 @@ $oInput = \Nails\Factory::service('Input');
                         $aField             = array();
                         $aField['key']      = 'sidebar_tags';
                         $aField['label']    = 'Tags';
-                        $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                        $aField['default']  = !empty($settings[$aField['key']]);
 
                         echo form_field_boolean($aField);
                     }
@@ -525,7 +525,7 @@ $oInput = \Nails\Factory::service('Input');
                     $aField             = array();
                     $aField['key']      = 'sidebar_popular_posts';
                     $aField['label']    = !empty($settings['postNamePlural']) ? 'Popular ' . ucfirst($settings['postNamePlural']) : 'Popular Posts';
-                    $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                    $aField['default']  = !empty($settings[$aField['key']]);
 
                     echo form_field_boolean($aField);
 
@@ -538,7 +538,7 @@ $oInput = \Nails\Factory::service('Input');
                             $aField             = array();
                             $aField['key']      = 'sidebar_association_' . $assoc->slug;
                             $aField['label']    = $assoc->widget->label;
-                            $aField['default']  = !empty($settings[$aField['key']]) ? true : false;
+                            $aField['default']  = !empty($settings[$aField['key']]);
 
                             echo form_field_boolean($aField);
                         }
