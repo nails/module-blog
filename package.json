@@ -7,11 +7,11 @@
     "repository": "https://github.com/nails/module-blog",
     "devDependencies": {
         "autoprefixer": "^9.6",
-        "css-loader": "^3.2",
-        "mini-css-extract-plugin": "^0.8",
+        "css-loader": "^4.3",
+        "mini-css-extract-plugin": "^0.12",
         "node-sass": "^4.12",
-        "postcss-loader": "^3.0",
-        "sass-loader": "^8.0",
+        "postcss-loader": "^4.0",
+        "sass-loader": "^10.0",
         "webpack": "^4.39",
         "webpack-command": "^0.5"
     },
