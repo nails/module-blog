@@ -17,6 +17,13 @@ class NAILS_Blog_post_model extends NAILS_Model
 {
     protected $reservedWords;
 
+    /**
+     * The name of the "label" column
+     *
+     * @var string
+     */
+    protected $tableLabelColumn = 'title';
+
     // --------------------------------------------------------------------------
 
     /**
@@ -33,7 +40,6 @@ class NAILS_Blog_post_model extends NAILS_Model
         $this->tableHit       = NAILS_DB_PREFIX . 'blog_post_hit';
         $this->tableHitPrefix = 'bph';
 
-        $this->tableLabelColumn  = 'title';
         $this->destructiveDelete = false;
 
         $this->defaultSortColumn = 'published';
