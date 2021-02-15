@@ -47,7 +47,7 @@ class Post extends BaseAdmin
 
                 //  Any draft posts?
                 $iNumDrafts = $oCi->blog_post_model->countDrafts($oBlog->id);
-                $oAlert = Factory::factory('NavAlert', 'nails/module-admin');
+                $oAlert = Factory::factory('NavAlert', \Nails\Admin\Constants::MODULE_SLUG);
                 $oAlert->setValue($iNumDrafts);
                 $oAlert->setLabel('Drafts');
 
@@ -58,7 +58,7 @@ class Post extends BaseAdmin
                 }
 
                 //  Create the navGrouping
-                $oNavGroup = Factory::factory('Nav', 'nails/module-admin');
+                $oNavGroup = Factory::factory('Nav', \Nails\Admin\Constants::MODULE_SLUG);
                 $oNavGroup->setLabel($sGroupLabel);
                 $oNavGroup->setIcon('fa-pencil-square-o');
                 $oNavGroup->addAction(
@@ -127,7 +127,7 @@ class Post extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $this->oChangeLogModel = Factory::model('ChangeLog', 'nails/module-admin');
+        $this->oChangeLogModel = Factory::model('ChangeLog', \Nails\Admin\Constants::MODULE_SLUG);
 
         // --------------------------------------------------------------------------
 
