@@ -464,9 +464,9 @@ class NAILS_Blog extends NAILS_Blog_Controller
         $this->data['posts'] = $this->blog_post_model->getAll(null, null, $data);
         $this->data['isRss'] = true;
 
-        //  Set Output
+        /** @var \Nails\Common\Service\Output $oOutput */
         $oOutput = Factory::service('Output');
-        $oOutput->set_content_type('text/xml; charset=UTF-8');
+        $oOutput->setContentType('text/xml; charset=UTF-8');
 
         $this->loadView('rss', $this->data);
     }
