@@ -17,9 +17,10 @@ use Nails\Common\Model\Base;
 
 class Tag extends Base
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->table = NAILS_DB_PREFIX . 'blog_tag';
-    }
+    /**
+     * The table this model represents
+     *
+     * @var string
+     */
+    const TABLE = NAILS_DB_PREFIX . 'blog_tag';
 }
