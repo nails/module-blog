@@ -947,16 +947,14 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-postcss-loader@^4.0:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-4.0.3.tgz#337f51bbdfb02269fb42f7db9fc7f0a93c1b2e3f"
-  integrity sha512-jHboC/AOnJLPu8/974hODCJ/rNAa2YhhJOclUeuRlAmFpKmEcBY6az8y1ejHyYc2LThzPl8qPRekh2Yz3CiRKA==
+postcss-loader@^5.2:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-5.2.0.tgz#ccd6668a778902d653602289c765a8bc481986dc"
+  integrity sha512-uSuCkENFeUaOYsKrXm0eNNgVIxc71z8RcckLMbVw473rGojFnrUeqEz6zBgXsH2q1EIzXnO/4pEz9RhALjlITA==
   dependencies:
     cosmiconfig "^7.0.0"
     klona "^2.0.4"
-    loader-utils "^2.0.0"
-    schema-utils "^2.7.1"
-    semver "^7.3.2"
+    semver "^7.3.4"
 
 postcss-modules-extract-imports@^3.0.0:
   version "3.0.0"
