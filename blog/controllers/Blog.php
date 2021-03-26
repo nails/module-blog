@@ -179,31 +179,6 @@ class NAILS_Blog extends NAILS_Blog_Controller
 
         // --------------------------------------------------------------------------
 
-        //  Assets
-        if (appSetting('social_enabled', 'blog-' . $this->oBlog->id)) {
-
-            $oAsset = Factory::service('Asset');
-            $oAsset->load('social-likes/social-likes.min.js', 'NAILS-BOWER');
-
-            switch (appSetting('social_skin', 'blog-' . $this->oBlog->id)) {
-
-                case 'FLAT':
-                    $oAsset->load('social-likes/social-likes_flat.css', 'NAILS-BOWER');
-                    break;
-
-                case 'BIRMAN':
-                    $oAsset->load('social-likes/social-likes_birman.css', 'NAILS-BOWER');
-                    break;
-
-                case 'CLASSIC':
-                default:
-                    $oAsset->load('social-likes/social-likes_classic.css', 'NAILS-BOWER');
-                    break;
-            }
-        }
-
-        // --------------------------------------------------------------------------
-
         $this->data['isSingle'] = true;
 
         // --------------------------------------------------------------------------
