@@ -354,8 +354,8 @@ $oInput = \Nails\Factory::service('Input');
             ?>
             <div class="tab-page tab-categories <?=$sActive?>">
                 <p>
-                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
-                    title="Categories allow for a broad grouping of post topics and should be considered top-level
+                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u class="hint--bottom"
+                    aria-label="Categories allow for a broad grouping of post topics and should be considered top-level
                     'containers' for posts of similar content.">categories</u>.
                 </p>
                 <p>
@@ -404,8 +404,8 @@ $oInput = \Nails\Factory::service('Input');
             ?>
             <div class="tab-page tab-tags <?=$sActive?>">
                 <p>
-                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u rel="tipsy"
-                    title="Tags are generally used to describe your post in more detail.">tags</u>.
+                    Organise your <?=$postNamePlural?> and help user's find them by assigning <u class="hint--bottom"
+                    aria-label="Tags are generally used to describe your post in more detail.">tags</u>.
                 </p>
                 <p>
                     <select name="tags[]" multiple="multiple" class="tags select2">
