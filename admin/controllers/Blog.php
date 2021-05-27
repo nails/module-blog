@@ -107,15 +107,10 @@ class Blog extends BaseAdmin
 
             if (!userHasPermission('admin:blog:blog:create')) {
 
-                $status   = 'message';
-                $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
-                $message .= 'in order to configure blog settings.';
-
                 $oSession = Factory::service('Session');
-                $oSession->setFlashData($status, $message);
+                $oSession->warning('<strong>You don\'t have a blog!</strong> Create a new blog in order to configure blog settings.');
 
                 redirect('admin/blog/blog/create');
-
             }
         }
 
@@ -171,12 +166,8 @@ class Blog extends BaseAdmin
 
                 if ($iId) {
 
-                    $sStatus   = 'success';
-                    $sMessage  = 'Blog was created successfully, ';
-                    $sMessage .= 'now please confirm blog settings.';
-
                     $oSession = Factory::service('Session');
-                    $oSession->setFlashData($sStatus, $sMessage);
+                    $oSession->success('Blog was created successfully, now please confirm blog settings.');
 
                     redirect('admin/blog/settings?blog_id=' . $iId);
 
@@ -241,11 +232,8 @@ class Blog extends BaseAdmin
 
                 if ($this->blog_model->update($oUri->segment(5), $aUpdateData)) {
 
-                    $status  = 'success';
-                    $message = 'Blog was updated successfully.';
-
                     $oSession = Factory::service('Session');
-                    $oSession->setFlashData($status, $message);
+                    $oSession->success('Blog was updated successfully.');
 
                     redirect('admin/blog/blog/index');
 
@@ -287,7 +275,7 @@ class Blog extends BaseAdmin
         $blog     = $this->blog_model->getById($oUri->segment(5));
 
         if (empty($blog)) {
-            $oSession->setFlashData('error', 'You specified an invalid Blog ID.');
+            $oSession->error('You specified an invalid Blog ID.');
             redirect('admin/blog/blog/index');
         }
 
@@ -295,11 +283,11 @@ class Blog extends BaseAdmin
 
         if ($this->blog_model->delete($blog->id)) {
 
-            $oSession->setFlashData('success', 'Blog was deleted successfully.');
+            $oSession->success('Blog was deleted successfully.');
 
         } else {
 
-            $oSession->setFlashData('error', 'Failed to delete blog. ' . $this->blog_model->lastError());
+            $oSession->error('Failed to delete blog. ' . $this->blog_model->lastError());
         }
 
         redirect('admin/blog/blog/index');

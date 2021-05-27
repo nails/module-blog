@@ -214,11 +214,8 @@ class Tag extends BaseAdmin
 
                 if ($this->blog_tag_model->create($aInsertData)) {
 
-                    $status  = 'success';
-                    $message = 'Tag created successfully.';
-
-                    $oSession = Factory::service('Session');
-                    $oSession->setFlashData($status, $message);
+                    $oUserFeedback = Factory::service('UserFeedback');
+                    $oUserFeedback->success('Tag created successfully.');
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
@@ -301,8 +298,8 @@ class Tag extends BaseAdmin
 
                 if ($this->blog_tag_model->update($this->data['tag']->id, $aUpdateData)) {
 
-                    $oSession = Factory::service('Session');
-                    $oSession->setFlashData('success', 'Tag saved successfully.');
+                    $oUserFeedback = Factory::service('UserFeedback');
+                    $oUserFeedback->success('Tag saved successfully.');
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
@@ -350,20 +347,15 @@ class Tag extends BaseAdmin
         // --------------------------------------------------------------------------
 
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session');
+        $oUserFeedback = Factory::service('UserFeedback');
 
         $id = $oUri->segment(6);
 
         if ($this->blog_tag_model->delete($id)) {
-
-            $oSession->setFlashData('success', 'Tag was deleted successfully.');
+            $oUserFeedback->success('Tag was deleted successfully.');
 
         } else {
-
-            $status   = 'error';
-            $message  = 'There was a problem deleting the Tag. ';
-            $message .= $this->blog_tag_model->lastError();
-            $oSession->setFlashData($status, $message);
+            $oUserFeedback->error('There was a problem deleting the Tag. ' . $this->blog_tag_model->lastError());
         }
 
         redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);

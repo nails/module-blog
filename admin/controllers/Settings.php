@@ -99,11 +99,8 @@ class Settings extends BaseAdmin
 
             if (userHasPermission('admin:blog:blog:create')) {
 
-                $status   = 'message';
-                $message  = '<strong>You don\'t have a blog!</strong> Create a new blog ';
-                $message .= 'in order to configure blog settings.';
-                $oSession = Factory::service('Session');
-                $oSession->setFlashData($status, $message);
+                $oUserFeedback = Factory::service('UserFeedback');
+                $oUserFeedback->warning('<strong>You don\'t have a blog!</strong> Create a new blog in order to configure blog settings.');
                 redirect('admin/blog/blog/create');
 
             } else {

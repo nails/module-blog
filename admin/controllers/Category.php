@@ -214,17 +214,14 @@ class Category extends BaseAdmin
 
                 if ($this->blog_category_model->create($aInsertData)) {
 
-                    $status  = 'success';
-                    $message = 'Category created successfully.';
-
-                    $oSession = Factory::service('Session');
-                    $oSession->setFlashData($status, $message);
+                    $oUserFeedback = Factory::service('UserFeedback');
+                    $oUserFeedback->success('Category created successfully.');
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
-                    $this->data['error']  = 'There was a problem creating the Category. ';
+                    $this->data['error']  = 'There was a problem creating the Category.';
                     $this->data['error'] .= $this->blog_category_model->lastError();
                 }
 
@@ -300,8 +297,8 @@ class Category extends BaseAdmin
 
                 if ($this->blog_category_model->update($this->data['category']->id, $aUpdateData)) {
 
-                    $oSession = Factory::service('Session');
-                    $oSession->setFlashData('success', 'Category saved successfully.');
+                    $oUserFeedback = Factory::service('UserFeedback');
+                    $oUserFeedback->success('Category saved successfully.');
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
@@ -350,20 +347,16 @@ class Category extends BaseAdmin
         // --------------------------------------------------------------------------
 
         $oUri     = Factory::service('Uri');
-        $oSession = Factory::service('Session');
+        $oUserFeedback = Factory::service('UserFeedback');
 
         $id = $oUri->segment(6);
 
         if ($this->blog_category_model->delete($id)) {
 
-            $oSession->setFlashData('success', 'Category was deleted successfully.');
+            $oUserFeedback->success('Category was deleted successfully.');
 
         } else {
-
-            $status   = 'error';
-            $message  = 'There was a problem deleting the Category. ';
-            $message .= $this->blog_category_model->lastError();
-            $oSession->setFlashData($status, $message);
+            $oUserFeedback->error('There was a problem deleting the Category. ' . $this->blog_category_model->lastError());
         }
 
         redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
