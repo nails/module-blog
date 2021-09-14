@@ -172,12 +172,11 @@ class Blog extends BaseAdmin
                     redirect('admin/blog/settings?blog_id=' . $iId);
 
                 } else {
-                    $this->data['error']  = 'Failed to create blog. ';
-                    $this->data['error'] .= $this->blog_model->lastError();
+                    $this->oUserFeedback->error('Failed to create blog. ' . $this->blog_model->lastError());
                 }
 
             } else {
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -239,13 +238,12 @@ class Blog extends BaseAdmin
 
                 } else {
 
-                    $this->data['error']  = 'Failed to create blog. ';
-                    $this->data['error'] .= $this->blog_model->lastError();
+                    $this->oUserFeedback->error('Failed to create blog. ' . $this->blog_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 

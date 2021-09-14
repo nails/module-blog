@@ -214,20 +214,18 @@ class Category extends BaseAdmin
 
                 if ($this->blog_category_model->create($aInsertData)) {
 
-                    $oUserFeedback = Factory::service('UserFeedback');
-                    $oUserFeedback->success('Category created successfully.');
+                    $this->oUserFeedback->success('Category created successfully.');
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
-                    $this->data['error']  = 'There was a problem creating the Category.';
-                    $this->data['error'] .= $this->blog_category_model->lastError();
+                    $this->oUserFeedback->error('There was a problem creating the Category.' . $this->blog_category_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -297,20 +295,18 @@ class Category extends BaseAdmin
 
                 if ($this->blog_category_model->update($this->data['category']->id, $aUpdateData)) {
 
-                    $oUserFeedback = Factory::service('UserFeedback');
-                    $oUserFeedback->success('Category saved successfully.');
+                    $this->oUserFeedback->success('Category saved successfully.');
 
                     redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
-                    $this->data['error']  = 'There was a problem saving the Category. ';
-                    $this->data['error'] .= $this->blog_category_model->lastError();
+                    $this->oUserFeedback->error('There was a problem saving the Category. ' . $this->blog_category_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -346,17 +342,16 @@ class Category extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $oUri     = Factory::service('Uri');
-        $oUserFeedback = Factory::service('UserFeedback');
+        $oUri = Factory::service('Uri');
 
         $id = $oUri->segment(6);
 
         if ($this->blog_category_model->delete($id)) {
 
-            $oUserFeedback->success('Category was deleted successfully.');
+            $this->oUserFeedback->success('Category was deleted successfully.');
 
         } else {
-            $oUserFeedback->error('There was a problem deleting the Category. ' . $this->blog_category_model->lastError());
+            $this->oUserFeedback->error('There was a problem deleting the Category. ' . $this->blog_category_model->lastError());
         }
 
         redirect('admin/blog/category/index/' . $this->blog->id . $this->isModal);

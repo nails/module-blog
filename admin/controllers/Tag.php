@@ -214,20 +214,18 @@ class Tag extends BaseAdmin
 
                 if ($this->blog_tag_model->create($aInsertData)) {
 
-                    $oUserFeedback = Factory::service('UserFeedback');
-                    $oUserFeedback->success('Tag created successfully.');
+                    $this->oUserFeedback->success('Tag created successfully.');
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
-                    $this->data['error']  = 'There was a problem creating the Tag. ';
-                    $this->data['error'] .= $this->blog_tag_model->lastError();
+                    $this->oUserFeedback->error('There was a problem creating the Tag. ' . $this->blog_tag_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -298,20 +296,18 @@ class Tag extends BaseAdmin
 
                 if ($this->blog_tag_model->update($this->data['tag']->id, $aUpdateData)) {
 
-                    $oUserFeedback = Factory::service('UserFeedback');
-                    $oUserFeedback->success('Tag saved successfully.');
+                    $this->oUserFeedback->success('Tag saved successfully.');
 
                     redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);
 
                 } else {
 
-                    $this->data['error']  = 'There was a problem saving the Tag. ';
-                    $this->data['error'] .= $this->blog_tag_model->lastError();
+                    $this->oUserFeedback->error('There was a problem saving the Tag. ' . $this->blog_tag_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -346,16 +342,15 @@ class Tag extends BaseAdmin
 
         // --------------------------------------------------------------------------
 
-        $oUri     = Factory::service('Uri');
-        $oUserFeedback = Factory::service('UserFeedback');
+        $oUri = Factory::service('Uri');
 
         $id = $oUri->segment(6);
 
         if ($this->blog_tag_model->delete($id)) {
-            $oUserFeedback->success('Tag was deleted successfully.');
+            $this->oUserFeedback->success('Tag was deleted successfully.');
 
         } else {
-            $oUserFeedback->error('There was a problem deleting the Tag. ' . $this->blog_tag_model->lastError());
+            $this->oUserFeedback->error('There was a problem deleting the Tag. ' . $this->blog_tag_model->lastError());
         }
 
         redirect('admin/blog/tag/index/' . $this->blog->id . $this->isModal);

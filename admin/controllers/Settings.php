@@ -99,8 +99,7 @@ class Settings extends BaseAdmin
 
             if (userHasPermission('admin:blog:blog:create')) {
 
-                $oUserFeedback = Factory::service('UserFeedback');
-                $oUserFeedback->warning('<strong>You don\'t have a blog!</strong> Create a new blog in order to configure blog settings.');
+                $this->oUserFeedback->warning('<strong>You don\'t have a blog!</strong> Create a new blog in order to configure blog settings.');
                 redirect('admin/blog/blog/create');
 
             } else {
@@ -122,8 +121,7 @@ class Settings extends BaseAdmin
             }
 
             if (empty($this->data['selectedBlogId'])) {
-
-                $this->data['error'] = 'There is no blog by that ID.';
+                $this->oUserFeedback->error('There is no blog by that ID.');
             }
         }
 
@@ -195,11 +193,11 @@ class Settings extends BaseAdmin
             // --------------------------------------------------------------------------
 
             //  Save
-            $oAppSettingService = Factory::service('AppSetting');
+            $oAppSettingService = Factory::service('AppSetting')
 
             if ($oAppSettingService->set($settings, 'blog-' . $oInput->get('blog_id'))) {
 
-                $this->data['success'] = 'Blog settings have been saved.';
+                $this->oUserFeedback->success('Blog settings have been saved.');
 
                 try {
 
@@ -208,14 +206,15 @@ class Settings extends BaseAdmin
                     $oEventService->trigger(\Nails\Common\Events::ROUTES_UPDATE);
 
                 } catch (\Exception $e) {
-                    $this->data['warning']  = '<strong>Warning:</strong> while the blog settings were updated, the ';
-                    $this->data['warning'] .= 'routes file could not be updated. The blog may not behave as expected,';
-                    $this->data['warning'] .= 'The following reason was given: ' . $e->getMessage();
+                    $this->oUserFeedback->warning(
+                        '<strong>Warning:</strong> while the blog settings were updated, the ' .
+                        'routes file could not be updated. The blog may not behave as expected. ' .
+                        'The following reason was given: ' . $e->getMessage()
+                    );
                 }
 
             } else {
-
-                $this->data['error'] = 'There was a problem saving settings.';
+                $this->oUserFeedback->error('There was a problem saving settings.');
             }
         }
 

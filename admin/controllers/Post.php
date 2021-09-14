@@ -399,8 +399,7 @@ class Post extends BaseAdmin
                             'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId
                         );
 
-                        $oUserFeedback = Factory::service('UserFeedback');
-                        $oUserFeedback->success(ucfirst($this->data['postName']) . ' was created.');
+                        $this->oUserFeedback->success(ucfirst($this->data['postName']) . ' was created.');
 
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
@@ -413,13 +412,12 @@ class Post extends BaseAdmin
 
                 } else {
 
-                    $this->data['error']  = 'An error occurred and the post could not be created. ';
-                    $this->data['error'] .= $this->blog_post_model->lastError();
+                    $this->oUserFeedback->error('An error occurred and the post could not be created. ' . $this->blog_post_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -730,8 +728,7 @@ class Post extends BaseAdmin
                             }
                         }
 
-                        $oUserFeedback = Factory::service('UserFeedback');
-                        $oUserFeedback->success(ucfirst($this->data['postName']) . ' was updated.');
+                        $this->oUserFeedback->success(ucfirst($this->data['postName']) . ' was updated.');
 
                         $sRedirectUrl = 'admin/blog/post/edit/' . $this->blog->id . '/' . $iPostId;
 
@@ -744,13 +741,12 @@ class Post extends BaseAdmin
 
                 } else {
 
-                    $this->data['error']  = 'An error occurred and the post could not be updated. ';
-                    $this->data['error'] .= $this->blog_post_model->lastError();
+                    $this->oUserFeedback->error('An error occurred and the post could not be updated. ' . $this->blog_post_model->lastError());
                 }
 
             } else {
 
-                $this->data['error'] = lang('fv_there_were_errors');
+                $this->oUserFeedback->error(lang('fv_there_were_errors'));
             }
         }
 
@@ -835,15 +831,14 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $oUri     = Factory::service('Uri');
-        $oUserFeedback = Factory::service('UserFeedback');
+        $oUri = Factory::service('Uri');
 
         $iPostId = (int) $oUri->segment(6);
         $oPost   = $this->blog_post_model->getById($iPostId);
 
         if (!$oPost || $oPost->blog->id != $this->blog->id) {
 
-            $oUserFeedback->error('I could\'t find a post by that ID.');
+            $this->oUserFeedback->error('I could\'t find a post by that ID.');
             redirect('admin/blog/post/index/' . $this->blog->id);
         }
 
@@ -856,14 +851,14 @@ class Post extends BaseAdmin
                 $sMessage .= anchor('admin/blog/post/restore/' . $this->blog->id . '/' . $iPostId, 'Undo?');
             }
 
-            $oUserFeedback->success($sMessage);
+            $this->oUserFeedback->success($sMessage);
 
             //  Update admin changelog
             $this->oChangeLogModel->add('deleted', 'a', 'blog post', $iPostId, $oPost->title);
 
         } else {
 
-            $oUserFeedback->error('I failed to delete that post. ' . $this->blog_post_model->lastError());
+            $this->oUserFeedback->error('I failed to delete that post. ' . $this->blog_post_model->lastError());
         }
 
         redirect('admin/blog/post/index/' . $this->blog->id);
@@ -885,8 +880,7 @@ class Post extends BaseAdmin
         // --------------------------------------------------------------------------
 
         //  Fetch and check post
-        $oUri     = Factory::service('Uri');
-        $oUserFeedback = Factory::service('UserFeedback');
+        $oUri = Factory::service('Uri');
 
         $iPostId = (int) $oUri->segment(6);
 
@@ -896,7 +890,7 @@ class Post extends BaseAdmin
 
             $oPost = $this->blog_post_model->getById($iPostId);
 
-            $oUserFeedback->success(ucfirst($this->data['postName']) . ' was restored successfully.');
+            $this->oUserFeedback->success(ucfirst($this->data['postName']) . ' was restored successfully.');
 
             //  Update admin changelog
             $this->oChangeLogModel->add(
@@ -909,7 +903,7 @@ class Post extends BaseAdmin
             );
 
         } else {
-            $oUserFeedback->error('I failed to restore that ' . $this->data['postName'] . '. ' . $this->blog_post_model->lastError());
+            $this->oUserFeedback->error('I failed to restore that ' . $this->data['postName'] . '. ' . $this->blog_post_model->lastError());
         }
 
         redirect('admin/blog/post/index/' . $this->blog->id);
