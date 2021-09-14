@@ -193,7 +193,7 @@ class Settings extends BaseAdmin
             // --------------------------------------------------------------------------
 
             //  Save
-            $oAppSettingService = Factory::service('AppSetting')
+            $oAppSettingService = Factory::service('AppSetting');
 
             if ($oAppSettingService->set($settings, 'blog-' . $oInput->get('blog_id'))) {
 
