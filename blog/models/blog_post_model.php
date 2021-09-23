@@ -628,7 +628,7 @@ class NAILS_Blog_post_model extends NAILS_Model
      *
      * @return array
      **/
-    public function getAll($page = null, $perPage = null, $data = null, $includeDeleted = false)
+    public function getAll($page = null, $perPage = null, array $data = null, bool $includeDeleted = false)
     {
         //  If the first value is an array then treat as if called with getAll(null, null, $aData);
         //  @todo (Pablo - 2017-11-09) - Convert these to expandable fields
