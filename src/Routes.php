@@ -21,7 +21,7 @@ class Routes implements RouteGenerator
      * Returns an array of routes for this module
      * @return array
      */
-    public static function generate()
+    public static function generate(): array
     {
         $oDb              = Factory::service('PDODatabase');
         $oSettingsService = Factory::service('AppSetting');
