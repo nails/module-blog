@@ -28,6 +28,7 @@
     "require":
     {
         "nails/common": "dev-develop",
+        "nails/module-admin": "dev-develop",
         "nails/module-cdn": "dev-develop",
         "nails/skin-blog-classic": "dev-develop"
     },

@@ -1,6 +1,11 @@
 parameters:
-    level: 0
+    level: 1
     paths:
         - ../helpers
         - ../src
         - ../tests
+    scanFiles:
+        - constants.php
+    scanDirectories:
+        - ../vendor/codeigniter/framework/system/core
+        - ../vendor/nails/common/helpers
